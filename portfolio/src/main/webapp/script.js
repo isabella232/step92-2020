@@ -13,26 +13,6 @@
 // limitations under the License.
 
 /**
- * Adds a random greeting to the page.
- */
-function addRandomGreeting() {
-  const greetings =
-      ['I am the god of destruction!', 'Give him pretty hair', 'I know tongue fu', 'Come and get it you Halloween turkey!'];
-
-  // Pick a random greeting.
-  const greeting = greetings[Math.floor(Math.random() * greetings.length)];
-
-  // Add it to the page.
-  const greetingContainer = document.getElementById('greeting-container');
-  greetingContainer.innerText = greeting;
-}
-
-async function getGreeting(){
-    const response = await fetch('/data');
-    const greeting = await response.text();
-    document.getElementById('hello-container').innerText = greeting;
-}
-/**
  * Fetches messages from the servers and adds them to the DOM.
  */
 async function getComments() {
@@ -77,10 +57,4 @@ function fetchBlobstoreUrlAndShowForm() {
         messageForm.action = imageUploadUrl;
         messageForm.classList.remove('hidden');
       });
-}
-/** Creates a map and adds it to the page. */
-function createMap() {
-  const map = new google.maps.Map(
-      document.getElementById('map'),
-      {center: {lat: 37.422, lng: -122.084}, zoom: 16});
 }
