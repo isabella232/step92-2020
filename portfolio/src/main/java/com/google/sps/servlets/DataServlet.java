@@ -101,8 +101,11 @@ public class DataServlet extends HttpServlet {
       // Get the message entered by the user.
       String message = request.getParameter("text-input");
 
-      //get number of comments
-      numberOfCommentsToDisplay = getNumberOfCommentsToDisplay(request);
+      //get sender
+      String sender = getParameter(request, "sender", "Steven");
+
+      //get type of comment
+      String commentType = getParameter(request, "tags", "Default")
 
       // Get the URL of the image that the user uploaded to Blobstore.
       String imageUrl = getUploadedFileUrl(request, "image");
@@ -112,10 +115,11 @@ public class DataServlet extends HttpServlet {
 
       //store image and comment in datastore
       Entity commentEntity = new Entity("Comment");
-      commentEntity.setProperty("sender", "Steven");
+      commentEntity.setProperty("sender", sender);
       commentEntity.setProperty("text", message);
       commentEntity.setProperty("imgUrl", imageUrl);
       commentEntity.setProperty("time", timestamp);
+      commentEntity.setProperty("tag", commentType);
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
       datastore.put(commentEntity);
       // Redirect back to the HTML page.
@@ -134,20 +138,6 @@ public class DataServlet extends HttpServlet {
       return value;
     }
 
-    /* Returns number of comments to display */
-    private int getNumberOfCommentsToDisplay(HttpServletRequest request) {
-      // Get the input from the form.
-      String numberOfCommentsString = getParameter(request, "comments-choice", "0");
-      // Convert the input to an int.
-      int numberOfComments;
-      try {
-        numberOfComments = Integer.parseInt(numberOfCommentsString);
-      } catch (NumberFormatException e) {
-        System.err.println("Could not convert to int: " + numberOfCommentsString);
-        return 1;
-      }
-      return numberOfComments;
-    }
     /** Returns a URL that points to the uploaded file, or null if the user didn't upload a file. */
     private String getUploadedFileUrl(HttpServletRequest request, String formInputElementName) {
       BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
