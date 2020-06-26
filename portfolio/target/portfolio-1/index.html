@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>BIPOC Blog</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+
+    <style>
+      /* Form is hidden by default. */
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="content">
+      <h1>Welcome!</h1>
+      <p>This blog is a space to uplift BIPOC and share resources.</p>
+        
+      <body onload="fetchBlobstoreUrlAndShowForm()">
+        <form id="my-form" enctype="multipart/form-data" method="POST">
+          <p>Enter your comment here:</p>
+          <textarea name="text-input">Your text here</textarea>
+          <br/><br/>
+          <p>Upload an image:</p>
+          <input type="file" name="image">
+          <br/><br/>
+          <p>Number of Comments to Display:</p>
+          <input type="number" name="comments-choice" id="comments-choice" min="1" max="100" value="1">
+          <br/><br/>
+          <input type="submit"/>
+        </form>
+        <button onclick="getComments()">Show Comments</button>
+      </body>
+      <div id="comments-container"></div>
+      <form action="/delete-data" method="POST">
+          <button onclick="deleteData()">Delete Comments</button>
+      </form>
+    </div>
+
+  </body>
+</html>

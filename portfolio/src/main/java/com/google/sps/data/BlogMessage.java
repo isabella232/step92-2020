@@ -14,6 +14,7 @@
 
 package com.google.sps.data;
 
+import java.lang.String;
 import java.util.ArrayList;
 
 public final class BlogMessage {
@@ -21,10 +22,9 @@ public final class BlogMessage {
   private final String message;
   private final String sender;
   private final long timestamp;
-  private String image;
-  private String tags;
-
-  public static ArrayList<String> messageReplies;
+  private final String image;
+  private final String tags;
+  private static ArrayList<String> messageReplies;
 
   public BlogMessage(long id, String tags, String message, String image, String sender, ArrayList<String> messageReplies, long timestamp) {
     this.id = id;

@@ -29,6 +29,7 @@ import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.gson.Gson;
+import com.google.sps.data.BlogMessage;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.*;
@@ -65,11 +66,11 @@ public class DataServlet extends HttpServlet {
         long messageId = entity.getKey().getId();
         long timestamp = (long) entity.getProperty("time");
         String tags = (String) entity.getProperty("tag");
-        String message = (String) entity.getProperty("text");
+        String comment = (String) entity.getProperty("text");
         String sender = (String) entity.getProperty("sender");
         String image = (String) entity.getProperty("imgUrl");
-        ArrayList<String> messageReplies = entity.getProperty("replies");
-        BlogMessage message = new BlogMessage(messageId, tags, message, image, sender, messageReplies, timestamp);
+        ArrayList<String> messageReplies = (ArrayList) entity.getProperty("replies");
+        BlogMessage message = new BlogMessage(messageId, tags, comment, image, sender, messageReplies, timestamp);
         messages.add(message);
       }
 
@@ -101,7 +102,7 @@ public class DataServlet extends HttpServlet {
       String sender = getParameter(request, "sender", "Steven");
 
       // Get type of comment.
-      String commentType = getParameter(request, "tags", "Default")
+      String commentType = getParameter(request, "tags", "Default");
 
       // Get the URL of the image that the user uploaded to Blobstore.
       String imageUrl = getUploadedFileUrl(request, "image");

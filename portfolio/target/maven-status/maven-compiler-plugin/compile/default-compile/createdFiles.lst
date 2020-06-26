@@ -1,0 +1,5 @@
+com/google/sps/servlets/BlobstoreUploadUrlServlet.class
+com/google/sps/data/BlogMessage.class
+com/google/sps/servlets/DeleteServlet.class
+com/googl/sps/servlets/FormHandlerServlet.class
+com/google/sps/servlets/DataServlet.class
