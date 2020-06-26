@@ -46,18 +46,6 @@ import java.util.List;
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-    /*TODO move class into own file*/
-    public class CommentMessage {
-        private String sender; 
-        private String message;
-        private String imgUrl;
-        public CommentMessage(String sndr, String msg, String img){
-          sender = sndr;
-          message = msg;
-          imgUrl = img;
-        }
-    }
-
     int numberOfCommentsToDisplay = 0;
     
     @Override
@@ -67,20 +55,28 @@ public class DataServlet extends HttpServlet {
         response.getWriter().println("Please enter an integer between 1 and 100.");
         return;
       }
-      List<CommentMessage> messages = new ArrayList<>();
-      Query query = new Query("Comment").addSort("time", SortDirection.DESCENDING);
+
+      List<BlogMessage> messages = new ArrayList<>();
+      Query query = new Query("blogMessage").addSort("time", SortDirection.DESCENDING);
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
       PreparedQuery results = datastore.prepare(query);
+
       for (Entity entity : results.asIterable()) {
-        String comment = (String) entity.getProperty("text");
+        long messageId = entity.getKey().getId();
+        long timestamp = (long) entity.getProperty("time");
+        String tags = (String) entity.getProperty("tag");
+        String message = (String) entity.getProperty("text");
         String sender = (String) entity.getProperty("sender");
         String image = (String) entity.getProperty("imgUrl");
-        CommentMessage nComment = new CommentMessage(sender, comment, image);
-        messages.add(nComment);
+        ArrayList<String> messageReplies = entity.getProperty("replies");
+        BlogMessage message = new BlogMessage(messageId, tags, message, image, sender, messageReplies, timestamp);
+        messages.add(message);
       }
+
       Gson gson = new Gson();
       response.setContentType("application/json;");
-      List<CommentMessage> limitedMessages = new ArrayList<>();
+
+      List<BlogMessage> limitedMessages = new ArrayList<>();
       if(numberOfCommentsToDisplay == 0){
         response.getWriter().println(gson.toJson(messages));
         return;
@@ -101,34 +97,43 @@ public class DataServlet extends HttpServlet {
       // Get the message entered by the user.
       String message = request.getParameter("text-input");
 
-      //get sender
+      // Get sender.
       String sender = getParameter(request, "sender", "Steven");
 
-      //get type of comment
+      // Get type of comment.
       String commentType = getParameter(request, "tags", "Default")
 
       // Get the URL of the image that the user uploaded to Blobstore.
       String imageUrl = getUploadedFileUrl(request, "image");
 
-      //get system time
+      /** Reply button uses js to send replies using params.
+          TODO: 
+            Get and add replies to messageReplies(See BlogMessage class),
+            Add messageReplies to message details and put in datastore.
+       */
+
+        
+
+      // Get system time.
       long timestamp = System.currentTimeMillis();
 
-      //store image and comment in datastore
-      Entity commentEntity = new Entity("Comment");
-      commentEntity.setProperty("sender", sender);
-      commentEntity.setProperty("text", message);
-      commentEntity.setProperty("imgUrl", imageUrl);
-      commentEntity.setProperty("time", timestamp);
-      commentEntity.setProperty("tag", commentType);
+      // Store image and comment in datastore.
+      Entity blogMessageEntity = new Entity("blogMessage");
+      blogMessageEntity.setProperty("sender", sender);
+      blogMessageEntity.setProperty("text", message);
+      blogMessageEntity.setProperty("imgUrl", imageUrl);
+      blogMessageEntity.setProperty("time", timestamp);
+      blogMessageEntity.setProperty("tag", commentType);
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-      datastore.put(commentEntity);
+      datastore.put(blogMessageEntity);
+
       // Redirect back to the HTML page.
       response.sendRedirect("/index.html");
     }
 
   /**
    * @return the request parameter, or the default value if the parameter
-   *         was not specified by the client
+   *         was not specified by the client.
    */
     private String getParameter(HttpServletRequest request, String name, String defaultValue) {
       String value = request.getParameter(name);
