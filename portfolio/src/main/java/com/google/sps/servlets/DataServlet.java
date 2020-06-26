@@ -101,18 +101,13 @@ public class DataServlet extends HttpServlet {
       String sender = getParameter(request, "sender", "Steven");
 
       // Get type of comment.
-      String commentType = getParameter(request, "tags", "Default")
+      String commentType = getParameter(request, "tags", "Default");
 
       // Get the URL of the image that the user uploaded to Blobstore.
       String imageUrl = getUploadedFileUrl(request, "image");
 
-      /** Reply button uses js to send replies using params.
-          TODO: 
-            Get and add replies to messageReplies(See BlogMessage class),
-            Add messageReplies to message details and put in datastore.
-       */
-
-        
+      //Get replies.
+      ArrayList<String> messageReplies = getParameter(request, "replies", "").split(",");
 
       // Get system time.
       long timestamp = System.currentTimeMillis();
@@ -124,6 +119,7 @@ public class DataServlet extends HttpServlet {
       blogMessageEntity.setProperty("imgUrl", imageUrl);
       blogMessageEntity.setProperty("time", timestamp);
       blogMessageEntity.setProperty("tag", commentType);
+      blogMessageEntity.setProperty("replies", messageReplies);
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
       datastore.put(blogMessageEntity);
 
@@ -180,4 +176,14 @@ public class DataServlet extends HttpServlet {
         return imagesService.getServingUrl(options);
       }
     }
+
+    //Get data out of hash table.
+    /*private List<BlogMessage> getInfoFromHashTable(String tag, Hashtable<keys,values> table){
+      List<BlogMessage> messages = new ArrayList<>();
+      Set<String> keys = table.keySet();
+      for(String key: keys){
+        messages.add(table.get(key));
+      }
+      return messages;
+    }*/
 }
