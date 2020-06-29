@@ -42,6 +42,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
@@ -103,13 +104,19 @@ public class DataServlet extends HttpServlet {
 
       // Get type of comment.
       String commentType = getParameter(request, "tags", "Default");
+      
+      //Get number of comments.
+      numberOfCommentsToDisplay = getNumberOfCommentsToDisplay(request);
 
       // Get the URL of the image that the user uploaded to Blobstore.
       String imageUrl = getUploadedFileUrl(request, "image");
 
       //Get replies.
-      ArrayList<String> messageReplies = getParameter(request, "replies", "").split(",");
-
+      String messageRepliesString = getParameter(request, "replies", "");
+	    String messageRepliesArray[] = messageRepliesString.split(",");
+	    List<String> messageReplies = new ArrayList<String>();
+	    messageReplies = Arrays.asList(messageRepliesArray);
+      
       // Get system time.
       long timestamp = System.currentTimeMillis();
 
@@ -138,6 +145,21 @@ public class DataServlet extends HttpServlet {
         return defaultValue;
       }
       return value;
+    }
+
+    /* Returns number of comments to display */
+    private int getNumberOfCommentsToDisplay(HttpServletRequest request) {
+      // Get the input from the form.
+      String numberOfCommentsString = getParameter(request, "comments-choice", "0");
+      // Convert the input to an int.
+      int numberOfComments;
+      try {
+        numberOfComments = Integer.parseInt(numberOfCommentsString);
+      } catch (NumberFormatException e) {
+        System.err.println("Could not convert to int: " + numberOfCommentsString);
+        return 1;
+      }
+      return numberOfComments;
     }
 
     /** Returns a URL that points to the uploaded file, or null if the user didn't upload a file. */

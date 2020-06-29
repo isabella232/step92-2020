@@ -25,14 +25,20 @@
         
           <form id="my-form" enctype="multipart/form-data" method="POST">
             <p>Type your post here:</p>
+            <textarea name="sender">Your name</textarea>
+            <br/>
             <textarea name="text-input">Your text here</textarea>
             <br/><br/>
             <p>Upload an image:</p>
             <input type="file" name="image">
             <br/><br/>
+            <textarea name="tags">Tags</textarea>
+            <br/>
             <p>Number of Posts to Display:</p>
             <input type="number" name="comments-choice" id="comments-choice" min="1" max="100" value="1">
             <br/><br/>
+            <textarea name="replies">Your reply here</textarea>
+            <br/>
             <input type="submit"/>
           </form>
           <button onclick="getComments()">Show Comments</button>
