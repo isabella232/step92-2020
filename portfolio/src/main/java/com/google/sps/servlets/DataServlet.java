@@ -201,12 +201,12 @@ public class DataServlet extends HttpServlet {
     }
 
     //Get data out of hash table.
-    /*private List<BlogMessage> getInfoFromHashTable(String tag, Hashtable<keys,values> table){
+    private List<BlogMessage> getInfoFromHashTable(String tag, Hashtable<String,LinkedList<String>> table){
       List<BlogMessage> messages = new ArrayList<>();
       Set<String> keys = table.keySet();
       for(String key: keys){
         messages.add(table.get(key));
       }
       return messages;
-    }*/
+    }
 }
