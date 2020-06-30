@@ -66,7 +66,7 @@ function createImgElement(text) {
 }
  
 function deleteData(){
-    fetch('/delete-data', {method: 'POST'}).then(getComments());
+  fetch('/delete-data', {method: 'POST'}).then(getComments());
 }
  
 function fetchBlobstoreUrlAndShowForm() {
@@ -79,4 +79,20 @@ function fetchBlobstoreUrlAndShowForm() {
         messageForm.action = imageUploadUrl;
         messageForm.classList.remove('hidden');
       });
+}
+
+function userAuthentication() {
+  fetch('/login').then((response) => {
+      return response.userService.isUserLoggedIn();
+      })
+}
+
+function showPostForm() {
+  fetch('/login').then(response => response.json()).then((isLoggedIn) => {
+    if (isLoggedIn) {
+      document.getElementById("blogcontent").style.display = "block";
+    } else {
+      window.open("/", "/data")
+    }
+  });
 }
