@@ -82,16 +82,11 @@ function fetchBlobstoreUrlAndShowForm() {
 }
 
 function showPostForm() {
-  fetch('/login').then(response => response.text()).then((isLoggedIn) => {
+  fetch('/login_status').then(response => response.json()).then((isLoggedIn) => {
     if (isLoggedIn) {
       console.log("inside IF")
-      console.log(isLoggedIn)
-      isLoggedIn = false
       document.getElementById("blogcontent").style.display = "block";
     } else {
-      console.log("inside ELSE")
-      console.log(isLoggedIn)
-      window.open("/login")
-    }
+    window.open("/login")}
   });
 }
