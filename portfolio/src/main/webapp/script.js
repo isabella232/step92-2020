@@ -81,18 +81,17 @@ function fetchBlobstoreUrlAndShowForm() {
       });
 }
 
-function userAuthentication() {
-  fetch('/login').then((response) => {
-      return response.userService.isUserLoggedIn();
-      })
-}
-
 function showPostForm() {
-  fetch('/login').then(response => response.json()).then((isLoggedIn) => {
+  fetch('/login').then(response => response.text()).then((isLoggedIn) => {
     if (isLoggedIn) {
+      console.log("inside IF")
+      console.log(isLoggedIn)
+      isLoggedIn = false
       document.getElementById("blogcontent").style.display = "block";
     } else {
-      window.open("/", "/data")
+      console.log("inside ELSE")
+      console.log(isLoggedIn)
+      window.open("/login")
     }
   });
 }
