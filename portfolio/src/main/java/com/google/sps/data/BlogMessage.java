@@ -23,16 +23,41 @@ public final class BlogMessage {
   private final String sender;
   private final long timestamp;
   private final String image;
-  private final String tags;
+  private final String tag;
   private static ArrayList<String> messageReplies;
 
-  public BlogMessage(long id, String tags, String message, String image, String sender, ArrayList<String> messageReplies, long timestamp) {
+  public BlogMessage(long id, String tag, String message, String image, String sender, ArrayList<String> messageReplies, long timestamp) {
     this.id = id;
-    this.tags = tags;
+    this.tag = tag;
     this.message = message;
     this.image = image;
     this.sender = sender;
     this.messageReplies = messageReplies;
     this.timestamp = timestamp;
+  }
+
+  // MessageId useful for deleting messages.
+  public long getMessageId() {
+    return id;
+  }
+
+  public String getTag() {
+    return tag;
+  }
+
+  public String getMessage() {
+    return message;
+  }
+
+  public String getImgUrl() {
+    return image;
+  }
+
+  public String getSender() {
+    return sender;
+  }
+
+  public ArrayList<String> getReplies() {
+    return messageReplies;
   }
 }
