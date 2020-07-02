@@ -30,6 +30,7 @@ import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.gson.Gson;
 import com.google.sps.data.BlogMessage;
+import com.google.sps.data.BlogHashMap;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.*;
@@ -44,6 +45,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
@@ -75,18 +80,39 @@ public class DataServlet extends HttpServlet {
         messages.add(message);
       }
 
+      // Create linkedHashMap and put in BlogMessages. 
+      Map<String, LinkedList<BlogMessage>> map = new LinkedHashMap<String, LinkedList<BlogMessage>>();
+      BlogHashMap.putInMap(messages, map);
+
+      // If (user loads all BlogMessages) 
+      LinkedList<BlogMessage> allBlogMessages = BlogHashMap.getMessages(map);
+
+      // If (user loads BlogMessages for a specific tag)
+      String tagToSearch = ""; // we'll get the input later.
+      LinkedList<BlogMessage> BlogMessagesForTag = BlogHashMap.getMessages(tagToSearch, map);
+
+      // If (user loads all BlogMessages for a list of tags)
+      List<String> tagsToSearch = new ArrayList<String>();
+      tagsToSearch.add(""); // we'll get inputs later.
+
+      LinkedList<BlogMessage> BlogMessagesForTags = BlogHashMap.getMessages(tagsToSearch, map);
+    
+
       Gson gson = new Gson();
       response.setContentType("application/json;");
 
-      List<BlogMessage> limitedMessages = new ArrayList<>();
+      LinkedList<BlogMessage> limitedMessages = new LinkedList<BlogMessage>();
       if(numberOfCommentsToDisplay == 0){
-        response.getWriter().println(gson.toJson(messages));
+        response.getWriter().println(gson.toJson(allBlogMessages)); // set a default amount later.
         return;
       }
-      for(int i = 0; i < numberOfCommentsToDisplay; i++){
-        limitedMessages.add(messages.get(i));
-      }
-      response.getWriter().println(gson.toJson(limitedMessages));
+
+      /** TODO: 
+            add functionality for next cases => 
+            1. user specifies amount for all messages
+            2. user specifies amount for messages under a tag
+            3. user specifies amount for all messages under a list of tags
+        */ 
 
     }
     
