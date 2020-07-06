@@ -68,14 +68,13 @@ public class LoginServlet extends HttpServlet {
       return;
     }
 
-    String nickname = request.getParameter(NICKNAME);
     String id = userService.getCurrentUser().getUserId();
     String userEmail = userService.getCurrentUser().getEmail();
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Entity entity = new Entity("blogMessage", id);
     entity.setProperty("id", id);
-    entity.setProperty("nickname", nickname);
+    entity.setProperty("nickname", request.getParameter(NICKNAME));
     entity.setProperty("email", userEmail);
     datastore.put(entity);
 
@@ -92,7 +91,6 @@ public class LoginServlet extends HttpServlet {
     if (entity == null) {
       return "";
     }
-    String nickname = (String) entity.getProperty(NICKNAME);
-    return nickname;
+    return (String) entity.getProperty(NICKNAME);
   }
 }
