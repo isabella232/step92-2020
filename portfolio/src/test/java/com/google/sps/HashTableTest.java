@@ -30,7 +30,7 @@ public final class HashTableTest {
   @Test
   public void noComments() {
     //Should return an empty hash map.
-    Hashtable actual = new Hashmap<>();
+    BlogHashMap actual = new BlogHashMap<>();
     int expected = 0;
 
     Assert.assertEquals(expected, actual.size());
@@ -39,10 +39,10 @@ public final class HashTableTest {
   @Test
   public void oneBlogPostForEachTag() {
     //Return a Hashmap with LinkedList of size one for each tag.
-    Hashmap<String, LinkedList<BlogMessage>> actual = new Hashmap<>();
-    actual("#Pop") = BlogMessage(1, "#Pop", "I enjoy pop music", "", "Steven", ArrayList<String>(), System.currentTimeMillis());
-    actual("#Country") = BlogMessage(2, "#Country", "Country music is the best music", "", "Tayyaba", ArrayList<String>(), System.currentTimeMillis());
-    actual("#Classical") = BlogMessage(3, "#Classical", "Classical music makes you smarter", "", "Andrew", ArrayList<String>(), System.currentTimeMillis());
+    BlogHashMap<String, LinkedList<BlogMessage>> actual = new BlogHashMap<>();
+    actual("#Pop") = BlogMessage(1, "#Pop", "I enjoy pop music", "", "Steven", new ArrayList<String>(), System.currentTimeMillis());
+    actual("#Country") = BlogMessage(2, "#Country", "Country music is the best music", "", "Tayyaba", new ArrayList<String>(), System.currentTimeMillis());
+    actual("#Classical") = BlogMessage(3, "#Classical", "Classical music makes you smarter", "", "Andrew", new ArrayList<String>(), System.currentTimeMillis());
 
     Set<String> keys = actual.keySet();
     for(String key : keys){
@@ -54,15 +54,15 @@ public final class HashTableTest {
   public void multipleBlogPostsForFewTags() {
     /*should return a Hashmap with the appropriate amount of LinkedLists, 
     whose size is equal to the amount of posts per tag.*/
-    Hashmap<String,LinkedList<String>> actual = new Hashmap<>();
+    BlogHashMap<String,LinkedList<String>> actual = new BlogHashMap<>();
     for(int i = 0; i < 4; i++){
-      actual("#Pop") = BlogMessage(i, "#Pop", "Test Message", "", "Steven", ArrayList<String>(), System.currentTimeMillis());
+      actual("#Pop") = BlogMessage(i, "#Pop", "Test Message", "", "Steven", new ArrayList<String>(), System.currentTimeMillis());
     }
     for(int i = 0; i < 4; i++){
-      actual("#Country") = BlogMessage(i, "#Country", "Test Message", "", "Tayyaba", ArrayList<String>(), System.currentTimeMillis());
+      actual("#Country") = BlogMessage(i, "#Country", "Test Message", "", "Tayyaba", new ArrayList<String>(), System.currentTimeMillis());
     }
     for(int i = 0; i < 4; i++){
-      actual("#Classical") = BlogMessage(i, "#Classical", "Test Message", "", "Andrew", ArrayList<String>(), System.currentTimeMillis());
+      actual("#Classical") = BlogMessage(i, "#Classical", "Test Message", "", "Andrew", new ArrayList<String>(), System.currentTimeMillis());
     }
     
     Set<String> keys = actual.keySet();
@@ -74,12 +74,12 @@ public final class HashTableTest {
   @Test
   public void multipleBlogPostsInOrder(){
     //Should return blog posts in descending order by timestamp.
-    Hashmap<String,LinkedList<String>> actual = new Hashmap<>();
+    BlogHashMap<String,LinkedList<String>> actual = new BlogHashMap<>();
     List<String> expected = new ArrayList<>();
     for(int i = 0; i < 4; i++){
-      long int time = System.currentTimeMillis();
-      actual("#Pop") = BlogMessage(i, "#Pop", "Test Message", "", "Steven", ArrayList<String>(), time);
-      expected.add(BlogMessage(i, "#Pop", "Test Message", "", "Steven", ArrayList<String>(), time));
+      long time = System.currentTimeMillis();
+      actual("#Pop") = BlogMessage(i, "#Pop", "Test Message", "", "Steven", new ArrayList<String>(), time);
+      expected.add(BlogMessage(i, "#Pop", "Test Message", "", "Steven", new ArrayList<String>(), time));
     }
     
     Set<String> keys = actual.keySet();
@@ -91,8 +91,8 @@ public final class HashTableTest {
   @Test
   public void invalidTag(){
     //Tag should not be supported so should return empty hash table.
-    Hashmap<String,LinkedList<String>> actual = new Hashmap<>();
-    actual("#Edm") = BlogMessage(1, "#Edm", "I listen to Edm while I work.", "", "Steven", ArrayList<String>(), System.currentTimeMillis());
+    BlogHashMap<String,LinkedList<String>> actual = new BlogHashMap<>();
+    actual("#Edm") = BlogMessage(1, "#Edm", "I listen to Edm while I work.", "", "Steven", new ArrayList<String>(), System.currentTimeMillis());
 
     Assert.assertEquals(0, actual.size());
   }

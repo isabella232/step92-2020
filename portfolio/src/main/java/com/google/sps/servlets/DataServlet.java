@@ -49,6 +49,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
@@ -70,7 +71,7 @@ public class DataServlet extends HttpServlet {
 
       for (Entity entity : results.asIterable()) {
         long messageId = entity.getKey().getId();
-        long timestamp = (long) entity.getProperty("time");
+        long git  = (long) entity.getProperty("time");
         String tags = (String) entity.getProperty("tag");
         String comment = (String) entity.getProperty("text");
         String sender = (String) entity.getProperty("sender");
@@ -226,12 +227,12 @@ public class DataServlet extends HttpServlet {
     }
 
     //Get data out of hash table.
-    private List<BlogMessage> getInfoFromHashTable(String tag, Hashtable<String,LinkedList<String>> table){
+    /*private List<BlogMessage> getInfoFromHashTable(String tag, BlogHashMap<String,LinkedList<String>> table){
       List<BlogMessage> messages = new ArrayList<>();
       Set<String> keys = table.keySet();
       for(String key: keys){
         messages.add(table.get(key));
       }
       return messages;
-    }
+    }*/
 }
