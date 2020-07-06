@@ -1,11 +1,61 @@
-#content {
+#blogcontent {
   margin-left: auto;
   margin-right: auto;
-  width: 650px;
+  width: 950px;
+  background-color: rgb(255, 255, 255);
+  padding: 50px;
+  color: black;
 }
 
-#intro {
+#infocontent {
   margin-left: auto;
   margin-right: auto;
-  width: 650px;
+  width: 950px;
+  background-color: rgb(255, 255, 255);
+  padding: 50px;
+  color: black;
 }
+
+#resourcescontent {
+  margin-left: auto;
+  margin-right: auto;
+  width: 950px;
+  background-color: rgb(255, 255, 255);
+  padding: 50px;
+  color: black;
+}
+
+body, html {
+  height: 100%;
+  margin: 0;
+  font-family: Arial;
+}
+
+/* Style tab links */
+.tablink {
+  background-color: #555;
+  color: white;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  font-size: 17px;
+  width: 33.3333333%;
+}
+
+.tablink:hover {
+  background-color: #777;
+}
+
+/* Style the tab content (and add height:100% for full page content) */
+.tabcontent {
+  color: white;
+  display: none;
+  padding: 100px 20px;
+  height: 100%;
+}
+
+#Blog {background-color: rgb(189, 255, 249);}
+#Information {background-color: rgb(164, 248, 164);}
+#Resources {background-color: rgb(248, 235, 159);}
