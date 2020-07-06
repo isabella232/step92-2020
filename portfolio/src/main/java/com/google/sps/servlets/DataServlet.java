@@ -28,6 +28,8 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.ServingUrlOptions;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import com.google.sps.data.BlogMessage;
 import java.io.IOException;
@@ -63,15 +65,18 @@ public class DataServlet extends HttpServlet {
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
       PreparedQuery results = datastore.prepare(query);
 
+      UserService userService = UserServiceFactory.getUserService();
+
       for (Entity entity : results.asIterable()) {
         long messageId = entity.getKey().getId();
         long timestamp = (long) entity.getProperty("time");
         String tags = (String) entity.getProperty("tag");
         String comment = (String) entity.getProperty("text");
-        String sender = (String) entity.getProperty("sender");
+        String nickname = (String) entity.getProperty("nickname");
+        String email = (String) userService.getCurrentUser().getEmail();
         String image = (String) entity.getProperty("imgUrl");
         ArrayList<String> messageReplies = (ArrayList) entity.getProperty("replies");
-        BlogMessage message = new BlogMessage(messageId, tags, comment, image, sender, messageReplies, timestamp);
+        BlogMessage message = new BlogMessage(messageId, tags, comment, image, nickname, email, messageReplies, timestamp);
         messages.add(message);
       }
 
@@ -108,7 +113,7 @@ public class DataServlet extends HttpServlet {
       //Get number of comments.
       numberOfCommentsToDisplay = getNumberOfCommentsToDisplay(request);
 
-      // Get the URL of the image that the user uploaded to Blobstore.
+      // Get the URL of  the image that the user uploaded to Blobstore.
       String imageUrl = getUploadedFileUrl(request, "image");
 
       //Get replies.
