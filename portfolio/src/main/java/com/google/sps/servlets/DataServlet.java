@@ -79,29 +79,28 @@ public class DataServlet extends HttpServlet {
         BlogMessage message = new BlogMessage(messageId, tags, comment, image, sender, messageReplies, timestamp);
         messages.add(message);
       }
-
-      // Create linkedHashMap and put in BlogMessages. 
-      Map<String, LinkedList<BlogMessage>> map = new LinkedHashMap<String, LinkedList<BlogMessage>>();
-      BlogHashMap.putInMap(messages, map);
+      
+      // Create BlogHashMap Object and put BlogMessages in the map.
+      BlogHashMap blogMap = new BlogHashMap();
+      blogMap.putInMap(messages);
 
       // If (user loads all BlogMessages) 
-      LinkedList<BlogMessage> allBlogMessages = BlogHashMap.getMessages(map);
+      LinkedList<BlogMessage> allBlogMessages = blogMap.getMessages();
 
       // If (user loads BlogMessages for a specific tag)
       String tagToSearch = ""; // we'll get the input later.
-      LinkedList<BlogMessage> BlogMessagesForTag = BlogHashMap.getMessages(tagToSearch, map);
+      LinkedList<BlogMessage> BlogMessagesForTag = blogMap.getMessages(tagToSearch);
 
       // If (user loads all BlogMessages for a list of tags)
       List<String> tagsToSearch = new ArrayList<String>();
       tagsToSearch.add(""); // we'll get inputs later.
 
-      LinkedList<BlogMessage> BlogMessagesForTags = BlogHashMap.getMessages(tagsToSearch, map);
+      LinkedList<BlogMessage> BlogMessagesForTags = blogMap.getMessages(tagsToSearch);
     
 
       Gson gson = new Gson();
       response.setContentType("application/json;");
 
-      LinkedList<BlogMessage> limitedMessages = new LinkedList<BlogMessage>();
       if(numberOfCommentsToDisplay == 0){
         response.getWriter().println(gson.toJson(allBlogMessages)); // set a default amount later.
         return;
