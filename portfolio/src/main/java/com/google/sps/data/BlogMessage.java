@@ -36,7 +36,6 @@ public final class BlogMessage {
     this.timestamp = timestamp;
   }
 
-  // MessageId useful for deleting messages.
   public long getMessageId() {
     return id;
   }
