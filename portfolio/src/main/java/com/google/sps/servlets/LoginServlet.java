@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
 
+  private final static String NICKNAME = "nickname";
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("text/html");
@@ -35,8 +37,10 @@ public class LoginServlet extends HttpServlet {
 
       String nickname = getUserNickname(userService.getCurrentUser().getUserId());
     
-      if (nickname == ""){ out.println("<p>You don't have a nickname</p>");
-      } else { out.println("<p>Your current nickname is " + nickname + ". If you'd like to change it, enter a new one below.</p>");}   
+      if (nickname.isEmpty()) { 
+        out.println("<p>You don't have a nickname</p>");
+      } else {
+        out.println("<p>Your current nickname is " + nickname + ". If you'd like to change it, enter a new one below.</p>");}   
 
       out.println("<p>Set your nickname here:</p>");
       out.println("<form method=\"POST\" action=\"/login\">");
@@ -64,14 +68,14 @@ public class LoginServlet extends HttpServlet {
       return;
     }
 
-    String NICKNAME = request.getParameter("nickname");
+    String nickname = request.getParameter(NICKNAME);
     String id = userService.getCurrentUser().getUserId();
     String userEmail = userService.getCurrentUser().getEmail();
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Entity entity = new Entity("blogMessage", id);
     entity.setProperty("id", id);
-    entity.setProperty("nickname", NICKNAME);
+    entity.setProperty("nickname", nickname);
     entity.setProperty("email", userEmail);
     datastore.put(entity);
 
@@ -88,7 +92,7 @@ public class LoginServlet extends HttpServlet {
     if (entity == null) {
       return "";
     }
-    String NICKNAME = (String) entity.getProperty("nickname");
-    return NICKNAME;
+    String nickname = (String) entity.getProperty(NICKNAME);
+    return nickname;
   }
 }
