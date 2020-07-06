@@ -101,31 +101,23 @@ public class DataServlet extends HttpServlet {
    */
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-      // Get the message entered by the user.
       String message = request.getParameter("text-input");
 
-      // Get sender.
       String sender = getParameter(request, "sender", "Steven");
 
-      // Get type of comment.
       String commentType = getParameter(request, "tags", "Default");
       
-      //Get number of comments.
       numberOfCommentsToDisplay = getNumberOfCommentsToDisplay(request);
 
-      // Get the URL of  the image that the user uploaded to Blobstore.
       String imageUrl = getUploadedFileUrl(request, "image");
 
-      //Get replies.
       String messageRepliesString = getParameter(request, "replies", "");
 	    String messageRepliesArray[] = messageRepliesString.split(",");
 	    List<String> messageReplies = new ArrayList<String>();
 	    messageReplies = Arrays.asList(messageRepliesArray);
       
-      // Get system time.
       long timestamp = System.currentTimeMillis();
 
-      // Store image and comment in datastore.
       Entity blogMessageEntity = new Entity("blogMessage");
       blogMessageEntity.setProperty("sender", sender);
       blogMessageEntity.setProperty("text", message);
@@ -136,7 +128,6 @@ public class DataServlet extends HttpServlet {
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
       datastore.put(blogMessageEntity);
 
-      // Redirect back to the HTML page.
       response.sendRedirect("/index.html");
     }
 
@@ -154,9 +145,7 @@ public class DataServlet extends HttpServlet {
 
     /* Returns number of comments to display */
     private int getNumberOfCommentsToDisplay(HttpServletRequest request) {
-      // Get the input from the form.
       String numberOfCommentsString = getParameter(request, "comments-choice", "0");
-      // Convert the input to an int.
       int numberOfComments;
       try {
         numberOfComments = Integer.parseInt(numberOfCommentsString);
@@ -173,7 +162,6 @@ public class DataServlet extends HttpServlet {
       Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(request);
       List<BlobKey> blobKeys = blobs.get(formInputElementName);
 
-      // User submitted form without selecting a file, so we can't get a URL. (dev server)
       if (blobKeys == null || blobKeys.isEmpty()) {
         return null;
       }
