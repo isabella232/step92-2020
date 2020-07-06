@@ -84,9 +84,13 @@ function fetchBlobstoreUrlAndShowForm() {
 function showPostForm() {
   fetch('/login_status').then(response => response.json()).then((isLoggedIn) => {
     if (isLoggedIn) {
-      console.log("inside IF")
       document.getElementById("blogcontent").style.display = "block";
     } else {
     window.open("/login")}
   });
 }
+
+function setNicknameForm() {
+    window.open("/login");
+}
+
