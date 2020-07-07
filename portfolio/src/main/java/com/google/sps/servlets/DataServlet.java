@@ -77,7 +77,7 @@ public class DataServlet extends HttpServlet {
         String sender = (String) entity.getProperty("sender");
         String image = (String) entity.getProperty("imgUrl");
         ArrayList<String> messageReplies = (ArrayList) entity.getProperty("replies");
-        BlogMessage message = new BlogMessage(messageId, tags, comment, image, sender, messageReplies, timestamp);
+        BlogMessage message = new BlogMessage(messageId, tags, comment, image, sender, "", messageReplies, timestamp);
         messages.add(message);
       }
       
