@@ -71,7 +71,7 @@ public class DataServlet extends HttpServlet {
 
       for (Entity entity : results.asIterable()) {
         long messageId = entity.getKey().getId();
-        long git  = (long) entity.getProperty("time");
+        long timestamp = (long) entity.getProperty("time");
         String tags = (String) entity.getProperty("tag");
         String comment = (String) entity.getProperty("text");
         String sender = (String) entity.getProperty("sender");

@@ -27,6 +27,9 @@ public final class BlogHashMap {
   private final String[] INTERNAL_TAGS = {"#general", "#wellbeing", "#music", "#games"};
   private Map<String, LinkedList<BlogMessage>> map;
 
+  public int size(){
+    return map.size();
+  }
   // Returns whether a message's tag is supported internally.
   private boolean tagIsSupported(BlogMessage message) {
     boolean isTagSupported = false;
