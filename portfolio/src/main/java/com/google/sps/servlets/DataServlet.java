@@ -56,7 +56,10 @@ public class DataServlet extends HttpServlet {
     int numberOfCommentsToDisplay = 0;
     
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {      
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException { 
+      //Get number of comments.
+      numberOfCommentsToDisplay = getNumberOfCommentsToDisplay(request);
+           
       if (numberOfCommentsToDisplay < 1 || numberOfCommentsToDisplay > 100) {
         response.setContentType("text/html");
         response.getWriter().println("Please enter an integer between 1 and 100.");
@@ -71,12 +74,12 @@ public class DataServlet extends HttpServlet {
       for (Entity entity : results.asIterable()) {
         long messageId = entity.getKey().getId();
         long timestamp = (long) entity.getProperty("time");
-        String tags = (String) entity.getProperty("tag");
+        String tag = (String) entity.getProperty("tag");
         String comment = (String) entity.getProperty("text");
         String sender = (String) entity.getProperty("sender");
         String image = (String) entity.getProperty("imgUrl");
         ArrayList<String> messageReplies = (ArrayList) entity.getProperty("replies");
-        BlogMessage message = new BlogMessage(messageId, tags, comment, image, sender, messageReplies, timestamp);
+        BlogMessage message = new BlogMessage(messageId, tag, comment, image, sender, messageReplies, timestamp);
         messages.add(message);
       }
       
@@ -84,34 +87,17 @@ public class DataServlet extends HttpServlet {
       BlogHashMap blogMap = new BlogHashMap();
       blogMap.putInMap(messages);
 
-      // If (user loads all BlogMessages) 
-      LinkedList<BlogMessage> allBlogMessages = blogMap.getMessages();
-
-      // If (user loads BlogMessages for a specific tag)
-      String tagToSearch = ""; // we'll get the input later.
-      LinkedList<BlogMessage> BlogMessagesForTag = blogMap.getMessages(tagToSearch);
-
-      // If (user loads all BlogMessages for a list of tags)
+      // Load messages from BlogHashMap and respond with gson.
       List<String> tagsToSearch = new ArrayList<String>();
       tagsToSearch.add(""); // we'll get inputs later.
 
-      LinkedList<BlogMessage> BlogMessagesForTags = blogMap.getMessages(tagsToSearch);
+      LinkedList<BlogMessage> loadedBlogMessages = blogMap.getMessages(tagsToSearch, numberOfCommentsToDisplay);
     
-
       Gson gson = new Gson();
       response.setContentType("application/json;");
-
-      if(numberOfCommentsToDisplay == 0){
-        response.getWriter().println(gson.toJson(allBlogMessages)); // set a default amount later.
-        return;
-      }
-
-      /** TODO: 
-            add functionality for next cases => 
-            1. user specifies amount for all messages
-            2. user specifies amount for messages under a tag
-            3. user specifies amount for all messages under a list of tags
-        */ 
+      
+      response.getWriter().println(gson.toJson(loadedBlogMessages));
+      return;
 
     }
     
@@ -123,15 +109,17 @@ public class DataServlet extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
       // Get the message entered by the user.
       String message = request.getParameter("text-input");
+      System.out.println(message);
 
       // Get sender.
       String sender = getParameter(request, "sender", "Steven");
-
+      System.out.println(sender);
+      
+      // TODO: 
+      //      Get default tag from the InternalTags class and use that below.
+      
       // Get type of comment.
       String commentType = getParameter(request, "tags", "Default");
-      
-      //Get number of comments.
-      numberOfCommentsToDisplay = getNumberOfCommentsToDisplay(request);
 
       // Get the URL of the image that the user uploaded to Blobstore.
       String imageUrl = getUploadedFileUrl(request, "image");
@@ -225,13 +213,4 @@ public class DataServlet extends HttpServlet {
       }
     }
 
-    //Get data out of hash table.
-    /*private List<BlogMessage> getInfoFromHashTable(String tag, Hashtable<keys,values> table){
-      List<BlogMessage> messages = new ArrayList<>();
-      Set<String> keys = table.keySet();
-      for(String key: keys){
-        messages.add(table.get(key));
-      }
-      return messages;
-    }*/
 }
