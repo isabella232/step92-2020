@@ -20,18 +20,21 @@ import java.util.ArrayList;
 public final class BlogMessage {
   private final long id;
   private final String message;
-  private final String sender;
+  private final String nickname;
   private final long timestamp;
   private final String image;
+  private final String email;
   private final String tag;
   private static ArrayList<String> messageReplies;
+  
+  public BlogMessage(long id, String tag, String message, String image, String nickname, String email, ArrayList<String> messageReplies, long timestamp) {
 
-  public BlogMessage(long id, String tag, String message, String image, String sender, ArrayList<String> messageReplies, long timestamp) {
     this.id = id;
     this.tag = tag;
     this.message = message;
     this.image = image;
-    this.sender = sender;
+    this.nickname = nickname;
+    this.email = email;
     this.messageReplies = messageReplies;
     this.timestamp = timestamp;
   }
@@ -53,7 +56,7 @@ public final class BlogMessage {
   }
 
   public String getSender() {
-    return sender;
+    return nickname;
   }
 
   public ArrayList<String> getReplies() {
