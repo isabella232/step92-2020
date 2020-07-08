@@ -24,83 +24,57 @@ import java.util.Map;
 import java.util.Set;
 
 public final class BlogHashMap {
-  private final String[] INTERNAL_TAGS = {"#general", "#wellbeing", "#music", "#games"};
+  private final int DEFAULT_LOAD_AMOUNT = 10;
+  private final InternalTags internal_tags;
   private Map<String, LinkedList<BlogMessage>> map;
-
-  // Returns whether a message's tag is supported internally.
-  private boolean tagIsSupported(BlogMessage message) {
-    boolean isTagSupported = false;
-    for (int i = 0; i < INTERNAL_TAGS.length; i++){
-      if (message.getTag().equals(INTERNAL_TAGS[i])){
-        isTagSupported = true;
-      }
-    }
-    return isTagSupported;
-  }
 
   // Takes and puts a list of BlogMessage type in map.
   // Each BlogMessage type should contain tag that matches tags in the internal System. 
   public void putInMap(List<BlogMessage> messages) {
     for (BlogMessage message : messages) {
-      if (tagIsSupported(message)) {
-        if (map.containsKey(message.getTag())){
-          map.get(message.getTag()).addLast(message);
-        } else {
-          // No such mapping with specified tag,
-          // Create first mapping with specified tag.
+      if (internal_tags.tagIsSupported(message)) {
+        if (!map.containsKey(message.getTag())){
           LinkedList<BlogMessage> firstValue = new LinkedList<BlogMessage>();
           firstValue.addFirst(message); 
           map.put(message.getTag(), firstValue);
+          continue;
         }
+        map.get(message.getTag()).addLast(message);
       } else {
         System.err.println("Tag not supported. Tag: " + message.getTag());
       }
     }
   }
   
-  /** FOR ALL getMessages() METHODS: 
-        In a case where different users assign different tags to equivalent messages,
-        Returned values could have duplicate messages - but for different tags.
-    */
-
-  // Returns a linkedList of all values of BlogMessage type in the map.
-  public LinkedList<BlogMessage> getMessages() {
-    Set<String> keys = map.keySet();
-    LinkedList<BlogMessage> values = new LinkedList<BlogMessage>();
-    for (String key : keys) {
-      values.addAll(map.get(key));
-    }
-    return values;
-  }
+  // FOR ALL getMessages() METHODS: 
+  //      Each method takes a 'limit', an argument for the amount of messages requested.
+  //      Returned messages will not be greater than this amount, but could be less,
+  //      For instance, when the number of messages in the map is less than that requested.
+  //        In a case where different users assign different tags to equivalent messages,
+  //      Returned values could have duplicate messages - but for different tags.
+  //
+  //      Returned values contain the most recent BlogMessages.
 
   // Returns a requested amount of all BlogMessages in map
-  // Returned values contain the most recent messages.
-  public LinkedList<BlogMessage> getMessages(int limit) {
-    if (limit < 0) {
-      return new LinkedList<>();
-    }
-
-    Set<String> keys = map.keySet();
+  private LinkedList<BlogMessage> getMessages(int limit) {
     LinkedList values = new LinkedList();
 
-    for (String key : keys) {
-      if (limit <= 0) {break;}
-      Iterator iterator;
-      int tagMessagesSize = (map.get(key)).size(); 
+    for (LinkedList<BlogMessage> tagMessages : map.values()){
+      if (limit <= 0) 
+      {break;}
 
-      // startPoint is from (n0.of.messages in each tag - limit) if the list contains more messages
-      // than the limit,
-      // That way, returned values contain the most recent messages.
+      Iterator iterator;
+      int tagMessagesSize = tagMessages.size();
+
+      // If a tag contains more messages than requested
+      // Iterate from (number of messages - limit) to return the most recent BlogMessages. 
       if (tagMessagesSize > limit) {
-        int startPoint = tagMessagesSize - limit;
-        iterator = (map.get(key)).listIterator(startPoint);
-      } 
-      // Otherwise the n0.of messages in the tag is less than or equal to the limit, hence
-      // we return all of them.
-      else {
-        iterator = (map.get(key)).iterator();
+        iterator = tagMessages.listIterator(tagMessagesSize - limit);
+      } else {
+        iterator = tagMessages.iterator();
       }
-      while(iterator.hasNext() && limit >= 0){
+
+      while(iterator.hasNext() && limit >= 0) {
         values.addLast(iterator.next());
         limit--;
       }
@@ -108,34 +82,17 @@ public final class BlogHashMap {
     return values;
   }
 
-  // Takes a tag, and
-  // Returns a linkedList of all values of BlogMessage type for the specified tag.
-  public LinkedList<BlogMessage> getMessages(String tag) {
-    LinkedList<BlogMessage> values = new LinkedList<BlogMessage>();
-    if (map.containsKey(tag)) {
-      values.addAll(map.get(tag));
-    } else {
-      System.err.println("Tag not found. Tag : " + tag);
-    }    
-    return values;
-  }
-
   // Returns a requested amount of all BlogMessages for a specified tag.
-  public LinkedList<BlogMessage>getMessages(String tag, int limit) {
-    if (limit < 0) {
-      return new LinkedList<>();
-    }
-
+  private LinkedList<BlogMessage> getMessages(String tag, int limit) {
     LinkedList values = new LinkedList();
 
-    if (map.containsKey(tag)){
+    if (map.containsKey(tag)) {
       Iterator iterator;
-      int tagMessagesSize = (map.get(tag)).size();
+      int tagMessagesSize = map.get(tag).size();
       if (tagMessagesSize > limit) {
-        int startPoint = tagMessagesSize - limit;
-        iterator = (map.get(tag)).listIterator(startPoint);
+        iterator = map.get(tag).listIterator(tagMessagesSize - limit);
       } else {
-        iterator = (map.get(tag)).iterator();
+        iterator = map.get(tag).iterator();
       }
       while (iterator.hasNext() && limit >= 0) {
         values.addLast(iterator.next());
@@ -147,39 +104,32 @@ public final class BlogHashMap {
     return values;
   } 
 
-  // Takes a list of tags, and
-  // Returns a linkedList of all values of BlogMessage type for the specified tags.
-  public LinkedList<BlogMessage> getMessages(List<String> tags) {
-    LinkedList<BlogMessage> values = new LinkedList<BlogMessage>();
-    for (String tag : tags){
-      if (map.containsKey(tag)) {
-        values.addAll(map.get(tag));
-      } else {
-        System.err.println("Tag not found. Tag : " + tag);
-      }    
-    }
-    return values;
-  }
-
-  // Returns a requested amount of all BlogMessages for specified tags.
+  // This method takes a list of tags and a number of messages to load, and
+  // Returns a requested (or default) amount of BlogMessages under specified tag/tags.
+  // If tag/tags are not specified, a requested (or default) amount of all BlogMessages will be returned.
   public LinkedList<BlogMessage> getMessages(List<String> tags, int limit) {
-    if (limit < 0) {
-      return new LinkedList<>();
+    if (limit <= 0) {
+      limit = DEFAULT_LOAD_AMOUNT;
+    }
+    if (tags.isEmpty()) {
+      return getMessages(limit);
+    }
+    if (tags.size() == 1) {
+      return getMessages(tags.get(0), limit);
     }
 
     LinkedList values = new LinkedList();
-
     for (String tag : tags) {
-      if (limit <= 0) {break;}
-      Iterator iterator;
+      if (limit <= 0) 
+      {break;}
 
+      Iterator iterator;
       if (map.containsKey(tag)) {
-        int tagMessagesSize = (map.get(tag)).size(); 
+        int tagMessagesSize = map.get(tag).size(); 
         if (tagMessagesSize > limit) {
-          int startPoint = tagMessagesSize - limit;
-          iterator = (map.get(tag)).listIterator(startPoint);
+          iterator = map.get(tag).listIterator(tagMessagesSize - limit);
         } else {
-          iterator = (map.get(tag)).iterator();
+          iterator = map.get(tag).iterator();
         }
         while(iterator.hasNext() && limit >= 0) {
           values.addLast(iterator.next());
@@ -194,6 +144,7 @@ public final class BlogHashMap {
 
   public BlogHashMap() {
     map = new LinkedHashMap<String, LinkedList<BlogMessage>>();
+    internal_tags = new InternalTags();
   }
 
 }
