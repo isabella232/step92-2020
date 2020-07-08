@@ -18,9 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class InternalTags {
-  private final List<String> INTERNAL_TAGS = new ArrayList<String>();
-  private final String DEFAULT_TAG = "#general";
-  private final void setTags() {
+  private static List<String> INTERNAL_TAGS = new ArrayList<String>();
+  private static String DEFAULT_TAG = "#general";
+  
+  private static void setTags() {
     INTERNAL_TAGS.add(DEFAULT_TAG);
     INTERNAL_TAGS.add("#business");
     INTERNAL_TAGS.add("#education");
@@ -29,7 +30,11 @@ public final class InternalTags {
     INTERNAL_TAGS.add("#wellbeing");
   }
 
-  public final boolean tagIsSupported(BlogMessage message) {
+  public static boolean tagIsSupported(BlogMessage message) {
+    if (INTERNAL_TAGS.isEmpty()) {
+      setTags();
+    }
+
     for (String internalTag : INTERNAL_TAGS) {
       if (message.getTag().equals(internalTag)){
         return true;
@@ -39,12 +44,8 @@ public final class InternalTags {
   }
 
   // For check in DataServlet
-  public String defaultTag(){
+  public static String defaultTag(){
     return DEFAULT_TAG;
-  }
-  
-  public InternalTags() {
-    setTags();
   }
 
   // TODO:
