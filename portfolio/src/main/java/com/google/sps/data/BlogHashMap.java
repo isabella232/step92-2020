@@ -25,14 +25,13 @@ import java.util.Set;
 
 public final class BlogHashMap {
   private final int DEFAULT_LOAD_AMOUNT = 10;
-  private final InternalTags internal_tags;
   private Map<String, LinkedList<BlogMessage>> map;
 
   // Takes and puts a list of BlogMessage type in map.
   // Each BlogMessage type should contain tag that matches tags in the internal System. 
   public void putInMap(List<BlogMessage> messages) {
     for (BlogMessage message : messages) {
-      if (internal_tags.tagIsSupported(message)) {
+      if (InternalTags.tagIsSupported(message)) {
         if (!map.containsKey(message.getTag())){
           LinkedList<BlogMessage> firstValue = new LinkedList<BlogMessage>();
           firstValue.addFirst(message); 
@@ -60,8 +59,9 @@ public final class BlogHashMap {
     LinkedList values = new LinkedList();
 
     for (LinkedList<BlogMessage> tagMessages : map.values()){
-      if (limit <= 0) 
-      {break;}
+      if (limit <= 0) {
+        break;
+      }
 
       Iterator iterator;
       int tagMessagesSize = tagMessages.size();
@@ -120,8 +120,9 @@ public final class BlogHashMap {
 
     LinkedList values = new LinkedList();
     for (String tag : tags) {
-      if (limit <= 0) 
-      {break;}
+      if (limit <= 0) {
+        break;
+      }
 
       Iterator iterator;
       if (map.containsKey(tag)) {
@@ -144,7 +145,6 @@ public final class BlogHashMap {
 
   public BlogHashMap() {
     map = new LinkedHashMap<String, LinkedList<BlogMessage>>();
-    internal_tags = new InternalTags();
   }
 
 }
