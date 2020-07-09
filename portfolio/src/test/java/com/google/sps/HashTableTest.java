@@ -52,7 +52,7 @@ public final class HashTableTest {
     actual.putInMap(blogMessages);
 
     Collection<String> keys = Arrays.asList("#general", "#wellbeing", "#music");
-    for(String key : keys){
+    for (String key : keys) {
       Assert.assertEquals(1, actual.getMessages(key).size());
     }
   }
@@ -63,22 +63,22 @@ public final class HashTableTest {
     whose size is equal to the amount of posts per tag.*/
     BlogHashMap actual = new BlogHashMap();
     List<BlogMessage> blogMessages = new ArrayList<>();
-    for(int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
       blogMessages.add(
         new BlogMessage(i, "#general", "Test Message", "", "Steven", "", new ArrayList<String>(), System.currentTimeMillis()));
     }
-    for(int i = 0; i < 4; i++){
+    for (int i = 0; i < 4; i++) {
       blogMessages.add(
         new BlogMessage(i, "#wellbeing", "Test Message", "", "Tayyaba", "", new ArrayList<String>(), System.currentTimeMillis()));
     }
-    for(int i = 0; i < 4; i++){
+    for (int i = 0; i < 4; i++) {
       blogMessages.add(
         new BlogMessage(i, "#music", "Test Message", "", "Andrew", "", new ArrayList<String>(), System.currentTimeMillis()));
     }
     actual.putInMap(blogMessages);
 
     Collection<String> keys = Arrays.asList("#general", "#wellbeing", "#music");
-    for(String key : keys){
+    for (String key : keys) {
       Assert.assertEquals(4, actual.getMessages(key).size());
     }
   }
@@ -89,7 +89,7 @@ public final class HashTableTest {
     BlogHashMap actual = new BlogHashMap();
     List<BlogMessage> expected = new ArrayList<>();
     List<BlogMessage> blogMessages = new ArrayList<>();
-    for(int i = 0; i < 4; i++){
+    for (int i = 0; i < 4; i++) {
       long time = System.currentTimeMillis();
       blogMessages.add(
         new BlogMessage(i, "#general", "Test Message", "", "Steven", "", new ArrayList<String>(), time));
@@ -98,7 +98,7 @@ public final class HashTableTest {
     }
     actual.putInMap(blogMessages);
 
-    for(int i = 0; i < expected.size(); i++){
+    for (int i = 0; i < expected.size(); i++) {
       Assert.assertEquals(expected.get(i).getTimestamp(), actual.getMessages("#general").pop().getTimestamp());
     }
   }
