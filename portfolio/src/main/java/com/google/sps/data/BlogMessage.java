@@ -24,12 +24,13 @@ public final class BlogMessage {
   private final long timestamp;
   private final String image;
   private final String email;
-  private final String tags;
+  private final String tag;
   private static ArrayList<String> messageReplies;
+  
+  public BlogMessage(long id, String tag, String message, String image, String nickname, String email, ArrayList<String> messageReplies, long timestamp) {
 
-  public BlogMessage(long id, String tags, String message, String image, String nickname, String email, ArrayList<String> messageReplies, long timestamp) {
     this.id = id;
-    this.tags = tags;
+    this.tag = tag;
     this.message = message;
     this.image = image;
     this.nickname = nickname;
@@ -43,7 +44,7 @@ public final class BlogMessage {
   }
 
   public String getTag() {
-    return tags;
+    return tag;
   }
 
   public String getMessage() {
@@ -65,4 +66,5 @@ public final class BlogMessage {
   public long getTimestamp() {
     return timestamp;
   }
+  
 }

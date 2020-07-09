@@ -38,20 +38,15 @@ import java.io.PrintWriter;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
-import java.util.Map;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
@@ -59,7 +54,10 @@ public class DataServlet extends HttpServlet {
     int numberOfCommentsToDisplay = 0;
     
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {      
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException { 
+      //Get number of comments.
+      numberOfCommentsToDisplay = getNumberOfCommentsToDisplay(request);
+           
       if (numberOfCommentsToDisplay < 1 || numberOfCommentsToDisplay > 100) {
         response.setContentType("text/html");
         response.getWriter().println("Please enter an integer between 1 and 100.");
@@ -90,34 +88,17 @@ public class DataServlet extends HttpServlet {
       BlogHashMap blogMap = new BlogHashMap();
       blogMap.putInMap(messages);
 
-      // If (user loads all BlogMessages) 
-      LinkedList<BlogMessage> allBlogMessages = blogMap.getMessages();
-
-      // If (user loads BlogMessages for a specific tag)
-      String tagToSearch = ""; // we'll get the input later.
-      LinkedList<BlogMessage> BlogMessagesForTag = blogMap.getMessages(tagToSearch);
-
-      // If (user loads all BlogMessages for a list of tags)
+      // Load messages from BlogHashMap and respond with gson.
       List<String> tagsToSearch = new ArrayList<String>();
       tagsToSearch.add(""); // we'll get inputs later.
 
-      LinkedList<BlogMessage> BlogMessagesForTags = blogMap.getMessages(tagsToSearch);
+      LinkedList<BlogMessage> loadedBlogMessages = blogMap.getMessages(tagsToSearch, numberOfCommentsToDisplay);
     
-
       Gson gson = new Gson();
       response.setContentType("application/json;");
-
-      if(numberOfCommentsToDisplay == 0){
-        response.getWriter().println(gson.toJson(allBlogMessages)); // set a default amount later.
-        return;
-      }
-
-      /** TODO: 
-            add functionality for next cases => 
-            1. user specifies amount for all messages
-            2. user specifies amount for messages under a tag
-            3. user specifies amount for all messages under a list of tags
-        */ 
+      
+      response.getWriter().println(gson.toJson(loadedBlogMessages));
+      return;
 
     }
     
@@ -130,10 +111,12 @@ public class DataServlet extends HttpServlet {
       String message = request.getParameter("text-input");
 
       String sender = getParameter(request, "sender", "Steven");
-
-      String commentType = getParameter(request, "tags", "Default");
       
-      numberOfCommentsToDisplay = getNumberOfCommentsToDisplay(request);
+      // TODO: 
+      //      Get default tag from the InternalTags class and use that below.
+      
+      // Get type of comment.
+      String commentType = getParameter(request, "tags", "Default");
 
       String imageUrl = getUploadedFileUrl(request, "image");
 
@@ -219,13 +202,4 @@ public class DataServlet extends HttpServlet {
       }
     }
 
-    //Get data out of hash table.
-    /*private List<BlogMessage> getInfoFromHashTable(String tag, BlogHashMap<String,LinkedList<String>> table){
-      List<BlogMessage> messages = new ArrayList<>();
-      Set<String> keys = table.keySet();
-      for(String key: keys){
-        messages.add(table.get(key));
-      }
-      return messages;
-    }*/
 }
