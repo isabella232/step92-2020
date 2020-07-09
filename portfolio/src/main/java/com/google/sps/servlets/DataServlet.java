@@ -76,13 +76,13 @@ public class DataServlet extends HttpServlet {
       for (Entity entity : results.asIterable()) {
         long messageId = entity.getKey().getId();
         long timestamp = (long) entity.getProperty("time");
-        String tags = (String) entity.getProperty("tag");
+        String tag = (String) entity.getProperty("tag");
         String comment = (String) entity.getProperty("text");
         String nickname = (String) entity.getProperty("nickname");
         String email = (String) userService.getCurrentUser().getEmail();
         String image = (String) entity.getProperty("imgUrl");
         ArrayList<String> messageReplies = (ArrayList) entity.getProperty("replies");
-        BlogMessage message = new BlogMessage(messageId, tags, comment, image, nickname, email, messageReplies, timestamp);
+        BlogMessage message = new BlogMessage(messageId, tag, comment, image, nickname, email, messageReplies, timestamp);
         messages.add(message);
       }
       
