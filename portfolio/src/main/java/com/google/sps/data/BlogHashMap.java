@@ -27,6 +27,10 @@ public final class BlogHashMap {
   private final int DEFAULT_LOAD_AMOUNT = 10;
   private Map<String, LinkedList<BlogMessage>> map;
 
+  public int size(){
+    return map.size();
+  }
+  
   // Takes and puts a list of BlogMessage type in map.
   // Each BlogMessage type should contain tag that matches tags in the internal System. 
   public void putInMap(List<BlogMessage> messages) {
@@ -106,7 +110,7 @@ public final class BlogHashMap {
 
   // This method takes a list of tags and a number of messages to load, and
   // Returns a requested (or default) amount of BlogMessages under specified tag/tags.
-  // If tag/tags are not specified, a requested (or default) amount of all BlogMessages will be returned.
+  // If |tags| are not specified, a requested (or default) amount of all BlogMessages will be returned.
   public LinkedList<BlogMessage> getMessages(List<String> tags, int limit) {
     if (limit <= 0) {
       limit = DEFAULT_LOAD_AMOUNT;

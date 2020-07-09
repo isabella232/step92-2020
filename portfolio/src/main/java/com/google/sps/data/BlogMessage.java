@@ -62,4 +62,9 @@ public final class BlogMessage {
   public ArrayList<String> getReplies() {
     return messageReplies;
   }
+
+  public long getTimestamp() {
+    return timestamp;
+  }
+  
 }

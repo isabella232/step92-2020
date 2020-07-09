@@ -1,5 +1,4 @@
-/home/mobegenie/step92-2020/portfolio/src/main/java/com/google/sps/servlets/BlobstoreUploadUrlServlet.java
-/home/mobegenie/step92-2020/portfolio/src/main/java/com/google/sps/data/BlogMessage.java
-/home/mobegenie/step92-2020/portfolio/src/main/java/com/google/sps/servlets/DeleteServlet.java
-/home/mobegenie/step92-2020/portfolio/src/main/java/com/google/sps/servlets/DataServlet.java
-/home/mobegenie/step92-2020/portfolio/src/main/java/com/google/sps/servlets/FormHandlerServlet.java
+/home/stevenmarquez/stepCapstone/step92-2020/portfolio/src/main/java/com/google/sps/servlets/DataServlet.java
+/home/stevenmarquez/stepCapstone/step92-2020/portfolio/src/main/java/com/google/sps/servlets/BlobstoreUploadUrlServlet.java
+/home/stevenmarquez/stepCapstone/step92-2020/portfolio/src/main/java/com/google/sps/servlets/DeleteServlet.java
+/home/stevenmarquez/stepCapstone/step92-2020/portfolio/src/main/java/com/google/sps/data/BlogMessage.java
