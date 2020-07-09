@@ -78,9 +78,10 @@ public class DataServlet extends HttpServlet {
         String comment = (String) entity.getProperty("text");
         String nickname = (String) entity.getProperty("nickname");
         String email = (String) userService.getCurrentUser().getEmail();
-        String image = (String) entity.getProperty("imgUrl");
+        //String image = (String) entity.getProperty("imgUrl");
         ArrayList<String> messageReplies = (ArrayList) entity.getProperty("replies");
-        BlogMessage message = new BlogMessage(messageId, tag, comment, image, nickname, email, messageReplies, timestamp);
+        //BlogMessage message = new BlogMessage(messageId, tag, comment, image, nickname, email, messageReplies, timestamp);
+        BlogMessage message = new BlogMessage(messageId, tag, comment, image, nickname, messageReplies, timestamp);
         messages.add(message);
       }
       
@@ -118,7 +119,7 @@ public class DataServlet extends HttpServlet {
       // Get type of comment.
       String commentType = getParameter(request, "tags", "Default");
 
-      String imageUrl = getUploadedFileUrl(request, "image");
+      //String imageUrl = getUploadedFileUrl(request, "image");
 
       String messageRepliesString = getParameter(request, "replies", "");
 	    String messageRepliesArray[] = messageRepliesString.split(",");
@@ -130,7 +131,7 @@ public class DataServlet extends HttpServlet {
       Entity blogMessageEntity = new Entity("blogMessage");
       blogMessageEntity.setProperty("sender", sender);
       blogMessageEntity.setProperty("text", message);
-      blogMessageEntity.setProperty("imgUrl", imageUrl);
+      //blogMessageEntity.setProperty("imgUrl", imageUrl);
       blogMessageEntity.setProperty("time", timestamp);
       blogMessageEntity.setProperty("tag", commentType);
       blogMessageEntity.setProperty("replies", messageReplies);

@@ -105,7 +105,8 @@ public final class HashTableTest {
     for (int i = 0; i < expected.size(); i++) {
       List<String> keyInList = new ArrayList<>();
       keyInList.add("#general");
-      Assert.assertEquals(expected.get(i).getTimestamp(), actual.getMessages(keyInList, 1).pop().getTimestamp());
+      Assert.assertEquals(
+        expected.get(i).getTimestamp(), actual.getMessages(keyInList, 1).pop().getTimestamp());
     }
   }
 
