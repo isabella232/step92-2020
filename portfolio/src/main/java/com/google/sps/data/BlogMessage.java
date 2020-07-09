@@ -37,4 +37,32 @@ public final class BlogMessage {
     this.messageReplies = messageReplies;
     this.timestamp = timestamp;
   }
+
+  public long getMessageId() {
+    return id;
+  }
+
+  public String getTag() {
+    return tags;
+  }
+
+  public String getMessage() {
+    return message;
+  }
+
+  public String getImgUrl() {
+    return image;
+  }
+
+  public String getSender() {
+    return nickname;
+  }
+
+  public ArrayList<String> getReplies() {
+    return messageReplies;
+  }
+
+  public long getTimestamp() {
+    return timestamp;
+  }
 }

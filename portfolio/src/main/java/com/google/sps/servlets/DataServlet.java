@@ -32,6 +32,7 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import com.google.sps.data.BlogMessage;
+import com.google.sps.data.BlogHashMap;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.*;
@@ -46,6 +47,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
@@ -70,28 +76,48 @@ public class DataServlet extends HttpServlet {
       for (Entity entity : results.asIterable()) {
         long messageId = entity.getKey().getId();
         long timestamp = (long) entity.getProperty("time");
-        String tags = (String) entity.getProperty("tag");
+        String tag = (String) entity.getProperty("tag");
         String comment = (String) entity.getProperty("text");
         String nickname = (String) entity.getProperty("nickname");
         String email = (String) userService.getCurrentUser().getEmail();
         String image = (String) entity.getProperty("imgUrl");
         ArrayList<String> messageReplies = (ArrayList) entity.getProperty("replies");
-        BlogMessage message = new BlogMessage(messageId, tags, comment, image, nickname, email, messageReplies, timestamp);
+        BlogMessage message = new BlogMessage(messageId, tag, comment, image, nickname, email, messageReplies, timestamp);
         messages.add(message);
       }
+      
+      // Create BlogHashMap Object and put BlogMessages in the map.
+      BlogHashMap blogMap = new BlogHashMap();
+      blogMap.putInMap(messages);
+
+      // If (user loads all BlogMessages) 
+      LinkedList<BlogMessage> allBlogMessages = blogMap.getMessages();
+
+      // If (user loads BlogMessages for a specific tag)
+      String tagToSearch = ""; // we'll get the input later.
+      LinkedList<BlogMessage> BlogMessagesForTag = blogMap.getMessages(tagToSearch);
+
+      // If (user loads all BlogMessages for a list of tags)
+      List<String> tagsToSearch = new ArrayList<String>();
+      tagsToSearch.add(""); // we'll get inputs later.
+
+      LinkedList<BlogMessage> BlogMessagesForTags = blogMap.getMessages(tagsToSearch);
+    
 
       Gson gson = new Gson();
       response.setContentType("application/json;");
 
-      List<BlogMessage> limitedMessages = new ArrayList<>();
       if(numberOfCommentsToDisplay == 0){
-        response.getWriter().println(gson.toJson(messages));
+        response.getWriter().println(gson.toJson(allBlogMessages)); // set a default amount later.
         return;
       }
-      for(int i = 0; i < numberOfCommentsToDisplay; i++){
-        limitedMessages.add(messages.get(i));
-      }
-      response.getWriter().println(gson.toJson(limitedMessages));
+
+      /** TODO: 
+            add functionality for next cases => 
+            1. user specifies amount for all messages
+            2. user specifies amount for messages under a tag
+            3. user specifies amount for all messages under a list of tags
+        */ 
 
     }
     
@@ -194,7 +220,7 @@ public class DataServlet extends HttpServlet {
     }
 
     //Get data out of hash table.
-    /*private List<BlogMessage> getInfoFromHashTable(String tag, Hashtable<keys,values> table){
+    /*private List<BlogMessage> getInfoFromHashTable(String tag, BlogHashMap<String,LinkedList<String>> table){
       List<BlogMessage> messages = new ArrayList<>();
       Set<String> keys = table.keySet();
       for(String key: keys){
