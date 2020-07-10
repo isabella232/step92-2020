@@ -54,8 +54,11 @@ public class DataServlet extends HttpServlet {
     int numberOfCommentsToDisplay = 0;
     
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {      
-      System.out.println(numberOfCommentsToDisplay);
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+      List<String> allTags = new ArrayList<>();
+      allTags.add("#general");
+      allTags.add("#music");
+
       List<BlogMessage> messages = new ArrayList<>();
       Query query = new Query("blogMessage").addSort("time", SortDirection.DESCENDING);
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -70,10 +73,9 @@ public class DataServlet extends HttpServlet {
         String comment = (String) entity.getProperty("text");
         String nickname = (String) entity.getProperty("nickname");
         String email = (String) userService.getCurrentUser().getEmail();
-        //String image = (String) entity.getProperty("imgUrl");
+        String image = (String) entity.getProperty("imgUrl");
         ArrayList<String> messageReplies = (ArrayList) entity.getProperty("replies");
-        //BlogMessage message = new BlogMessage(messageId, tag, comment, image, nickname, email, messageReplies, timestamp);
-        BlogMessage message = new BlogMessage(messageId, tag, comment, image, nickname, messageReplies, timestamp);
+        BlogMessage message = new BlogMessage(messageId, tag, comment, image, nickname, email, messageReplies, timestamp);
         messages.add(message);
       }
       
@@ -82,27 +84,17 @@ public class DataServlet extends HttpServlet {
       blogMap.putInMap(messages);
 
       // If (user loads all BlogMessages) 
-      LinkedList<BlogMessage> allBlogMessages = blogMap.getMessages();
+      LinkedList<BlogMessage> allBlogMessages = blogMap.getMessages(allTags, messages.size());
 
       if (numberOfCommentsToDisplay < 1 || numberOfCommentsToDisplay >= allBlogMessages.size()) {
         response.setContentType("text/html");
         response.getWriter().println("Please enter an integer between 1 and "+allBlogMessages.size()+".");
         return;
       }
-
-      // If (user loads BlogMessages for a specific tag)
-      String tagToSearch = ""; // we'll get the input later.
-      LinkedList<BlogMessage> BlogMessagesForTag = blogMap.getMessages(tagToSearch);
-
-      // If (user loads all BlogMessages for a list of tags)
-      List<String> tagsToSearch = new ArrayList<String>();
-      tagsToSearch.add(""); // we'll get inputs later.
-
-      LinkedList<BlogMessage> loadedBlogMessages = blogMap.getMessages(tagsToSearch, numberOfCommentsToDisplay);
     
       Gson gson = new Gson();
       response.setContentType("application/json;");
-      
+
       if(numberOfCommentsToDisplay == 0){
         response.getWriter().println(gson.toJson(allBlogMessages)); // set a default amount later.
         return;
