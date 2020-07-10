@@ -56,9 +56,7 @@ public class DataServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
       List<String> allTags = new ArrayList<>();
-      allTags.add("#general");
-      allTags.add("#music");
-
+      
       List<BlogMessage> messages = new ArrayList<>();
       Query query = new Query("blogMessage").addSort("time", SortDirection.DESCENDING);
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -86,7 +84,7 @@ public class DataServlet extends HttpServlet {
       // If (user loads all BlogMessages) 
       LinkedList<BlogMessage> allBlogMessages = blogMap.getMessages(allTags, messages.size());
 
-      if (numberOfCommentsToDisplay < 1 || numberOfCommentsToDisplay >= allBlogMessages.size()) {
+      if (numberOfCommentsToDisplay < 1 || numberOfCommentsToDisplay > allBlogMessages.size()) {
         response.setContentType("text/html");
         response.getWriter().println("Please enter an integer between 1 and "+allBlogMessages.size()+".");
         return;
