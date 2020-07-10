@@ -53,7 +53,9 @@ public final class HashTableTest {
 
     Collection<String> keys = Arrays.asList("#general", "#wellbeing", "#music");
     for (String key : keys) {
-      Assert.assertEquals(1, actual.getMessages(key).size());
+      List<String> keyInList = new ArrayList<>();
+      keyInList.add(key);
+      Assert.assertEquals(1, actual.getMessages(keyInList, 1).size());
     }
   }
 
@@ -79,7 +81,9 @@ public final class HashTableTest {
 
     Collection<String> keys = Arrays.asList("#general", "#wellbeing", "#music");
     for (String key : keys) {
-      Assert.assertEquals(4, actual.getMessages(key).size());
+      List<String> keyInList = new ArrayList<>();
+      keyInList.add(key);
+      Assert.assertEquals(4, actual.getMessages(keyInList, 4).size());
     }
   }
 
@@ -99,7 +103,10 @@ public final class HashTableTest {
     actual.putInMap(blogMessages);
 
     for (int i = 0; i < expected.size(); i++) {
-      Assert.assertEquals(expected.get(i).getTimestamp(), actual.getMessages("#general").pop().getTimestamp());
+      List<String> keyInList = new ArrayList<>();
+      keyInList.add("#general");
+      Assert.assertEquals(
+        expected.get(i).getTimestamp(), actual.getMessages(keyInList, 1).pop().getTimestamp());
     }
   }
 

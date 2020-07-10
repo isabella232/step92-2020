@@ -38,20 +38,15 @@ import java.io.PrintWriter;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
-import java.util.Map;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
@@ -75,9 +70,10 @@ public class DataServlet extends HttpServlet {
         String comment = (String) entity.getProperty("text");
         String nickname = (String) entity.getProperty("nickname");
         String email = (String) userService.getCurrentUser().getEmail();
-        String image = (String) entity.getProperty("imgUrl");
+        //String image = (String) entity.getProperty("imgUrl");
         ArrayList<String> messageReplies = (ArrayList) entity.getProperty("replies");
-        BlogMessage message = new BlogMessage(messageId, tag, comment, image, nickname, email, messageReplies, timestamp);
+        //BlogMessage message = new BlogMessage(messageId, tag, comment, image, nickname, email, messageReplies, timestamp);
+        BlogMessage message = new BlogMessage(messageId, tag, comment, image, nickname, messageReplies, timestamp);
         messages.add(message);
       }
       
@@ -102,12 +98,11 @@ public class DataServlet extends HttpServlet {
       List<String> tagsToSearch = new ArrayList<String>();
       tagsToSearch.add(""); // we'll get inputs later.
 
-      LinkedList<BlogMessage> BlogMessagesForTags = blogMap.getMessages(tagsToSearch);
+      LinkedList<BlogMessage> loadedBlogMessages = blogMap.getMessages(tagsToSearch, numberOfCommentsToDisplay);
     
-
       Gson gson = new Gson();
       response.setContentType("application/json;");
-
+      
       if(numberOfCommentsToDisplay == 0){
         response.getWriter().println(gson.toJson(allBlogMessages)); // set a default amount later.
         return;
@@ -138,12 +133,14 @@ public class DataServlet extends HttpServlet {
       String message = request.getParameter("text-input");
 
       String sender = getParameter(request, "sender", "Steven");
-
-      String commentType = getParameter(request, "tags", "Default");
       
-      numberOfCommentsToDisplay = getNumberOfCommentsToDisplay(request);
+      // TODO: 
+      //      Get default tag from the InternalTags class and use that below.
+      
+      // Get type of comment.
+      String commentType = getParameter(request, "tags", "Default");
 
-      String imageUrl = getUploadedFileUrl(request, "image");
+      //String imageUrl = getUploadedFileUrl(request, "image");
 
       String messageRepliesString = getParameter(request, "replies", "");
 	    String messageRepliesArray[] = messageRepliesString.split(",");
@@ -155,7 +152,7 @@ public class DataServlet extends HttpServlet {
       Entity blogMessageEntity = new Entity("blogMessage");
       blogMessageEntity.setProperty("nickname", sender);
       blogMessageEntity.setProperty("text", message);
-      blogMessageEntity.setProperty("imgUrl", imageUrl);
+      //blogMessageEntity.setProperty("imgUrl", imageUrl);
       blogMessageEntity.setProperty("time", timestamp);
       blogMessageEntity.setProperty("tag", commentType);
       blogMessageEntity.setProperty("replies", messageReplies);
@@ -227,13 +224,4 @@ public class DataServlet extends HttpServlet {
       }
     }
 
-    //Get data out of hash table.
-    /*private List<BlogMessage> getInfoFromHashTable(String tag, BlogHashMap<String,LinkedList<String>> table){
-      List<BlogMessage> messages = new ArrayList<>();
-      Set<String> keys = table.keySet();
-      for(String key: keys){
-        messages.add(table.get(key));
-      }
-      return messages;
-    }*/
 }
