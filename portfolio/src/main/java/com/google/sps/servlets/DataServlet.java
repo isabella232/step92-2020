@@ -60,12 +60,7 @@ public class DataServlet extends HttpServlet {
     
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {      
-      if (numberOfCommentsToDisplay < 1 || numberOfCommentsToDisplay > 100) {
-        response.setContentType("text/html");
-        response.getWriter().println("Please enter an integer between 1 and 100.");
-        return;
-      }
-
+      System.out.println(numberOfCommentsToDisplay);
       List<BlogMessage> messages = new ArrayList<>();
       Query query = new Query("blogMessage").addSort("time", SortDirection.DESCENDING);
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -93,6 +88,12 @@ public class DataServlet extends HttpServlet {
       // If (user loads all BlogMessages) 
       LinkedList<BlogMessage> allBlogMessages = blogMap.getMessages();
 
+      if (numberOfCommentsToDisplay < 1 || numberOfCommentsToDisplay >= allBlogMessages.size()) {
+        response.setContentType("text/html");
+        response.getWriter().println("Please enter an integer between 1 and "+allBlogMessages.size()+".");
+        return;
+      }
+
       // If (user loads BlogMessages for a specific tag)
       String tagToSearch = ""; // we'll get the input later.
       LinkedList<BlogMessage> BlogMessagesForTag = blogMap.getMessages(tagToSearch);
@@ -109,6 +110,13 @@ public class DataServlet extends HttpServlet {
 
       if(numberOfCommentsToDisplay == 0){
         response.getWriter().println(gson.toJson(allBlogMessages)); // set a default amount later.
+        return;
+      } else {
+        List<BlogMessage> limitedBlogMessages = new ArrayList<>();
+        for (int i = 0; i < allBlogMessages.size(); i++) {
+          limitedBlogMessages.add(allBlogMessages.get(i));
+        }
+        response.getWriter().println(gson.toJson(limitedBlogMessages));
         return;
       }
 
@@ -145,7 +153,7 @@ public class DataServlet extends HttpServlet {
       long timestamp = System.currentTimeMillis();
 
       Entity blogMessageEntity = new Entity("blogMessage");
-      blogMessageEntity.setProperty("sender", sender);
+      blogMessageEntity.setProperty("nickname", sender);
       blogMessageEntity.setProperty("text", message);
       blogMessageEntity.setProperty("imgUrl", imageUrl);
       blogMessageEntity.setProperty("time", timestamp);

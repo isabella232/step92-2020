@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 public final class BlogHashMap {
-  private final String[] INTERNAL_TAGS = {"#general", "#wellbeing", "#music", "#games"};
+  private final String[] INTERNAL_TAGS = {"#general", "#wellbeing", "#music", "#games", "Tags"};
   private Map<String, LinkedList<BlogMessage>> map;
 
   public int size(){
