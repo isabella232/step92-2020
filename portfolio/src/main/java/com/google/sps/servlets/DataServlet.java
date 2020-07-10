@@ -100,7 +100,7 @@ public class DataServlet extends HttpServlet {
         return;
       } else {
         List<BlogMessage> limitedBlogMessages = new ArrayList<>();
-        for (int i = 0; i < allBlogMessages.size(); i++) {
+        for (int i = 0; i < numberOfCommentsToDisplay; i++) {
           limitedBlogMessages.add(allBlogMessages.get(i));
         }
         response.getWriter().println(gson.toJson(limitedBlogMessages));
@@ -125,6 +125,8 @@ public class DataServlet extends HttpServlet {
       String message = request.getParameter("text-input");
 
       String sender = getParameter(request, "sender", "Steven");
+
+      numberOfCommentsToDisplay = getNumberOfCommentsToDisplay(request);
       
       // TODO: 
       //      Get default tag from the InternalTags class and use that below.
@@ -132,7 +134,7 @@ public class DataServlet extends HttpServlet {
       // Get type of comment.
       String commentType = getParameter(request, "tags", "Default");
 
-      //String imageUrl = getUploadedFileUrl(request, "image");
+      String imageUrl = getUploadedFileUrl(request, "image");
 
       String messageRepliesString = getParameter(request, "replies", "");
 	    String messageRepliesArray[] = messageRepliesString.split(",");
@@ -144,7 +146,7 @@ public class DataServlet extends HttpServlet {
       Entity blogMessageEntity = new Entity("blogMessage");
       blogMessageEntity.setProperty("nickname", sender);
       blogMessageEntity.setProperty("text", message);
-      //blogMessageEntity.setProperty("imgUrl", imageUrl);
+      blogMessageEntity.setProperty("imgUrl", imageUrl);
       blogMessageEntity.setProperty("time", timestamp);
       blogMessageEntity.setProperty("tag", commentType);
       blogMessageEntity.setProperty("replies", messageReplies);
