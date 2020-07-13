@@ -44,9 +44,9 @@ async function getComments() {
     statsListElement.innerHTML = '';
     msgs.forEach((msg) => {
         statsListElement.appendChild(
-            createListElement(msg.sender + ': ' + msg.message));
+            createListElement(msg.nickname + ': ' + msg.message));
         statsListElement.appendChild(
-            createImgElement(msg.imgUrl));
+            createImgElement(msg.image));
     })
     
   });

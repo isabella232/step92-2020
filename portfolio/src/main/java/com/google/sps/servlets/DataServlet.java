@@ -54,16 +54,9 @@ public class DataServlet extends HttpServlet {
     int numberOfCommentsToDisplay = 0;
     
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException { 
-      //Get number of comments.
-      numberOfCommentsToDisplay = getNumberOfCommentsToDisplay(request);
-           
-      if (numberOfCommentsToDisplay < 1 || numberOfCommentsToDisplay > 100) {
-        response.setContentType("text/html");
-        response.getWriter().println("Please enter an integer between 1 and 100.");
-        return;
-      }
-
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+      List<String> allTags = new ArrayList<>();
+      
       List<BlogMessage> messages = new ArrayList<>();
       Query query = new Query("blogMessage").addSort("time", SortDirection.DESCENDING);
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -78,10 +71,9 @@ public class DataServlet extends HttpServlet {
         String comment = (String) entity.getProperty("text");
         String nickname = (String) entity.getProperty("nickname");
         String email = (String) userService.getCurrentUser().getEmail();
-        //String image = (String) entity.getProperty("imgUrl");
+        String image = (String) entity.getProperty("imgUrl");
         ArrayList<String> messageReplies = (ArrayList) entity.getProperty("replies");
-        //BlogMessage message = new BlogMessage(messageId, tag, comment, image, nickname, email, messageReplies, timestamp);
-        BlogMessage message = new BlogMessage(messageId, tag, comment, image, nickname, messageReplies, timestamp);
+        BlogMessage message = new BlogMessage(messageId, tag, comment, image, nickname, email, messageReplies, timestamp);
         messages.add(message);
       }
       
@@ -89,17 +81,29 @@ public class DataServlet extends HttpServlet {
       BlogHashMap blogMap = new BlogHashMap();
       blogMap.putInMap(messages);
 
-      // Load messages from BlogHashMap and respond with gson.
-      List<String> tagsToSearch = new ArrayList<String>();
-      tagsToSearch.add(""); // we'll get inputs later.
+      // If (user loads all BlogMessages) 
+      LinkedList<BlogMessage> allBlogMessages = blogMap.getMessages(allTags, messages.size());
 
-      LinkedList<BlogMessage> loadedBlogMessages = blogMap.getMessages(tagsToSearch, numberOfCommentsToDisplay);
+      if (numberOfCommentsToDisplay < 1 || numberOfCommentsToDisplay > allBlogMessages.size()) {
+        numberOfCommentsToDisplay = allBlogMessages.size();
+      }
     
       Gson gson = new Gson();
       response.setContentType("application/json;");
-      
-      response.getWriter().println(gson.toJson(loadedBlogMessages));
+
+      List<BlogMessage> limitedBlogMessages = new ArrayList<>();
+      for (int i = 0; i < numberOfCommentsToDisplay; i++) {
+        limitedBlogMessages.add(allBlogMessages.get(i));
+      }
+      response.getWriter().println(gson.toJson(limitedBlogMessages));
       return;
+      
+      /** TODO: 
+            add functionality for next cases => 
+            1. user specifies amount for all messages
+            2. user specifies amount for messages under a tag
+            3. user specifies amount for all messages under a list of tags
+        */ 
 
     }
     
@@ -111,7 +115,9 @@ public class DataServlet extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
       String message = request.getParameter("text-input");
 
-      String sender = getParameter(request, "sender", "Steven");
+      String nickname = getParameter(request, "sender", "Steven");
+
+      numberOfCommentsToDisplay = getNumberOfCommentsToDisplay(request);
       
       // TODO: 
       //      Get default tag from the InternalTags class and use that below.
@@ -119,7 +125,7 @@ public class DataServlet extends HttpServlet {
       // Get type of comment.
       String commentType = getParameter(request, "tags", "Default");
 
-      //String imageUrl = getUploadedFileUrl(request, "image");
+      String imageUrl = getUploadedFileUrl(request, "image");
 
       String messageRepliesString = getParameter(request, "replies", "");
 	    String messageRepliesArray[] = messageRepliesString.split(",");
@@ -129,9 +135,9 @@ public class DataServlet extends HttpServlet {
       long timestamp = System.currentTimeMillis();
 
       Entity blogMessageEntity = new Entity("blogMessage");
-      blogMessageEntity.setProperty("sender", sender);
+      blogMessageEntity.setProperty("nickname", nickname);
       blogMessageEntity.setProperty("text", message);
-      //blogMessageEntity.setProperty("imgUrl", imageUrl);
+      blogMessageEntity.setProperty("imgUrl", imageUrl);
       blogMessageEntity.setProperty("time", timestamp);
       blogMessageEntity.setProperty("tag", commentType);
       blogMessageEntity.setProperty("replies", messageReplies);
