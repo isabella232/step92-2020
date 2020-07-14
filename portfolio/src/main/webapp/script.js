@@ -35,13 +35,28 @@ function openPage(pageName, elmnt, color) {
 }
 
 function defaultPage() {
-    document.getElementById("defaultOpen").click();
+  document.getElementById("defaultOpen").click();
 }
  
 /**
  * Fetches messages from the servers and adds them to the DOM.
  */
 async function getComments() {
+    fetch('/data').then(response => response.json()).then((msgs) => {
+   
+    const statsListElement = document.getElementById('comments-container');
+    statsListElement.innerHTML = '';
+    msgs.forEach((msg) => {
+        statsListElement.appendChild(
+            createListElement(msg.nickname + ': ' + msg.message));
+        statsListElement.appendChild(
+            createImgElement(msg.image));
+    })
+    
+  });
+}
+
+function getXComments() {
     fetch('/data').then(response => response.json()).then((msgs) => {
    
     const statsListElement = document.getElementById('comments-container');
