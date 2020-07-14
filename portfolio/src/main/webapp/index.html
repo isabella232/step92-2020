@@ -13,13 +13,19 @@
       }
     </style>
   </head>
-  <body onload="fetchBlobstoreUrlAndShowForm()">
-    <button class="tablink" onclick="openPage('Blog', this, 'grey')" id="defaultOpen">Blog</button>
-    <button class="tablink" onclick="openPage('Information', this, 'grey')" >Information</button>
+  <body onload="fetchBlobstoreUrlAndShowForm(); defaultPage();">
+    <button class="tablink" onclick="openPage('Home', this, 'grey')" id="defaultOpen">Home</button>
+    <button class="tablink" onclick="openPage('Blog', this, 'grey')">Blog</button>
+    <button class="tablink" onclick="openPage('Information', this, 'grey')">Information</button>
     <button class="tablink" onclick="openPage('Resources', this, 'grey')">Resources</button>
 
-    
- 
+    <div id="Home" class="tabcontent">
+      <div id="homecontent">
+        <h1>TOP X POSTS</h1>
+        <p>Here are the top X posts!</p>
+      </div>
+    </div>
+
     <div id="Blog" class="tabcontent">
       <button onclick="showPostForm()">Click here to create a post</button>
       <button onclick="setNicknameForm()">Set your nickname</button>
