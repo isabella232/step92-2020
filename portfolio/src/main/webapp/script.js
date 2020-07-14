@@ -33,6 +33,10 @@ function openPage(pageName, elmnt, color) {
   elmnt.style.backgroundColor = color;
   
 }
+
+function defaultPage() {
+    document.getElementById("defaultOpen").click();
+}
  
 /**
  * Fetches messages from the servers and adds them to the DOM.
