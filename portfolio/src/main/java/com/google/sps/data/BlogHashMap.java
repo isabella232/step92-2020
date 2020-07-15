@@ -63,24 +63,22 @@ public final class BlogHashMap {
   private LinkedList<BlogMessage> getMessages(int limit) {
     LinkedList<BlogMessage> values = new LinkedList<BlogMessage>();
 
-    // |valuesList| is a list of LinkedList BlogMessages for each tag in map, hence
-    // We reverse iterate starting from the last tag entered.
-    List valuesList = new ArrayList(map.values());
-    ListIterator reverseItr = valuesList.listIterator(valuesList.size());
+    List<LinkedList> valuesList = new ArrayList(map.values());
+    ListIterator<LinkedList> reverseItr = valuesList.listIterator(valuesList.size());
      
     while (reverseItr.hasPrevious()) {
       if (limit <= 0) {
         break;
       }
 
-      LinkedList tagMessages = (LinkedList) reverseItr.previous();
+      LinkedList<BlogMessage> tagMessages = reverseItr.previous();
 
       // Use LinkedList's |descendingIterator()| to iterate BlogMessages from the back,
       // And addFirst to return the most recent messages in the order they were received.
       // This way, if [limit] is 1 we return the last message in the last tag entered. 
-      Iterator iterateFromBack = tagMessages.descendingIterator();
+      Iterator<BlogMessage> iterateFromBack = tagMessages.descendingIterator();
       while(iterateFromBack.hasNext() && limit > 0) {
-        values.addFirst((BlogMessage) iterateFromBack.next());
+        values.addFirst(iterateFromBack.next());
         limit--;
       }
     }
@@ -92,7 +90,7 @@ public final class BlogHashMap {
     LinkedList<BlogMessage> values = new LinkedList<BlogMessage>();
 
     if (map.containsKey(tag)) {
-      Iterator iterator;
+      Iterator<BlogMessage> iterator;
       int tagMessagesSize = map.get(tag).size();
 
       // If the tag contains more messages than requested
@@ -103,7 +101,7 @@ public final class BlogHashMap {
         iterator = map.get(tag).iterator();
       }
       while (iterator.hasNext() && limit >= 0) {
-        values.addLast((BlogMessage) iterator.next());
+        values.addLast(iterator.next());
         limit--;
       }
     } else {
@@ -132,7 +130,7 @@ public final class BlogHashMap {
         break;
       }
 
-      Iterator iterator;
+      Iterator<BlogMessage> iterator;
       if (map.containsKey(tag)) {
         int tagMessagesSize = map.get(tag).size(); 
         if (tagMessagesSize > limit) {
@@ -141,7 +139,7 @@ public final class BlogHashMap {
           iterator = map.get(tag).iterator();
         }
         while(iterator.hasNext() && limit >= 0) {
-          values.addLast((BlogMessage) iterator.next());
+          values.addLast(iterator.next());
           limit--;
         }
       } else {
