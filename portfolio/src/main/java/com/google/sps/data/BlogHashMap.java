@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,7 +38,7 @@ public final class BlogHashMap {
   public void putInMap(List<BlogMessage> messages) {
     for (BlogMessage message : messages) {
       if (InternalTags.tagIsSupported(message)) {
-        if (!map.containsKey(message.getTag())){
+        if (!map.containsKey(message.getTag())) {
           LinkedList<BlogMessage> firstValue = new LinkedList<BlogMessage>();
           firstValue.addFirst(message); 
           map.put(message.getTag(), firstValue);
@@ -61,26 +62,24 @@ public final class BlogHashMap {
 
   // Returns a requested amount of all BlogMessages in map
   private LinkedList<BlogMessage> getMessages(int limit) {
-    LinkedList values = new LinkedList();
+    LinkedList<BlogMessage> values = new LinkedList<BlogMessage>();
 
-    for (LinkedList<BlogMessage> tagMessages : map.values()){
+    List<LinkedList> valuesList = new ArrayList(map.values());
+    ListIterator<LinkedList> reverseItr = valuesList.listIterator(valuesList.size());
+     
+    while (reverseItr.hasPrevious()) {
       if (limit <= 0) {
         break;
       }
 
-      Iterator iterator;
-      int tagMessagesSize = tagMessages.size();
+      LinkedList<BlogMessage> tagMessages = reverseItr.previous();
 
-      // If a tag contains more messages than requested
-      // Iterate from (number of messages - limit) to return the most recent BlogMessages. 
-      if (tagMessagesSize > limit) {
-        iterator = tagMessages.listIterator(tagMessagesSize - limit);
-      } else {
-        iterator = tagMessages.iterator();
-      }
-
-      while(iterator.hasNext() && limit >= 0) {
-        values.addLast(iterator.next());
+      // Use LinkedList's |descendingIterator()| to iterate BlogMessages from the back,
+      // And addFirst to return the most recent messages in the order they were received.
+      // This way, if [limit] is 1 we return the last message in the last tag entered. 
+      Iterator<BlogMessage> iterateFromBack = tagMessages.descendingIterator();
+      while(iterateFromBack.hasNext() && limit > 0) {
+        values.addFirst(iterateFromBack.next());
         limit--;
       }
     }
@@ -89,11 +88,14 @@ public final class BlogHashMap {
 
   // Returns a requested amount of all BlogMessages for a specified tag.
   private LinkedList<BlogMessage> getMessages(String tag, int limit) {
-    LinkedList values = new LinkedList();
+    LinkedList<BlogMessage> values = new LinkedList<BlogMessage>();
 
     if (map.containsKey(tag)) {
-      Iterator iterator;
+      Iterator<BlogMessage> iterator;
       int tagMessagesSize = map.get(tag).size();
+
+      // If the tag contains more messages than requested
+      // Iterate from (number of messages - limit) to return the most recent BlogMessages. 
       if (tagMessagesSize > limit) {
         iterator = map.get(tag).listIterator(tagMessagesSize - limit);
       } else {
@@ -123,13 +125,13 @@ public final class BlogHashMap {
       return getMessages(tags.get(0), limit);
     }
 
-    LinkedList values = new LinkedList();
+    LinkedList<BlogMessage> values = new LinkedList<BlogMessage>();
     for (String tag : tags) {
       if (limit <= 0) {
         break;
       }
 
-      Iterator iterator;
+      Iterator<BlogMessage> iterator;
       if (map.containsKey(tag)) {
         int tagMessagesSize = map.get(tag).size(); 
         if (tagMessagesSize > limit) {
