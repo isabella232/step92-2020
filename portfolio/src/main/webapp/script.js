@@ -56,10 +56,10 @@ async function getComments() {
   });
 }
 
-function getXComments() {
+function getCommentsHome() {
     fetch('/data').then(response => response.json()).then((msgs) => {
    
-    const statsListElement = document.getElementById('comments-container');
+    const statsListElement = document.getElementById('home-comments-container');
     statsListElement.innerHTML = '';
     msgs.forEach((msg) => {
         statsListElement.appendChild(
