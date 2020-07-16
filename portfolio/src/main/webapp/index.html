@@ -13,7 +13,7 @@
       }
     </style>
   </head>
-  <body onload="fetchBlobstoreUrlAndShowForm(); defaultPage();">
+  <body onload="fetchBlobstoreUrlAndShowForm(); defaultPage(); getCommentsHome();">
     <button class="tablink" onclick="openPage('Home', this, 'grey')" id="defaultOpen">Home</button>
     <button class="tablink" onclick="openPage('Blog', this, 'grey')">Blog</button>
     <button class="tablink" onclick="openPage('Information', this, 'grey')">Information</button>
@@ -21,8 +21,9 @@
 
     <div id="Home" class="tabcontent">
       <div id="homecontent">
-        <h1>TOP X POSTS</h1>
+        <h1 style="text-align:center;">TOP X POSTS</h1>
         <p>Here are the top X posts!</p>
+        <div id="home-comments-container"></div>
       </div>
     </div>
 
