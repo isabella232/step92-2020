@@ -23,25 +23,20 @@
     <div id="Home" class="tabcontent">
       <div id="homecontent">
         <div class="scrollmenu">
-          <button class="scrollbutton" onclick="setTag('#general'); getCommentsHome();" id="comments-tag" name="comments-tag" value="#general">#general</button>
-          <input type="text" name="comments-tag" id="comments-tag" value="#general">
-          <button class="scrollbutton" onclick="setTag('#animals'); getCommentsHome();" id="comments-tag" name="comments-tag">#animals</button>
-          <a onclick="getCommentsHome();" id="comments-tag" name="comments-tag" value="#business">#business</a>
-          <a href="#education">#education</a>
-          <a href="#games">#games</a>
-          <a href="#music">#music</a>
-          <a href="#wellbeing">#wellbeing</a>
-          <a href="#wellbeing">#extra1</a>
-          <a href="#wellbeing">#extra2</a>
-          <a href="#wellbeing">#extra3</a>
-          <a href="#wellbeing">#extra4</a>
-          <a href="#wellbeing">#extra5</a>
-          <a href="#wellbeing">#extra6</a>
-          <a href="#wellbeing">#extra7</a>
+          <button class="scrollbutton" onclick="getCommentsTag('#general');">#general</button>
+          <button class="scrollbutton" onclick="getCommentsTag('#animals');">#animals</button>
+          <button class="scrollbutton" onclick="getCommentsTag('#art');">#art</button>
+          <button class="scrollbutton" onclick="getCommentsTag('#business');">#business</button>
+          <button class="scrollbutton" onclick="getCommentsTag('#education');">#education</button>
+          <button class="scrollbutton" onclick="getCommentsTag('#environment');">#environment</button>
+          <button class="scrollbutton" onclick="getCommentsTag('#games');">#games</button>
+          <button class="scrollbutton" onclick="getCommentsTag('#music');">#music</button>
+          <button class="scrollbutton" onclick="getCommentsTag('#politics');">#politics</button>       
+          <button class="scrollbutton" onclick="getCommentsTag('#wellbeing');">#wellbeing</button>
         </div>
         <h1 style="text-align:center;">TOP X POSTS</h1>
         <p>Here are the top X posts!</p>
-        <div id="home-comments-container"></div>
+        <div id="home-comments-container" style="text-align:center;"></div>
       </div>
     </div>
 
@@ -65,10 +60,13 @@
             <select name="tags" id="tags">
               <option value="#general">#general</option>
               <option value="#animals">#animals</option>
+              <option value="#art">#art</option>
               <option value="#business">#business</option>
               <option value="#education">#education</option>
+              <option value="#environment">#environment</option>
               <option value="#games">#games</option>
               <option value="#music">#music</option>
+              <option value="#politics">#politics</option>
               <option value="#wellbeing">#wellbeing</option>
             </select>
             <br/><br/>
