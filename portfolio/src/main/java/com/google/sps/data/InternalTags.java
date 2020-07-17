@@ -24,9 +24,13 @@ public final class InternalTags {
   private static void setTags() {
     INTERNAL_TAGS.add(DEFAULT_TAG);
     INTERNAL_TAGS.add("#business");
+    INTERNAL_TAGS.add("#animals");
+    INTERNAL_TAGS.add("#art");
     INTERNAL_TAGS.add("#education");
+    INTERNAL_TAGS.add("#environment");
     INTERNAL_TAGS.add("#games");
     INTERNAL_TAGS.add("#music");
+    INTERNAL_TAGS.add("#politics");
     INTERNAL_TAGS.add("#wellbeing");
   }
 
