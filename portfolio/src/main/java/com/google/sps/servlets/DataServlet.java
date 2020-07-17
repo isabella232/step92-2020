@@ -56,12 +56,6 @@ public class DataServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-      String displayTag = getWhichTagToDisplay(request);
-      System.out.println(displayTag);
-
-      if (!displayTag.equals("")){
-        allTags.add(displayTag);
-      }
       
       List<BlogMessage> messages = new ArrayList<>();
       Query query = new Query("blogMessage").addSort("time", SortDirection.DESCENDING);
@@ -177,12 +171,6 @@ public class DataServlet extends HttpServlet {
         return 1;
       }
       return numberOfComments;
-    }
-
-    /* Returns comments for a certain tag */
-    private String getWhichTagToDisplay(HttpServletRequest request) {
-      String tagToDisplay = getParameter(request, "comments-tag", "");
-      return tagToDisplay;
     }
 
     /** Returns a URL that points to the uploaded file, or null if the user didn't upload a file. */
