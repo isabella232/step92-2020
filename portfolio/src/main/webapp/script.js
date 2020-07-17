@@ -34,30 +34,87 @@ function openPage(pageName, elmnt, color) {
   
 }
  
-/**
- * Fetches messages from the servers and adds them to the DOM.
- */
-async function getComments() {
-    fetch('/data').then(response => response.json()).then((msgs) => {
-   
-    const statsListElement = document.getElementById('comments-container');
-    statsListElement.innerHTML = '';
+// Posts and fetches messages from the server and adds them to the DOM.
+async function sendAndGet() {
+  // Get post parameters.
+  const textEle = document.getElementById('text-input');
+  const nameEle = document.getElementById('sender');
+  const tagEle = document.getElementById('tags');
+
+  // To load the recent post BlogHashMap needs a loadFactor(limit) of 1.
+  const loadFactor = 1;
+
+  //TODO: use FormData function to post image file.
+  // const imgEle = document.getElementById('image');
+  
+  
+  // Create a |URLSearchParams()| and append parameters to it. 
+  const params = new URLSearchParams();
+  params.append('text-input', textEle.value);
+  params.append('sender', nameEle.value);
+  params.append('tags', tagEle.value);
+  params.append('load_factor', loadFactor);
+
+  // Post parameters to the server and fetch instantly to build the page.
+  fetch('/data', {method: 'POST', body: params}).then(response => response.json()).then((msgs) => {
+    const statsListElement = document.getElementById('posts-list');
     msgs.forEach((msg) => {
-        statsListElement.appendChild(
-            createListElement(msg.sender + ': ' + msg.message));
-        statsListElement.appendChild(
-            createImgElement(msg.imgUrl));
+      statsListElement.appendChild(createListElement(msg));
+      //statsListElement.appendChild(createImgElement(msg.imgUrl));
     })
-    
+  });
+}
+
+async function loadPosts(){
+  fetch('/data').then(response => response.json()).then((msgs) => {
+    const statsListElement = document.getElementById('posts-list');
+    msgs.forEach((msg) => {
+      statsListElement.appendChild(createListElement(msg));
+      //statsListElement.appendChild(createImgElement(msg.imgUrl));
+    })
   });
 }
  
-/** Creates an <li> element containing text. */
-function createListElement(text) {
-  const liElement = document.createElement('li');
-  liElement.innerText = text;
-  return liElement;
+// Creates an <li> element containing message details.
+function createListElement(msg) {
+  const postElement = document.createElement('li');
+  postElement.style.margin = "10px";
+
+  const messageElement = document.createElement('span');
+  messageElement.innerText = msg.message;
+  
+  const userElement = document.createElement('span');
+  if (msg.nickname === undefined || msg.nickname === null) {
+    userElement.innerHTML = "<b><i>_Anonymous</i></b>";
+  } else {
+    userElement.innerHTML = "<b><i>_" + msg.nickname + "</i></b>";
+  }
+  userElement.style.marginLeft = "15px";
+
+  const timeElement = document.createElement('span');
+  var date = new Date(msg.timestamp);
+  timeElement.innerText = date.toString().slice(0, 24);
+  timeElement.style.marginTop = "5px";
+  timeElement.style.float = "right";
+  timeElement.style.clear ="left";
+
+  const deleteMsgElement = document.createElement('button');
+  deleteMsgElement.innerText = 'Delete';
+  deleteMsgElement.style.marginTop = "5px";
+  deleteMsgElement.style.float = "right";
+  deleteMsgElement.addEventListener('click', () => {
+    deleteMessage(msg);
+    postElement.remove();
+  });
+
+  postElement.appendChild(messageElement);
+  postElement.appendChild(userElement);
+  postElement.appendChild(deleteMsgElement);
+  postElement.appendChild(timeElement);
+
+  return postElement;
 }
+
 /** Creates an <img> element containing text. */
 function createImgElement(text) {
   const imgElement = document.createElement('img');
@@ -65,8 +122,13 @@ function createImgElement(text) {
   return imgElement;
 }
  
-function deleteData(){
-  fetch('/delete-data', {method: 'POST'}).then(getComments());
+async function deleteMessage(msg) {
+  const params = new URLSearchParams();
+  params.append('messageId', msg.id);
+  fetch('/delete-data', {method: 'POST', body: params}).then(response => response.text()).then((text) => {
+    const confirmationElement = document.getElementById('confirm');
+    confirmationElement.innerHTML = text;
+  });
 }
  
 function fetchBlobstoreUrlAndShowForm() {
