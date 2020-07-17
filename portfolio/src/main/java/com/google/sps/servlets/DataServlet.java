@@ -52,10 +52,16 @@ import java.util.Map;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
     int numberOfCommentsToDisplay = 0;
-    
+    List<String> allTags = new ArrayList<>();
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-      List<String> allTags = new ArrayList<>();
+      String displayTag = getWhichTagToDisplay(request);
+      System.out.println(displayTag);
+
+      if (!displayTag.equals("")){
+        allTags.add(displayTag);
+      }
       
       List<BlogMessage> messages = new ArrayList<>();
       Query query = new Query("blogMessage").addSort("time", SortDirection.DESCENDING);
@@ -115,6 +121,7 @@ public class DataServlet extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
       String message = request.getParameter("text-input");
 
+      UserService userService = UserServiceFactory.getUserService();
       String nickname = getParameter(request, "sender", "Steven");
 
       numberOfCommentsToDisplay = getNumberOfCommentsToDisplay(request);
@@ -128,9 +135,9 @@ public class DataServlet extends HttpServlet {
       String imageUrl = getUploadedFileUrl(request, "image");
 
       String messageRepliesString = getParameter(request, "replies", "");
-	    String messageRepliesArray[] = messageRepliesString.split(",");
-	    List<String> messageReplies = new ArrayList<String>();
-	    messageReplies = Arrays.asList(messageRepliesArray);
+      String messageRepliesArray[] = messageRepliesString.split(",");
+      List<String> messageReplies = new ArrayList<String>();
+	  messageReplies = Arrays.asList(messageRepliesArray);
       
       long timestamp = System.currentTimeMillis();
 
@@ -170,6 +177,12 @@ public class DataServlet extends HttpServlet {
         return 1;
       }
       return numberOfComments;
+    }
+
+    /* Returns comments for a certain tag */
+    private String getWhichTagToDisplay(HttpServletRequest request) {
+      String tagToDisplay = getParameter(request, "comments-tag", "");
+      return tagToDisplay;
     }
 
     /** Returns a URL that points to the uploaded file, or null if the user didn't upload a file. */
