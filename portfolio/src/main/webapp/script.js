@@ -109,6 +109,10 @@ function showPostForm() {
   });
 }
 
+function setTag(tag) {
+  document.getElementById("comments-tag").value = tag;
+}
+
 function setNicknameForm() {
     window.open("/login");
 }
