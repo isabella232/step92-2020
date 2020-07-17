@@ -70,6 +70,21 @@ function getCommentsHome() {
     
   });
 }
+
+function getCommentsTag(tag) {
+    fetch('/data').then(response => response.json()).then((msgs) => {
+   
+    const statsListElement = document.getElementById('home-comments-container');
+    statsListElement.innerHTML = '';
+    msgs.forEach((msg) => {
+        if (msg.tag == tag || tag == "") {
+        statsListElement.appendChild(
+            createListElement(msg.nickname + ': ' + msg.message));
+        statsListElement.appendChild(
+            createImgElement(msg.image));}
+    })   
+  });
+}
  
 /** Creates an <li> element containing text. */
 function createListElement(text) {
