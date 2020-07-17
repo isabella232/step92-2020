@@ -42,46 +42,46 @@ function defaultPage() {
  * Fetches messages from the servers and adds them to the DOM.
  */
 async function getComments() {
-    fetch('/data').then(response => response.json()).then((msgs) => {
+  fetch('/data').then(response => response.json()).then((msgs) => {
    
-    const statsListElement = document.getElementById('comments-container');
-    statsListElement.innerHTML = '';
-    msgs.forEach((msg) => {
-        statsListElement.appendChild(
-            createListElement(msg.nickname + ': ' + msg.message));
-        statsListElement.appendChild(
-            createImgElement(msg.image));
+  const statsListElement = document.getElementById('comments-container');
+  statsListElement.innerHTML = '';
+  msgs.forEach((msg) => {
+    statsListElement.appendChild(
+      createListElement(msg.nickname + ': ' + msg.message));
+    statsListElement.appendChild(
+      createImgElement(msg.image));
     })
     
   });
 }
 
 function getCommentsHome() {
-    fetch('/data').then(response => response.json()).then((msgs) => {
+  fetch('/data').then(response => response.json()).then((msgs) => {
    
-    const statsListElement = document.getElementById('home-comments-container');
-    statsListElement.innerHTML = '';
-    msgs.forEach((msg) => {
-        statsListElement.appendChild(
-            createListElement(msg.nickname + ': ' + msg.message));
-        statsListElement.appendChild(
-            createImgElement(msg.image));
+  const statsListElement = document.getElementById('home-comments-container');
+  statsListElement.innerHTML = '';
+  msgs.forEach((msg) => {
+    statsListElement.appendChild(
+      createListElement(msg.nickname + ': ' + msg.message));
+    statsListElement.appendChild(
+      createImgElement(msg.image));
     })
     
   });
 }
 
 function getCommentsTag(tag) {
-    fetch('/data').then(response => response.json()).then((msgs) => {
+  fetch('/data').then(response => response.json()).then((msgs) => {
    
-    const statsListElement = document.getElementById('home-comments-container');
-    statsListElement.innerHTML = '';
-    msgs.forEach((msg) => {
-        if (msg.tag == tag || tag == "") {
-        statsListElement.appendChild(
-            createListElement(msg.nickname + ': ' + msg.message));
-        statsListElement.appendChild(
-            createImgElement(msg.image));}
+  const statsListElement = document.getElementById('home-comments-container');
+  statsListElement.innerHTML = '';
+  msgs.forEach((msg) => {
+    if (msg.tag == tag || tag == "") {
+      statsListElement.appendChild(
+        createListElement(msg.nickname + ': ' + msg.message));
+      statsListElement.appendChild(
+        createImgElement(msg.image));}
     })   
   });
 }

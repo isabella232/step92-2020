@@ -51,8 +51,8 @@ import java.util.Map;
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-    int numberOfCommentsToDisplay = 0;
-    List<String> allTags = new ArrayList<>();
+  int numberOfCommentsToDisplay = 0;
+  List<String> allTags = new ArrayList<>();
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
