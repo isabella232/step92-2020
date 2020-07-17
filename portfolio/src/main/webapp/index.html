@@ -2,6 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>BIPOC Blog</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
@@ -21,6 +22,23 @@
 
     <div id="Home" class="tabcontent">
       <div id="homecontent">
+        <div class="scrollmenu">
+          <button class="scrollbutton" onclick="setTag('#general'); getCommentsHome();" id="comments-tag" name="comments-tag" value="#general">#general</button>
+          <input type="text" name="comments-tag" id="comments-tag" value="#general">
+          <button class="scrollbutton" onclick="setTag('#animals'); getCommentsHome();" id="comments-tag" name="comments-tag">#animals</button>
+          <a onclick="getCommentsHome();" id="comments-tag" name="comments-tag" value="#business">#business</a>
+          <a href="#education">#education</a>
+          <a href="#games">#games</a>
+          <a href="#music">#music</a>
+          <a href="#wellbeing">#wellbeing</a>
+          <a href="#wellbeing">#extra1</a>
+          <a href="#wellbeing">#extra2</a>
+          <a href="#wellbeing">#extra3</a>
+          <a href="#wellbeing">#extra4</a>
+          <a href="#wellbeing">#extra5</a>
+          <a href="#wellbeing">#extra6</a>
+          <a href="#wellbeing">#extra7</a>
+        </div>
         <h1 style="text-align:center;">TOP X POSTS</h1>
         <p>Here are the top X posts!</p>
         <div id="home-comments-container"></div>
