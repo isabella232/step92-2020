@@ -70,3 +70,33 @@ body, html {
 #Blog {background-color: rgb(189, 255, 249);}
 #Information {background-color: rgb(164, 248, 164);}
 #Resources {background-color: rgb(248, 235, 159);}
+
+.scrollmenu {
+  background-color: #333;
+  overflow: auto;
+  white-space: nowrap;
+}
+
+.scrollbutton {
+  background-color: #333;
+  color: white;
+  display: inline-block;
+  text-align: center;
+  padding: 14px;
+  font-size: 17px;
+  text-decoration: none;
+  border: none
+}
+
+
+.scrollmenu a {
+  display: inline-block;
+  color: white;
+  text-align: center;
+  padding: 14px;
+  text-decoration: none;
+}
+
+.scrollmenu a:hover {
+  background-color: #777;
+}
