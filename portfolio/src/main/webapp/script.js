@@ -33,6 +33,10 @@ function openPage(pageName, elmnt, color) {
   elmnt.style.backgroundColor = color;
   
 }
+
+function defaultPage() {
+  document.getElementById("defaultOpen").click();
+}
  
 // Posts and fetches messages from the server and adds them to the DOM.
 async function sendAndGet() {
@@ -45,7 +49,7 @@ async function sendAndGet() {
   const loadFactor = 1;
 
   //TODO: use FormData function to post image file.
-  // const imgEle = document.getElementById('image');
+  // const imgEle...
   
   
   // Create a |URLSearchParams()| and append parameters to it. 

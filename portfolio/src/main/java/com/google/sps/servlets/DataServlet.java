@@ -70,7 +70,7 @@ public class DataServlet extends HttpServlet {
         long timestamp = (long) entity.getProperty("time");
         String tag = (String) entity.getProperty("tag");
         String comment = (String) entity.getProperty("text");
-        String nickname = (String) entity.getProperty("sender");
+        String nickname = (String) entity.getProperty("nickname");
         String email = (String) userService.getCurrentUser().getEmail();
         //String image = (String) entity.getProperty("imgUrl");
         ArrayList<String> message_Replies = (ArrayList) entity.getProperty("replies");
@@ -88,7 +88,7 @@ public class DataServlet extends HttpServlet {
       Gson gson = new Gson();
       response.setContentType("application/json;");
       
-      response.getWriter().println(gson.toJson(loadedBlogMessages));
+      response.getWriter().println(gson.toJson(limitedBlogMessages));
       return;
     }
     
@@ -96,7 +96,7 @@ public class DataServlet extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
       // Get Post parameters.
       String message = request.getParameter("text-input");
-      String sender = request.getParameter("sender");
+      String nickname = request.getParameter("sender");
       String loadFactor = request.getParameter("load_factor");
       String postTag = getTagParameter(request, "tags", InternalTags.defaultTag());
       
@@ -110,9 +110,9 @@ public class DataServlet extends HttpServlet {
 
       long timestamp = System.currentTimeMillis();
       Entity blogMessageEntity = new Entity("blogMessage");
-      blogMessageEntity.setProperty("sender", sender);
+      blogMessageEntity.setProperty("nickname", nickname);
       blogMessageEntity.setProperty("text", message);
-      //blogMessageEntity.setProperty("imgUrl", imageUrl);
+      // blogMessageEntity.setProperty("imgUrl", imageUrl);
       blogMessageEntity.setProperty("time", timestamp);
       blogMessageEntity.setProperty("tag", postTag);
       blogMessageEntity.setProperty("replies", messageReplies);
