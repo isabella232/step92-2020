@@ -33,6 +33,7 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import com.google.sps.data.BlogMessage;
 import com.google.sps.data.BlogHashMap;
+import com.google.sps.data.InternalTags;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.*;
@@ -47,25 +48,18 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Iterator;
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
     int numberOfCommentsToDisplay = 0;
+    List<String> tagsToSearch = new ArrayList<String>();
+    List<String> messageReplies = new ArrayList<String>(); // TODO: Handle replies later.
     
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException { 
-      //Get number of comments.
-      numberOfCommentsToDisplay = getNumberOfCommentsToDisplay(request);
-           
-      if (numberOfCommentsToDisplay < 1 || numberOfCommentsToDisplay > 100) {
-        response.setContentType("text/html");
-        response.getWriter().println("Please enter an integer between 1 and 100.");
-        return;
-      }
-
       List<BlogMessage> messages = new ArrayList<>();
-      Query query = new Query("blogMessage").addSort("time", SortDirection.DESCENDING);
+      Query query = new Query("blogMessage").addSort("time", SortDirection.ASCENDING);
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
       PreparedQuery results = datastore.prepare(query);
 
@@ -76,12 +70,11 @@ public class DataServlet extends HttpServlet {
         long timestamp = (long) entity.getProperty("time");
         String tag = (String) entity.getProperty("tag");
         String comment = (String) entity.getProperty("text");
-        String nickname = (String) entity.getProperty("nickname");
+        String nickname = (String) entity.getProperty("sender");
         String email = (String) userService.getCurrentUser().getEmail();
         //String image = (String) entity.getProperty("imgUrl");
-        ArrayList<String> messageReplies = (ArrayList) entity.getProperty("replies");
-        //BlogMessage message = new BlogMessage(messageId, tag, comment, image, nickname, email, messageReplies, timestamp);
-        BlogMessage message = new BlogMessage(messageId, tag, comment, image, nickname, messageReplies, timestamp);
+        ArrayList<String> message_Replies = (ArrayList) entity.getProperty("replies");
+        BlogMessage message = new BlogMessage(messageId, tag, comment, nickname, email, message_Replies, timestamp);
         messages.add(message);
       }
       
@@ -89,10 +82,7 @@ public class DataServlet extends HttpServlet {
       BlogHashMap blogMap = new BlogHashMap();
       blogMap.putInMap(messages);
 
-      // Load messages from BlogHashMap and respond with gson.
-      List<String> tagsToSearch = new ArrayList<String>();
-      tagsToSearch.add(""); // we'll get inputs later.
-
+       // Load messages from BlogHashMap and respond with gson.
       LinkedList<BlogMessage> loadedBlogMessages = blogMap.getMessages(tagsToSearch, numberOfCommentsToDisplay);
     
       Gson gson = new Gson();
@@ -100,52 +90,60 @@ public class DataServlet extends HttpServlet {
       
       response.getWriter().println(gson.toJson(loadedBlogMessages));
       return;
-
     }
     
-
-    /**
-   * Converts a ServerStats instance into a JSON string using the Gson library
-   */
-    @Override
+   @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+      // Get Post parameters.
       String message = request.getParameter("text-input");
-
-      String sender = getParameter(request, "sender", "Steven");
+      String sender = request.getParameter("sender");
+      String loadFactor = request.getParameter("load_factor");
+      String postTag = getTagParameter(request, "tags", InternalTags.defaultTag());
       
-      // TODO: 
-      //      Get default tag from the InternalTags class and use that below.
+      //TODO: Handle image file sent with FormData.
+      //String imageUrl = getUploadedFileUrl(request, imagePath);
       
-      // Get type of comment.
-      String commentType = getParameter(request, "tags", "Default");
+      // Only put BlogMessages with a message and tag in datastore.
+      if (message.equals("") || message.equals(null) || postTag == null) {
+        return;
+      }
 
-      //String imageUrl = getUploadedFileUrl(request, "image");
-
-      String messageRepliesString = getParameter(request, "replies", "");
-	    String messageRepliesArray[] = messageRepliesString.split(",");
-	    List<String> messageReplies = new ArrayList<String>();
-	    messageReplies = Arrays.asList(messageRepliesArray);
-      
       long timestamp = System.currentTimeMillis();
-
       Entity blogMessageEntity = new Entity("blogMessage");
       blogMessageEntity.setProperty("sender", sender);
       blogMessageEntity.setProperty("text", message);
       //blogMessageEntity.setProperty("imgUrl", imageUrl);
       blogMessageEntity.setProperty("time", timestamp);
-      blogMessageEntity.setProperty("tag", commentType);
+      blogMessageEntity.setProperty("tag", postTag);
       blogMessageEntity.setProperty("replies", messageReplies);
+    
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
       datastore.put(blogMessageEntity);
 
-      response.sendRedirect("/index.html");
+      // To get the recently posted message, add its tag to the |tagsToSearch| list.
+      // If the list has tags already, clear them before adding the tag.
+      // Our goal is to get the recently posted message.
+      if (!tagsToSearch.isEmpty()) {
+        tagsToSearch.clear();
+      }
+      tagsToSearch.add(postTag);
+
+      // Everytime a post comes through, the javascript function that handles the Post assigns
+      // a load_factor value of 1.
+      // We assign that to the |numberOfCommentsToDisplay|. 
+      if (loadFactor != null) {
+        // we don't catch since this is always 1.
+        numberOfCommentsToDisplay = Integer.parseInt(loadFactor); 
+      }
+      
+      // Now we call |doGet| to load and respond with the message.
+      // |doGet| passes the |tagsToSearch| and |numberOfCommentsToDisplay| to the 
+      // BlogHashMap's getMessages method, which responds with the recent post.
+      doGet(request, response);
     }
 
-  /**
-   * @return the request parameter, or the default value if the parameter
-   *         was not specified by the client.
-   */
-    private String getParameter(HttpServletRequest request, String name, String defaultValue) {
+    // Returns the requested parameter, or the default value if the parameter is null.
+    private String getTagParameter(HttpServletRequest request, String name, String defaultValue) {
       String value = request.getParameter(name);
       if (value == null) {
         return defaultValue;
@@ -153,20 +151,7 @@ public class DataServlet extends HttpServlet {
       return value;
     }
 
-    /* Returns number of comments to display */
-    private int getNumberOfCommentsToDisplay(HttpServletRequest request) {
-      String numberOfCommentsString = getParameter(request, "comments-choice", "0");
-      int numberOfComments;
-      try {
-        numberOfComments = Integer.parseInt(numberOfCommentsString);
-      } catch (NumberFormatException e) {
-        System.err.println("Could not convert to int: " + numberOfCommentsString);
-        return 1;
-      }
-      return numberOfComments;
-    }
-
-    /** Returns a URL that points to the uploaded file, or null if the user didn't upload a file. */
+    // Returns a URL that points to the uploaded file, or null if the user didn't upload a file.
     private String getUploadedFileUrl(HttpServletRequest request, String formInputElementName) {
       BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
       Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(request);
