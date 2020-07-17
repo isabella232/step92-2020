@@ -45,26 +45,20 @@ async function sendAndGet() {
   const nameEle = document.getElementById('sender');
   const tagEle = document.getElementById('tags');
 
-  // To load the recent post BlogHashMap needs a loadFactor(limit) of 1.
-  const loadFactor = 1;
-
-  //TODO: use FormData function to post image file.
-  // const imgEle...
-  
+  // TODO: use FormData function to post image file.
   
   // Create a |URLSearchParams()| and append parameters to it. 
   const params = new URLSearchParams();
   params.append('text-input', textEle.value);
   params.append('sender', nameEle.value);
   params.append('tags', tagEle.value);
-  params.append('load_factor', loadFactor);
 
   // Post parameters to the server and fetch instantly to build the page.
-  fetch('/data', {method: 'POST', body: params}).then(response => response.json()).then((msgs) => {
+  fetch('/data', {method: 'POST', body: params})
+        .then(response => response.json()).then((msgs) => {
     const statsListElement = document.getElementById('posts-list');
     msgs.forEach((msg) => {
       statsListElement.appendChild(createListElement(msg));
-      //statsListElement.appendChild(createImgElement(msg.imgUrl));
     })
   });
 }
@@ -74,7 +68,6 @@ async function loadPosts(){
     const statsListElement = document.getElementById('posts-list');
     msgs.forEach((msg) => {
       statsListElement.appendChild(createListElement(msg));
-      //statsListElement.appendChild(createImgElement(msg.imgUrl));
     })
   });
 }
@@ -129,7 +122,8 @@ function createImgElement(text) {
 async function deleteMessage(msg) {
   const params = new URLSearchParams();
   params.append('messageId', msg.id);
-  fetch('/delete-data', {method: 'POST', body: params}).then(response => response.text()).then((text) => {
+  fetch('/delete-data', {method: 'POST', body: params})
+        .then(response => response.text()).then((text) => {
     const confirmationElement = document.getElementById('confirm');
     confirmationElement.innerHTML = text;
   });
