@@ -27,6 +27,8 @@ public final class InternalTags {
     INTERNAL_TAGS.add("#education");
     INTERNAL_TAGS.add("#games");
     INTERNAL_TAGS.add("#music");
+    INTERNAL_TAGS.add("#nature");
+    INTERNAL_TAGS.add("#space");
     INTERNAL_TAGS.add("#wellbeing");
   }
 
