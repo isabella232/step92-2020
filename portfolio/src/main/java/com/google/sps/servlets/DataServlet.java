@@ -54,14 +54,15 @@ import java.util.Map;
 public class DataServlet extends HttpServlet {
   private int numberOfCommentsToDisplay = 0;
   private List<String> tagsToSearch = new ArrayList<String>();
+  private final static String MESSAGE_PARAMETER = "text-input";
+  private final static String SENDER_PARAMETER = "sender";
+  private final static String TAG_PARAMETER = "tags";
   
   private void putBlogsInDatastore(String tag, String message, String nickname, List<String> reply) {
-    final long TIMESTAMP = System.currentTimeMillis();
-
     Entity blogMessageEntity = new Entity("blogMessage");
     blogMessageEntity.setProperty("nickname", nickname);
     blogMessageEntity.setProperty("text", message);
-    blogMessageEntity.setProperty("time", TIMESTAMP);
+    blogMessageEntity.setProperty("time", System.currentTimeMillis());
     blogMessageEntity.setProperty("tag", tag);
     blogMessageEntity.setProperty("replies", reply);
     
@@ -114,10 +115,6 @@ public class DataServlet extends HttpServlet {
     
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    final String MESSAGE_PARAMETER = "text-input";
-    final String SENDER_PARAMETER = "sender";
-    final String TAG_PARAMETER = "tags";
-    
     // Get Post parameters.
     String message = request.getParameter(MESSAGE_PARAMETER);
     String nickname = request.getParameter(SENDER_PARAMETER);
