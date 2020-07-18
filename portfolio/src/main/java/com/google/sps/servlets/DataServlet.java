@@ -55,7 +55,7 @@ public class DataServlet extends HttpServlet {
   private int numberOfCommentsToDisplay = 0;
   private List<String> tagsToSearch = new ArrayList<String>();
   
-  private void putBlogsInDatastore(String tag, String message, String nickname, reply) {
+  private void putBlogsInDatastore(String tag, String message, String nickname, List<String> reply) {
     final long TIMESTAMP = System.currentTimeMillis();
 
     Entity blogMessageEntity = new Entity("blogMessage");
@@ -70,7 +70,7 @@ public class DataServlet extends HttpServlet {
   }
 
   private List<BlogMessage> getBlogsFromDatastore() {
-    List<BlogMessage> BlogMessages = new ArrayList<>();
+    List<BlogMessage> BlogMessages = new ArrayList<BlogMessage>();
     Query query = new Query("blogMessage").addSort("time", SortDirection.ASCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
@@ -87,7 +87,7 @@ public class DataServlet extends HttpServlet {
       ArrayList<String> messageReplies = (ArrayList) entity.getProperty("replies");
       BlogMessage message = new BlogMessage(
             messageId, tag, comment, nickname, email, messageReplies, timestamp);
-      messages.add(message);
+      BlogMessages.add(message);
     }
     return BlogMessages;
   }
@@ -114,10 +114,14 @@ public class DataServlet extends HttpServlet {
     
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    final String MESSAGE_PARAMETER = "text-input";
+    final String SENDER_PARAMETER = "sender";
+    final String TAG_PARAMETER = "tags";
+    
     // Get Post parameters.
-    final String MESSAGE = request.getParameter("text-input");
-    final String NICKNAME = request.getParameter("sender");
-    String postTag = request.getParameter("tags");
+    String message = request.getParameter(MESSAGE_PARAMETER);
+    String nickname = request.getParameter(SENDER_PARAMETER);
+    String postTag = request.getParameter(TAG_PARAMETER);
     if (postTag == null || postTag.isEmpty()) {
       postTag = InternalTags.defaultTag();
     }
@@ -128,10 +132,10 @@ public class DataServlet extends HttpServlet {
     //TODO: Handle image file sent with FormData.
       
     // Only put BlogMessages with a message in datastore.
-    if (MESSAGE == null || MESSAGE.isEmpty()) {
+    if (message == null || message.isEmpty()) {
       return;
     }
-    putBlogsInDatastore(postTag, MESSAGE, NICKNAME, messageReplies);
+    putBlogsInDatastore(postTag, message, nickname, messageReplies);
 
     // To get the recently posted message, add its tag to the |tagsToSearch| list.
     // If the list has tags already, clear them before adding the tag.
