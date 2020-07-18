@@ -52,14 +52,25 @@ import java.util.Map;
 
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-  int numberOfCommentsToDisplay = 0;
-  List<String> tagsToSearch = new ArrayList<String>();
-  List<String> messageReplies = new ArrayList<String>(); 
-  // TODO: Handle replies later.
+  private int numberOfCommentsToDisplay = 0;
+  private List<String> tagsToSearch = new ArrayList<String>();
+  
+  private void putBlogsInDatastore(String tag, String message, String nickname, reply) {
+    final long TIMESTAMP = System.currentTimeMillis();
+
+    Entity blogMessageEntity = new Entity("blogMessage");
+    blogMessageEntity.setProperty("nickname", nickname);
+    blogMessageEntity.setProperty("text", message);
+    blogMessageEntity.setProperty("time", TIMESTAMP);
+    blogMessageEntity.setProperty("tag", tag);
+    blogMessageEntity.setProperty("replies", reply);
     
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException { 
-    List<BlogMessage> messages = new ArrayList<>();
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.put(blogMessageEntity);
+  }
+
+  private List<BlogMessage> getBlogsFromDatastore() {
+    List<BlogMessage> BlogMessages = new ArrayList<>();
     Query query = new Query("blogMessage").addSort("time", SortDirection.ASCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
@@ -74,52 +85,53 @@ public class DataServlet extends HttpServlet {
       String nickname = (String) entity.getProperty("nickname");
       String email = (String) userService.getCurrentUser().getEmail();
       ArrayList<String> messageReplies = (ArrayList) entity.getProperty("replies");
-      BlogMessage message = new BlogMessage(messageId, tag, comment, nickname, email, messageReplies, timestamp);
+      BlogMessage message = new BlogMessage(
+            messageId, tag, comment, nickname, email, messageReplies, timestamp);
       messages.add(message);
     }
-      
+    return BlogMessages;
+  }
+    
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // Get BlogMessages from Datastore.
+    List<BlogMessage> BlogMessages = getBlogsFromDatastore();
+
     // Create BlogHashMap Object and put BlogMessages in the map.
     BlogHashMap blogMap = new BlogHashMap();
-    blogMap.putInMap(messages);
+    blogMap.putInMap(BlogMessages);
 
     // Load messages from BlogHashMap and respond with gson.
-    LinkedList<BlogMessage> loadedBlogMessages = blogMap.getMessages(tagsToSearch, numberOfCommentsToDisplay);
-    
+    LinkedList<BlogMessage> loadedBlogMessages = blogMap.getMessages(
+        tagsToSearch, numberOfCommentsToDisplay);
+
     Gson gson = new Gson();
     response.setContentType("application/json;");
       
     response.getWriter().println(gson.toJson(loadedBlogMessages));
     return;
-    }
+  }
     
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get Post parameters.
-    String message = request.getParameter("text-input");
-    String nickname = request.getParameter("sender");
+    final String MESSAGE = request.getParameter("text-input");
+    final String NICKNAME = request.getParameter("sender");
     String postTag = request.getParameter("tags");
-
-    if (postTag.isEmpty() || postTag == null) {
+    if (postTag == null || postTag.isEmpty()) {
       postTag = InternalTags.defaultTag();
     }
-      
+
+    // TODO: Handle replies later.
+    List<String> messageReplies = new ArrayList<String>(); 
+  
     //TODO: Handle image file sent with FormData.
       
     // Only put BlogMessages with a message in datastore.
-    if (message.isEmpty() || message == null) {
+    if (MESSAGE == null || MESSAGE.isEmpty()) {
       return;
     }
-
-    long timestamp = System.currentTimeMillis();
-    Entity blogMessageEntity = new Entity("blogMessage");
-    blogMessageEntity.setProperty("nickname", nickname);
-    blogMessageEntity.setProperty("text", message);
-    blogMessageEntity.setProperty("time", timestamp);
-    blogMessageEntity.setProperty("tag", postTag);
-    blogMessageEntity.setProperty("replies", messageReplies);
-    
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    datastore.put(blogMessageEntity);
+    putBlogsInDatastore(postTag, MESSAGE, NICKNAME, messageReplies);
 
     // To get the recently posted message, add its tag to the |tagsToSearch| list.
     // If the list has tags already, clear them before adding the tag.
@@ -134,7 +146,7 @@ public class DataServlet extends HttpServlet {
     // |doGet| passes the |tagsToSearch| and |numberOfCommentsToDisplay| to the 
     // BlogHashMap's getMessages method, which responds with the recent post.
     doGet(request, response);
-    }
+  }
 
     // Returns a URL that points to the uploaded file, or null if the user didn't upload a file.
     private String getUploadedFileUrl(HttpServletRequest request, String formInputElementName) {
