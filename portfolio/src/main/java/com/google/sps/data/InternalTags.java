@@ -41,6 +41,7 @@ public final class InternalTags {
     INTERNAL_TAGS.add(MUSIC_TAG);
     INTERNAL_TAGS.add(POLITICS_TAG);
     INTERNAL_TAGS.add(WELLBEING_TAG);
+
   }
 
   public static boolean tagIsSupported(BlogMessage message) {
