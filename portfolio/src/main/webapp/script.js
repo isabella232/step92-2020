@@ -112,4 +112,3 @@ function showPostForm() {
 function setNicknameForm() {
     window.open("/login");
 }
-

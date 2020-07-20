@@ -83,8 +83,19 @@
 
     <div id="FollowTags" class="tabcontent">
       <div id="followtagscontent">
-        <h1>Tags You Follow</h1>
-        <p>This page will provide posts on tags you follow.</p>
+        <h1>Tags To Follow</h1>
+        <p>This page will provide posts on tags to follow.</p>
+        <form id="tags-form" enctype="multipart/form-data" method="POST">
+          <select name="tags" id="followtags">
+            <option value="#general" id="general">#general</option>
+            <option value="#business" id="business">#business</option>
+            <option value="#education" id="education">#education</option>
+            <option value="#games" id="games">#games</option>
+            <option value="#music" id="music">#music</option>
+            <option value="#wellbeing" id="wellbeing">#wellbeing</option>
+          </select>
+          <input type="submit"/>
+        </form>
         <div id="followedtags-container"></div>
       </div>
     </div>
