@@ -20,14 +20,28 @@ import java.util.List;
 public final class InternalTags {
   private static List<String> INTERNAL_TAGS = new ArrayList<String>();
   private static String DEFAULT_TAG = "#general";
+  private static String ANIMAL_TAG = "#animal";
+  private static String ART_TAG = "#art";
+  private static String BUSINESS_TAG = "#business";
+  private static String EDUCATION_TAG = "#education";
+  private static String ENVIRONMENT_TAG = "#environment";
+  private static String GAMES_TAG = "#games";
+  private static String MUSIC_TAG = "#music";
+  private static String POLITICS_TAG = "#politics";
+  private static String WELLBEING_TAG = "#wellbeing";
   
   private static void setTags() {
     INTERNAL_TAGS.add(DEFAULT_TAG);
-    INTERNAL_TAGS.add("#business");
-    INTERNAL_TAGS.add("#education");
-    INTERNAL_TAGS.add("#games");
-    INTERNAL_TAGS.add("#music");
-    INTERNAL_TAGS.add("#wellbeing");
+    INTERNAL_TAGS.add(ANIMAL_TAG);
+    INTERNAL_TAGS.add(ART_TAG);
+    INTERNAL_TAGS.add(BUSINESS_TAG);
+    INTERNAL_TAGS.add(EDUCATION_TAG);
+    INTERNAL_TAGS.add(ENVIRONMENT_TAG);
+    INTERNAL_TAGS.add(GAMES_TAG);
+    INTERNAL_TAGS.add(MUSIC_TAG);
+    INTERNAL_TAGS.add(POLITICS_TAG);
+    INTERNAL_TAGS.add(WELLBEING_TAG);
+
   }
 
   public static boolean tagIsSupported(BlogMessage message) {

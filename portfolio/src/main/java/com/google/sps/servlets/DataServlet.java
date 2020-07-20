@@ -33,6 +33,7 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import com.google.sps.data.BlogMessage;
 import com.google.sps.data.BlogHashMap;
+import com.google.sps.data.InternalTags;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.*;
@@ -44,135 +45,111 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-    int numberOfCommentsToDisplay = 0;
+  private int numberOfCommentsToDisplay = 0;
+  private List<String> tagsToSearch = new ArrayList<String>();
+  private final static String MESSAGE_PARAMETER = "text-input";
+  private final static String SENDER_PARAMETER = "sender";
+  private final static String TAG_PARAMETER = "tags";
+  
+  private void putBlogsInDatastore(String tag, String message, String nickname, List<String> reply) {
+    Entity blogMessageEntity = new Entity("blogMessage");
+    blogMessageEntity.setProperty("nickname", nickname);
+    blogMessageEntity.setProperty("text", message);
+    blogMessageEntity.setProperty("time", System.currentTimeMillis());
+    blogMessageEntity.setProperty("tag", tag);
+    blogMessageEntity.setProperty("replies", reply);
     
-    @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-      List<String> allTags = new ArrayList<>();
-      
-      List<BlogMessage> messages = new ArrayList<>();
-      Query query = new Query("blogMessage").addSort("time", SortDirection.DESCENDING);
-      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-      PreparedQuery results = datastore.prepare(query);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.put(blogMessageEntity);
+  }
 
-      UserService userService = UserServiceFactory.getUserService();
+  private List<BlogMessage> getBlogsFromDatastore() {
+    List<BlogMessage> BlogMessages = new ArrayList<BlogMessage>();
+    Query query = new Query("blogMessage").addSort("time", SortDirection.ASCENDING);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery results = datastore.prepare(query);
 
-      for (Entity entity : results.asIterable()) {
-        long messageId = entity.getKey().getId();
-        long timestamp = (long) entity.getProperty("time");
-        String tag = (String) entity.getProperty("tag");
-        String comment = (String) entity.getProperty("text");
-        String nickname = (String) entity.getProperty("nickname");
-        String email = (String) userService.getCurrentUser().getEmail();
-        String image = (String) entity.getProperty("imgUrl");
-        ArrayList<String> messageReplies = (ArrayList) entity.getProperty("replies");
-        BlogMessage message = new BlogMessage(messageId, tag, comment, image, nickname, email, messageReplies, timestamp);
-        messages.add(message);
-      }
-      
-      // Create BlogHashMap Object and put BlogMessages in the map.
-      BlogHashMap blogMap = new BlogHashMap();
-      blogMap.putInMap(messages);
+    UserService userService = UserServiceFactory.getUserService();
 
-      // If (user loads all BlogMessages) 
-      LinkedList<BlogMessage> allBlogMessages = blogMap.getMessages(allTags, messages.size());
-
-      if (numberOfCommentsToDisplay < 1 || numberOfCommentsToDisplay > allBlogMessages.size()) {
-        numberOfCommentsToDisplay = allBlogMessages.size();
-      }
+    for (Entity entity : results.asIterable()) {
+      long messageId = entity.getKey().getId();
+      long timestamp = (long) entity.getProperty("time");
+      String tag = (String) entity.getProperty("tag");
+      String comment = (String) entity.getProperty("text");
+      String nickname = (String) entity.getProperty("nickname");
+      String email = (String) userService.getCurrentUser().getEmail();
+      ArrayList<String> messageReplies = (ArrayList) entity.getProperty("replies");
+      BlogMessage message = new BlogMessage(
+            messageId, tag, comment, nickname, email, messageReplies, timestamp);
+      BlogMessages.add(message);
+    }
+    return BlogMessages;
+  }
     
-      Gson gson = new Gson();
-      response.setContentType("application/json;");
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // Get BlogMessages from Datastore.
+    List<BlogMessage> BlogMessages = getBlogsFromDatastore();
 
-      List<BlogMessage> limitedBlogMessages = new ArrayList<>();
-      for (int i = 0; i < numberOfCommentsToDisplay; i++) {
-        limitedBlogMessages.add(allBlogMessages.get(i));
-      }
-      response.getWriter().println(gson.toJson(limitedBlogMessages));
+    // Create BlogHashMap Object and put BlogMessages in the map.
+    BlogHashMap blogMap = new BlogHashMap();
+    blogMap.putInMap(BlogMessages);
+
+    // Load messages from BlogHashMap and respond with gson.
+    LinkedList<BlogMessage> loadedBlogMessages = blogMap.getMessages(
+        tagsToSearch, numberOfCommentsToDisplay);
+
+    Gson gson = new Gson();
+    response.setContentType("application/json;");
+    
+    response.getWriter().println(gson.toJson(loadedBlogMessages));
+    return;
+  }
+    
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // Get Post parameters.
+    String message = request.getParameter(MESSAGE_PARAMETER);
+    String nickname = request.getParameter(SENDER_PARAMETER);
+    String postTag = request.getParameter(TAG_PARAMETER);
+    if (postTag == null || postTag.isEmpty()) {
+      postTag = InternalTags.defaultTag();
+    }
+
+    // TODO: Handle replies later.
+    List<String> messageReplies = new ArrayList<String>(); 
+  
+    //TODO: Handle image file sent with FormData.
+      
+    // Only put BlogMessages with a message in datastore.
+    if (message == null || message.isEmpty()) {
       return;
-      
-      /** TODO: 
-            add functionality for next cases => 
-            1. user specifies amount for all messages
-            2. user specifies amount for messages under a tag
-            3. user specifies amount for all messages under a list of tags
-        */ 
-
     }
+    putBlogsInDatastore(postTag, message, nickname, messageReplies);
+
+    // To get the recently posted message, add its tag to the |tagsToSearch| list.
+    // If the list has tags already, clear them before adding the tag.
+    // Our goal is to get the recently posted message.
+    tagsToSearch.clear();
+    tagsToSearch.add(postTag);
     
+    // We want to load only the recent post.
+    numberOfCommentsToDisplay = 1; 
+    
+    // Now we call |doGet| to load and respond with the message.
+    // |doGet| passes the |tagsToSearch| and |numberOfCommentsToDisplay| to the 
+    // BlogHashMap's getMessages method, which responds with the recent post.
+    doGet(request, response);
+  }
 
-    /**
-   * Converts a ServerStats instance into a JSON string using the Gson library
-   */
-    @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-      String message = request.getParameter("text-input");
-
-      String nickname = getParameter(request, "sender", "Steven");
-
-      numberOfCommentsToDisplay = getNumberOfCommentsToDisplay(request);
-      
-      // TODO: 
-      //      Get default tag from the InternalTags class and use that below.
-      
-      // Get type of comment.
-      String commentType = getParameter(request, "tags", "Default");
-
-      String imageUrl = getUploadedFileUrl(request, "image");
-
-      String messageRepliesString = getParameter(request, "replies", "");
-	    String messageRepliesArray[] = messageRepliesString.split(",");
-	    List<String> messageReplies = new ArrayList<String>();
-	    messageReplies = Arrays.asList(messageRepliesArray);
-      
-      long timestamp = System.currentTimeMillis();
-
-      Entity blogMessageEntity = new Entity("blogMessage");
-      blogMessageEntity.setProperty("nickname", nickname);
-      blogMessageEntity.setProperty("text", message);
-      blogMessageEntity.setProperty("imgUrl", imageUrl);
-      blogMessageEntity.setProperty("time", timestamp);
-      blogMessageEntity.setProperty("tag", commentType);
-      blogMessageEntity.setProperty("replies", messageReplies);
-      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-      datastore.put(blogMessageEntity);
-
-      response.sendRedirect("/index.html");
-    }
-
-  /**
-   * @return the request parameter, or the default value if the parameter
-   *         was not specified by the client.
-   */
-    private String getParameter(HttpServletRequest request, String name, String defaultValue) {
-      String value = request.getParameter(name);
-      if (value == null) {
-        return defaultValue;
-      }
-      return value;
-    }
-
-    /* Returns number of comments to display */
-    private int getNumberOfCommentsToDisplay(HttpServletRequest request) {
-      String numberOfCommentsString = getParameter(request, "comments-choice", "0");
-      int numberOfComments;
-      try {
-        numberOfComments = Integer.parseInt(numberOfCommentsString);
-      } catch (NumberFormatException e) {
-        System.err.println("Could not convert to int: " + numberOfCommentsString);
-        return 1;
-      }
-      return numberOfComments;
-    }
-
-    /** Returns a URL that points to the uploaded file, or null if the user didn't upload a file. */
+    // Returns a URL that points to the uploaded file, or null if the user didn't upload a file.
     private String getUploadedFileUrl(HttpServletRequest request, String formInputElementName) {
       BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
       Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(request);
