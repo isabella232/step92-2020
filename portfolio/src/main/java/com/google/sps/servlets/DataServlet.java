@@ -108,7 +108,7 @@ public class DataServlet extends HttpServlet {
 
     Gson gson = new Gson();
     response.setContentType("application/json;");
-      
+    
     response.getWriter().println(gson.toJson(loadedBlogMessages));
     return;
   }

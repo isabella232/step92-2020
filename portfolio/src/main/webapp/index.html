@@ -2,6 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>BIPOC Blog</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
@@ -13,7 +14,7 @@
       }
     </style>
   </head>
-  <body onload="fetchBlobstoreUrlAndShowForm(); defaultPage(); loadPosts();">
+  <body onload="fetchBlobstoreUrlAndShowForm(); defaultPage(); getCommentsHome(); loadPosts();">
     <button class="tablink" onclick="openPage('Home', this, 'grey')" id="defaultOpen">Home</button>
     <button class="tablink" onclick="openPage('Blog', this, 'grey')">Blog</button>
     <button class="tablink" onclick="openPage('Information', this, 'grey')">Information</button>
@@ -21,8 +22,21 @@
 
     <div id="Home" class="tabcontent">
       <div id="homecontent">
-        <h1>TOP X POSTS</h1>
+        <div class="scrollmenu">
+          <button class="scrollbutton" onclick="getCommentsTag('#general');">#general</button>
+          <button class="scrollbutton" onclick="getCommentsTag('#animals');">#animals</button>
+          <button class="scrollbutton" onclick="getCommentsTag('#art');">#art</button>
+          <button class="scrollbutton" onclick="getCommentsTag('#business');">#business</button>
+          <button class="scrollbutton" onclick="getCommentsTag('#education');">#education</button>
+          <button class="scrollbutton" onclick="getCommentsTag('#environment');">#environment</button>
+          <button class="scrollbutton" onclick="getCommentsTag('#games');">#games</button>
+          <button class="scrollbutton" onclick="getCommentsTag('#music');">#music</button>
+          <button class="scrollbutton" onclick="getCommentsTag('#politics');">#politics</button>       
+          <button class="scrollbutton" onclick="getCommentsTag('#wellbeing');">#wellbeing</button>
+        </div>
+        <h1 style="text-align:center;">TOP X POSTS</h1>
         <p>Here are the top X posts!</p>
+        <div id="home-comments-container" style="text-align:center;"></div>
       </div>
     </div>
 
@@ -31,8 +45,7 @@
       <button onclick="setNicknameForm()">Set your nickname</button>
       <div id="blogcontent">
         <h1>Blog</h1>
-        <p>Welcome to the BIPOC blog, a space to uplift BIPOC and share resources.</p>
-        
+        <p>Welcome to the BIPOC blog, a space to uplift BIPOC and share resources.</p
         <form id="my-form" enctype="multipart/form-data">
           <textarea id="sender" rows="1" cols="20" placeholder="Nickname"></textarea> 
           <br>

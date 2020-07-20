@@ -63,12 +63,40 @@ async function sendAndGet() {
   });
 }
 
+function getCommentsHome() {
+  fetch('/data').then(response => response.json()).then((msgs) => {
+    const statsListElement = document.getElementById('home-comments-container');
+    statsListElement.innerHTML = '';
+    msgs.forEach((msg) => {
+      statsListElement.appendChild(
+        createListElement(msg.nickname + ': ' + msg.message));
+      statsListElement.appendChild(
+        createImgElement(msg.image));
+    })
+  });  
+}
+
 async function loadPosts(){
   fetch('/data').then(response => response.json()).then((msgs) => {
     const statsListElement = document.getElementById('posts-list');
     msgs.forEach((msg) => {
       statsListElement.appendChild(createListElement(msg));
     })
+  });
+}
+
+function getCommentsTag(tag) {
+  fetch('/data').then(response => response.json()).then((msgs) => {
+   
+  const statsListElement = document.getElementById('home-comments-container');
+  statsListElement.innerHTML = '';
+  msgs.forEach((msg) => {
+    if (msg.tag == tag || tag == "") {
+      statsListElement.appendChild(
+        createListElement(msg.nickname + ': ' + msg.message));
+      statsListElement.appendChild(
+        createImgElement(msg.image));}
+    })   
   });
 }
  
@@ -148,6 +176,10 @@ function showPostForm() {
     } else {
     window.open("/login")}
   });
+}
+
+function setTag(tag) {
+  document.getElementById("comments-tag").value = tag;
 }
 
 function setNicknameForm() {
