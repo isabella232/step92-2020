@@ -191,3 +191,11 @@ function setNicknameForm() {
     window.open("/login");
 }
 
+function sendFollowedTags() {
+  const tagElem = document.getElementById('followtags');
+
+  const params = new URLSearchParams();
+  params.append('tags', tagElem.value);
+
+  fetch('/follow-tags', {method: 'POST', body: params});
+}

@@ -19,6 +19,7 @@
     <button class="tablink" onclick="openPage('Blog', this, 'grey')">Blog</button>
     <button class="tablink" onclick="openPage('Information', this, 'grey')">Information</button>
     <button class="tablink" onclick="openPage('Resources', this, 'grey')">Resources</button>
+    <button class="tablink" onclick="openPage('FollowTags', this, 'grey')">Tags You Follow</button>
 
     <div id="Home" class="tabcontent">
       <div id="homecontent">
@@ -85,6 +86,23 @@
       <div id="resourcescontent">
         <h1>Resources</h1>
         <p>This page will provide physical resources.</p>
+      </div>
+    </div>
+
+    <div id="FollowTags" class="tabcontent">
+      <div id="followtagscontent">
+        <h1>Tags To Follow</h1>
+        <p>This page will provide posts on tags to follow.</p>
+        <select name="tags" id="followtags">
+          <option value="#general" id="general">#general</option>
+          <option value="#business" id="business">#business</option>
+          <option value="#education" id="education">#education</option>
+          <option value="#games" id="games">#games</option>
+          <option value="#music" id="music">#music</option>
+          <option value="#wellbeing" id="wellbeing">#wellbeing</option>
+        </select>
+        <button onclick="sendFollowedTags()">Follow</button>
+        <div id="followedtags-container"></div>
       </div>
     </div>
  

@@ -35,6 +35,15 @@
   color: black;
 }
 
+#followtagscontent {
+  margin-left: auto;
+  margin-right: auto;
+  width: 950px;
+  background-color: rgb(255, 255, 255);
+  padding: 50px;
+  color: black;
+}
+
 body, html {
   margin: 0;
   font-family: Arial;
@@ -97,6 +106,7 @@ body, html {
 #Blog {background-color: rgb(189, 255, 249);}
 #Information {background-color: rgb(164, 248, 164);}
 #Resources {background-color: rgb(248, 235, 159);}
+#FollowTags {background-color: rgb(255, 255, 255);}
 
 .scrollmenu {
   background-color: #333;
