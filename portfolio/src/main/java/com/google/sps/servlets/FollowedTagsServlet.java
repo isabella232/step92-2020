@@ -58,7 +58,6 @@ public class FollowedTagsServlet extends HttpServlet {
 
     }
     
-
     /**
    * Converts a ServerStats instance into a JSON string using the Gson library
    */
@@ -66,11 +65,13 @@ public class FollowedTagsServlet extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
       UserService userService = UserServiceFactory.getUserService();
      
-      String commentType = getParameter(request, "tags", "#general");
+      String commentType = request.getParameter("tags");
+      if (commentType == null) {
+        return;
+      }
       String email = (String) userService.getCurrentUser().getEmail();
 
       followedPosts.add(commentType);
-      System.out.println(commentType);
 
       Entity followedTag = new Entity("followedTag");
       followedTag.setProperty("tag", commentType);
@@ -83,11 +84,4 @@ public class FollowedTagsServlet extends HttpServlet {
    * @return the request parameter, or the default value if the parameter
    *         was not specified by the client.
    */
-   private String getParameter(HttpServletRequest request, String name, String defaultValue) {
-      String value = request.getParameter(name);
-      if (value == null) {
-        return defaultValue;
-      }
-      return value;
-    }
 }
