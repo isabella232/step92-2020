@@ -58,8 +58,10 @@ public class DataServlet extends HttpServlet {
   private final static String SENDER_PARAMETER = "sender";
   private final static String TAG_PARAMETER = "tags";
   
+  public final static String BLOG_ENTITY_KIND = "blogMessage";
+  
   private void putBlogsInDatastore(String tag, String message, String nickname, List<String> reply) {
-    Entity blogMessageEntity = new Entity("blogMessage");
+    Entity blogMessageEntity = new Entity(BLOG_ENTITY_KIND);
     blogMessageEntity.setProperty("nickname", nickname);
     blogMessageEntity.setProperty("text", message);
     blogMessageEntity.setProperty("time", System.currentTimeMillis());
@@ -72,7 +74,7 @@ public class DataServlet extends HttpServlet {
 
   private List<BlogMessage> getBlogsFromDatastore() {
     List<BlogMessage> BlogMessages = new ArrayList<BlogMessage>();
-    Query query = new Query("blogMessage").addSort("time", SortDirection.ASCENDING);
+    Query query = new Query(BLOG_ENTITY_KIND).addSort("time", SortDirection.ASCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
