@@ -146,14 +146,19 @@ function createImgElement(text) {
   imgElement.src = text;
   return imgElement;
 }
- 
-async function deleteMessage(msg) {
+
+// Deletes a post and sends a confirmation message for 5 seconds.
+async function deleteMessage(msg) { 
   const params = new URLSearchParams();
   params.append('messageId', msg.id);
   fetch('/delete-data', {method: 'POST', body: params})
         .then(response => response.text()).then((text) => {
     const confirmationElement = document.getElementById('confirm');
-    confirmationElement.innerHTML = text;
+    confirmationElement.innerHTML="";
+    confirmationElement.style.display='inline-block';
+    confirmationElement.innerHTML = `<i>${text}</i>`;
+    setTimeout(function () {
+        document.getElementById('confirm').style.display='none';}, 5000);
   });
 }
  
