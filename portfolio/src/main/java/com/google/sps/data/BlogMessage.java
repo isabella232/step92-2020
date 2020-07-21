@@ -61,5 +61,9 @@ public final class BlogMessage {
   public long getTimestamp() {
     return timestamp;
   }
+
+  public long getParentID() {
+    return parentID;
+  }
   
 }
