@@ -28,7 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public final class LoadFollowedTags {
-  
+  public static String tagQuery = "followedTag";
   public List<String> getFollowedTags (String email) {
     List<String> followedTags = new ArrayList<String>();
     PreparedQuery results = getResults(email);
@@ -46,7 +46,7 @@ public final class LoadFollowedTags {
 
   private PreparedQuery getResults (String email) {
     Filter tagFilter = new FilterPredicate("email", FilterOperator.EQUAL, email);
-    Query query = new Query("followedTag").setFilter(tagFilter);
+    Query query = new Query(tagQuery).setFilter(tagFilter);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
     return results;

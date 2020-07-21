@@ -52,7 +52,8 @@ import java.util.Map;
 @WebServlet("/follow-tags")
 public class FollowedTagsServlet extends HttpServlet {
   List<String> followedPosts= new ArrayList<>();
-    
+  public static String tagQuery = "followedTag";
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
@@ -73,7 +74,7 @@ public class FollowedTagsServlet extends HttpServlet {
 
     followedPosts.add(commentType);
 
-    Entity followedTag = new Entity("followedTag");
+    Entity followedTag = new Entity(tagQuery);
     followedTag.setProperty("tag", commentType);
     followedTag.setProperty("email", email);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
