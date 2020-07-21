@@ -66,6 +66,34 @@ body, html {
   height: 100%;
 }
 
+#confirm {
+  background-color: rgb(51, 153, 255);
+  display: none;
+  width: max-content;
+  border: 5px solid rgb(51, 153, 255);
+  padding: 5px;
+  margin: 5px;
+  text-decoration: none;
+  color: #008CBA;
+  position: relative;
+  animation-name: confirmAnim;
+  animation-duration: 5s;
+}
+
+@keyframes confirmAnim {
+  0%   {background-color:rgb(0, 132, 255);}
+  50% {
+    background-color:rgb(85, 255, 51);
+    border: 5px solid rgb(85, 255, 51);
+    left:250px;
+  }
+  100% {
+    background-color:green;
+    border: 5px solid green;
+    left:500px;
+  }
+}
+
 #Home {background-color: rgb(220, 189, 255);}
 #Blog {background-color: rgb(189, 255, 249);}
 #Information {background-color: rgb(164, 248, 164);}
