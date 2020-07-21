@@ -27,7 +27,7 @@ public final class BlogMessage {
   private static ArrayList<String> messageReplies;
   
   public BlogMessage(long id, String tag, String message,
-        String nickname, String email, ArrayList<String> messageReplies, long timestamp) {
+        String nickname, String email, ArrayList<String> messageReplies, long timestamp, long parentID) {
     this.id = id;
     this.tag = tag;
     this.message = message;
@@ -35,6 +35,7 @@ public final class BlogMessage {
     this.email = email;
     this.messageReplies = messageReplies;
     this.timestamp = timestamp;
+    this.parentID = parentID;
   }
 
   public long getMessageId() {
@@ -53,7 +54,7 @@ public final class BlogMessage {
     return nickname;
   }
 
-  public ArrayList<String> getReplies() {
+  public ArrayList<BlogMessage> getReplies() {
     return messageReplies;
   }
 
