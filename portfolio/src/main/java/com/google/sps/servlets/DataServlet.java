@@ -61,8 +61,10 @@ public class DataServlet extends HttpServlet {
   // TODO: ADD TO FORM IN INDEX
   private final static long PARENT_ID_PARAMETER = 0;
   
-  private void putBlogsInDatastore(String tag, String message, String nickname, List<BlogMessage> reply, long parentID) {
-    Entity blogMessageEntity = new Entity("blogMessage");
+  public final static String BLOG_ENTITY_KIND = "blogMessage";
+  
+  private void putBlogsInDatastore(String tag, String message, String nickname, List<String> reply) {
+    Entity blogMessageEntity = new Entity(BLOG_ENTITY_KIND);
     blogMessageEntity.setProperty("nickname", nickname);
     blogMessageEntity.setProperty("text", message);
     blogMessageEntity.setProperty("time", System.currentTimeMillis());
@@ -76,7 +78,7 @@ public class DataServlet extends HttpServlet {
 
   private List<BlogMessage> getBlogsFromDatastore() {
     List<BlogMessage> BlogMessages = new ArrayList<BlogMessage>();
-    Query query = new Query("blogMessage").addSort("time", SortDirection.ASCENDING);
+    Query query = new Query(BLOG_ENTITY_KIND).addSort("time", SortDirection.ASCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
