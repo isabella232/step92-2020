@@ -57,6 +57,9 @@ public class DataServlet extends HttpServlet {
   private final static String MESSAGE_PARAMETER = "text-input";
   private final static String SENDER_PARAMETER = "sender";
   private final static String TAG_PARAMETER = "tags";
+
+  // TODO: ADD TO FORM IN INDEX
+  private final static long PARENT_ID_PARAMETER = 0;
   
   public final static String BLOG_ENTITY_KIND = "blogMessage";
   
@@ -67,6 +70,7 @@ public class DataServlet extends HttpServlet {
     blogMessageEntity.setProperty("time", System.currentTimeMillis());
     blogMessageEntity.setProperty("tag", tag);
     blogMessageEntity.setProperty("replies", reply);
+    blogMessageEntity.setProperty("parentID", parentID);
     
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(blogMessageEntity);
@@ -87,9 +91,10 @@ public class DataServlet extends HttpServlet {
       String comment = (String) entity.getProperty("text");
       String nickname = (String) entity.getProperty("nickname");
       String email = (String) userService.getCurrentUser().getEmail();
-      ArrayList<String> messageReplies = (ArrayList) entity.getProperty("replies");
+      long parentID = (long) entity.getProperty("parentID");
+      ArrayList<BlogMessage> messageReplies = (ArrayList) entity.getProperty("replies");
       BlogMessage message = new BlogMessage(
-            messageId, tag, comment, nickname, email, messageReplies, timestamp);
+            messageId, tag, comment, nickname, email, messageReplies, timestamp, parentID);
       BlogMessages.add(message);
     }
     return BlogMessages;
@@ -121,12 +126,13 @@ public class DataServlet extends HttpServlet {
     String message = request.getParameter(MESSAGE_PARAMETER);
     String nickname = request.getParameter(SENDER_PARAMETER);
     String postTag = request.getParameter(TAG_PARAMETER);
+    long parentID = PARENT_ID_PARAMETER;
     if (postTag == null || postTag.isEmpty()) {
       postTag = InternalTags.defaultTag();
     }
 
     // TODO: Handle replies later.
-    List<String> messageReplies = new ArrayList<String>(); 
+    List<BlogMessage> messageReplies = new ArrayList<BlogMessage>(); 
   
     //TODO: Handle image file sent with FormData.
       
@@ -134,7 +140,7 @@ public class DataServlet extends HttpServlet {
     if (message == null || message.isEmpty()) {
       return;
     }
-    putBlogsInDatastore(postTag, message, nickname, messageReplies);
+    putBlogsInDatastore(postTag, message, nickname, messageReplies, parentID);
 
     // To get the recently posted message, add its tag to the |tagsToSearch| list.
     // If the list has tags already, clear them before adding the tag.
