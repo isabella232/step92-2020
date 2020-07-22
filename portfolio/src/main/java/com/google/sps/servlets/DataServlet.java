@@ -57,13 +57,13 @@ public class DataServlet extends HttpServlet {
   private final static String MESSAGE_PARAMETER = "text-input";
   private final static String SENDER_PARAMETER = "sender";
   private final static String TAG_PARAMETER = "tags";
-
+  
   // TODO: ADD TO FORM IN INDEX
   private final static long PARENT_ID_PARAMETER = 0;
   
   public final static String BLOG_ENTITY_KIND = "blogMessage";
   
-  private void putBlogsInDatastore(String tag, String message, String nickname, List<String> reply) {
+  private void putBlogsInDatastore(String tag, String message, String nickname, List<BlogMessage> reply, long parentID) {
     Entity blogMessageEntity = new Entity(BLOG_ENTITY_KIND);
     blogMessageEntity.setProperty("nickname", nickname);
     blogMessageEntity.setProperty("text", message);
@@ -91,7 +91,8 @@ public class DataServlet extends HttpServlet {
       String comment = (String) entity.getProperty("text");
       String nickname = (String) entity.getProperty("nickname");
       String email = (String) userService.getCurrentUser().getEmail();
-      long parentID = (long) entity.getProperty("parentID");
+      long parentID = (long) 0;
+      // TODO: UPDATE WHEN FRONTEND INPUT IS TAKEN 
       ArrayList<BlogMessage> messageReplies = (ArrayList) entity.getProperty("replies");
       BlogMessage message = new BlogMessage(
             messageId, tag, comment, nickname, email, messageReplies, timestamp, parentID);
@@ -105,7 +106,25 @@ public class DataServlet extends HttpServlet {
     // Get BlogMessages from Datastore.
     List<BlogMessage> BlogMessages = getBlogsFromDatastore();
 
+    // Separate posts from replies from BlogMessages. 
+    // Add replies to messageReplies for the respective posts.
     // Create BlogHashMap Object and put BlogMessages in the map.
+    List<BlogMessage> blogMessagesReplies = new ArrayList<BlogMessage>();
+    for (BlogMessage message : BlogMessages) {
+      if (message.getParentID() != 0) {
+        blogMessagesReplies.add(message);
+        BlogMessages.remove(message);
+      }
+    }
+
+    for (BlogMessage post : BlogMessages) {
+      for (BlogMessage reply : blogMessagesReplies) {
+        if (reply.getParentID() == post.getTimestamp()) {
+          post.addReply(reply);
+        }
+      }
+    }
+
     BlogHashMap blogMap = new BlogHashMap();
     blogMap.putInMap(BlogMessages);
 
