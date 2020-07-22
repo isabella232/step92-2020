@@ -25,7 +25,7 @@ public final class BlogMessage {
   private final String email;
   private final String tag;
   private final long parentID;
-  private static ArrayList<BlogMessage> messageReplies;
+  private final ArrayList<BlogMessage> messageReplies;
   
   public BlogMessage(long id, String tag, String message,
         String nickname, String email, ArrayList<BlogMessage> messageReplies, long timestamp, long parentID) {
@@ -57,6 +57,10 @@ public final class BlogMessage {
 
   public ArrayList<BlogMessage> getReplies() {
     return messageReplies;
+  }
+
+  public void setAdditionalReply(BlogMessage message) {
+    messageReplies.add(message);
   }
 
   public long getTimestamp() {
