@@ -124,12 +124,8 @@ public class DataServlet extends HttpServlet {
         }
     }
 
-   // TAYYABA BRANCH
-
     BlogHashMap blogMap = new BlogHashMap();
     blogMap.putInMap(BlogMessages);
-
-  //  blogMap.putInMap(BlogMessages);
 
     // Load messages from BlogHashMap and respond with gson.
     LinkedList<BlogMessage> loadedBlogMessages = blogMap.getMessages(
