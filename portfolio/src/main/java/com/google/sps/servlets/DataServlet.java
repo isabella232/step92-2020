@@ -112,15 +112,14 @@ public class DataServlet extends HttpServlet {
 
     //check to see if user follows any tags
     if (LoadFollowedTags.hasFollowedTags(email)) {
-      LoadFollowedTags loadTags = new LoadFollowedTags();
-      List<String> newTags = loadTags.getFollowedTags(email);
+      List<String> newTags = LoadFollowedTags.getFollowedTags(email);
       for (String tag : newTags) {
         if (!tagsToSearch.contains(tag)) {
           tagsToSearch.add(tag);
         }
       }
       LinkedList<BlogMessage> followedBlogMessages = blogMap.getMessages(
-        tagsToSearch, numberOfCommentsToDisplay);
+          tagsToSearch, numberOfCommentsToDisplay);
 
       Gson gson = new Gson();
       response.setContentType("application/json;");

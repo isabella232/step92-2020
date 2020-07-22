@@ -27,11 +27,14 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+
+//Class to check if a user follows a tag.
+//Includes functionality to get followed tags from datastore.
 public final class LoadFollowedTags {
-  public static String tagQuery = "followedTag";
+  public static final String TAG_QUERY = "followedTag";
   public static List<String> getFollowedTags (String email) {
     List<String> followedTags = new ArrayList<String>();
-    PreparedQuery results = getResults(email);
+    PreparedQuery results = getTagsFromDatastore(email);
 
     for (Entity entity : results.asIterable()) {
       String tag = (String) entity.getProperty("tag");
@@ -44,9 +47,9 @@ public final class LoadFollowedTags {
     return getFollowedTags(email).isEmpty();
   }
 
-  private static PreparedQuery getResults (String email) {
+  private static PreparedQuery getTagsFromDatastore (String email) {
     Filter tagFilter = new FilterPredicate("email", FilterOperator.EQUAL, email);
-    Query query = new Query(tagQuery).setFilter(tagFilter);
+    Query query = new Query(TAG_QUERY).setFilter(tagFilter);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
     return results;
