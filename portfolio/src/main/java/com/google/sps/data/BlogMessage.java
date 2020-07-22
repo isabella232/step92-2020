@@ -59,7 +59,7 @@ public final class BlogMessage {
     return messageReplies;
   }
 
-  public void setAdditionalReply(BlogMessage message) {
+  public void addReply(BlogMessage message) {
     messageReplies.add(message);
   }
 
