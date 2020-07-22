@@ -29,7 +29,7 @@ import java.util.List;
 
 public final class LoadFollowedTags {
   public static String tagQuery = "followedTag";
-  public List<String> getFollowedTags (String email) {
+  public static List<String> getFollowedTags (String email) {
     List<String> followedTags = new ArrayList<String>();
     PreparedQuery results = getResults(email);
 
@@ -40,11 +40,11 @@ public final class LoadFollowedTags {
     return followedTags;
   }
 
-  public Boolean hasFollowedTags (String email) {
+  public static Boolean hasFollowedTags (String email) {
     return getFollowedTags(email).isEmpty();
   }
 
-  private PreparedQuery getResults (String email) {
+  private static PreparedQuery getResults (String email) {
     Filter tagFilter = new FilterPredicate("email", FilterOperator.EQUAL, email);
     Query query = new Query(tagQuery).setFilter(tagFilter);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
