@@ -63,7 +63,7 @@ public class DataServlet extends HttpServlet {
   
   public final static String BLOG_ENTITY_KIND = "blogMessage";
   
-  private void putBlogsInDatastore(String tag, String message, String nickname, List<String> reply) {
+  private void putBlogsInDatastore(String tag, String message, String nickname, List<BlogMessage> reply, long parentID) {
     Entity blogMessageEntity = new Entity(BLOG_ENTITY_KIND);
     blogMessageEntity.setProperty("nickname", nickname);
     blogMessageEntity.setProperty("text", message);
@@ -106,8 +106,30 @@ public class DataServlet extends HttpServlet {
     List<BlogMessage> BlogMessages = getBlogsFromDatastore();
 
     // Create BlogHashMap Object and put BlogMessages in the map.
+    
+    List<BlogMessage> BlogMessagesReplies = new ArrayList<BlogMessage>();
+    for (BlogMessage message : BlogMessages) {
+      if (message.getParentID() != 0) {
+      BlogMessagesReplies.add(message);
+      BlogMessages.remove(message);
+      }
+    }
+
+    for (BlogMessage post : BlogMessages) {
+        long postTime = post.getTimestamp();
+        for (BlogMessage reply : BlogMessagesReplies) {
+          if (reply.getParentID() == postTime) {
+              post.setAdditionalReply(reply);
+          }
+        }
+    }
+
+   // TAYYABA BRANCH
+
     BlogHashMap blogMap = new BlogHashMap();
     blogMap.putInMap(BlogMessages);
+
+  //  blogMap.putInMap(BlogMessages);
 
     // Load messages from BlogHashMap and respond with gson.
     LinkedList<BlogMessage> loadedBlogMessages = blogMap.getMessages(
