@@ -57,7 +57,7 @@ public class DataServlet extends HttpServlet {
   private final static String MESSAGE_PARAMETER = "text-input";
   private final static String SENDER_PARAMETER = "sender";
   private final static String TAG_PARAMETER = "tags";
-
+  
   // TODO: ADD TO FORM IN INDEX
   private final static long PARENT_ID_PARAMETER = 0;
   
@@ -91,7 +91,9 @@ public class DataServlet extends HttpServlet {
       String comment = (String) entity.getProperty("text");
       String nickname = (String) entity.getProperty("nickname");
       String email = (String) userService.getCurrentUser().getEmail();
-      long parentID = (long) entity.getProperty("parentID");
+      long parentID = (long) 0;
+     // TODO: UPDATE WHEN FRONTEND INPUT IS TAKEN 
+     // long parentID = (long) entity.getProperty("parentID");
       ArrayList<BlogMessage> messageReplies = (ArrayList) entity.getProperty("replies");
       BlogMessage message = new BlogMessage(
             messageId, tag, comment, nickname, email, messageReplies, timestamp, parentID);
