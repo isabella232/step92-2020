@@ -92,8 +92,7 @@ public class DataServlet extends HttpServlet {
       String nickname = (String) entity.getProperty("nickname");
       String email = (String) userService.getCurrentUser().getEmail();
       long parentID = (long) 0;
-     // TODO: UPDATE WHEN FRONTEND INPUT IS TAKEN 
-     // long parentID = (long) entity.getProperty("parentID");
+      // TODO: UPDATE WHEN FRONTEND INPUT IS TAKEN 
       ArrayList<BlogMessage> messageReplies = (ArrayList) entity.getProperty("replies");
       BlogMessage message = new BlogMessage(
             messageId, tag, comment, nickname, email, messageReplies, timestamp, parentID);
@@ -107,23 +106,23 @@ public class DataServlet extends HttpServlet {
     // Get BlogMessages from Datastore.
     List<BlogMessage> BlogMessages = getBlogsFromDatastore();
 
+    // Separate posts from replies from BlogMessages. 
+    // Add replies to messageReplies for the respective posts.
     // Create BlogHashMap Object and put BlogMessages in the map.
-    
-    List<BlogMessage> BlogMessagesReplies = new ArrayList<BlogMessage>();
+    List<BlogMessage> blogMessagesReplies = new ArrayList<BlogMessage>();
     for (BlogMessage message : BlogMessages) {
       if (message.getParentID() != 0) {
-      BlogMessagesReplies.add(message);
-      BlogMessages.remove(message);
+        blogMessagesReplies.add(message);
+        BlogMessages.remove(message);
       }
     }
 
     for (BlogMessage post : BlogMessages) {
-        long postTime = post.getTimestamp();
-        for (BlogMessage reply : BlogMessagesReplies) {
-          if (reply.getParentID() == postTime) {
-              post.setAdditionalReply(reply);
-          }
+      for (BlogMessage reply : blogMessagesReplies) {
+        if (reply.getParentID() == post.getTimestamp()) {
+          post.addReply(reply);
         }
+      }
     }
 
     BlogHashMap blogMap = new BlogHashMap();
