@@ -73,6 +73,20 @@
         </div>
         <div id="confirm"></div>
       </div>
+
+      <div id="blogreplycontent">
+        <form id="my-form" enctype="multipart/form-data">
+          <textarea id="sender" rows="1" cols="20" placeholder="Nickname"></textarea> 
+          <br>
+          <textarea id="text-input" rows="6" cols="60" placeholder="What's on your mind..."></textarea>
+          <br>
+          <br>
+          Upload an image:
+          <input type="file" id="image" name="image">
+        </form>
+        <button onclick="sendAndGet()">Post</button> 
+      </div>
+      
     </div>
  
     <div id="Information" class="tabcontent">
@@ -102,7 +116,7 @@
           <option value="#wellbeing" id="wellbeing">#wellbeing</option>
         </select>
         <button onclick="sendFollowedTags()">Follow</button>
-        <div id="followedtags-container"></div>
+        <div id="home-comments-container"></div>
       </div>
     </div>
  

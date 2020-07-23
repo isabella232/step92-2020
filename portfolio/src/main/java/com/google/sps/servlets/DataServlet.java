@@ -56,7 +56,8 @@ public class DataServlet extends HttpServlet {
   private final static String SENDER_PARAMETER = "sender";
   private final static String TAG_PARAMETER = "tags";
   public final static String BLOG_ENTITY_KIND = "blogMessage";
- 
+  // Can add another parameter name for parentID which should be a constant.
+  
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get BlogMessages from Datastore.
@@ -124,7 +125,8 @@ public class DataServlet extends HttpServlet {
     if (postTag == null || postTag.isEmpty()) {
       postTag = InternalTags.defaultTag();
     }
- 
+    
+    // TODO: Get parentID from client when a reply is made.
     long parentID = 0;
  
     // TODO: Handle replies later.
@@ -142,7 +144,7 @@ public class DataServlet extends HttpServlet {
     response.getWriter().println(gson.toJson(LoadAllBlogsOrLast(false)));   
   }
  
-  // HELPER FUNCTION:.........................................................................
+  // Takes BlogMessage details and puts in datastore.
   private void putBlogsInDatastore(
         String tag, String message, String nickname, List<BlogMessage> reply, long parentID) {
     // Only put BlogMessages with a message in datastore.
@@ -160,7 +162,6 @@ public class DataServlet extends HttpServlet {
     }
   }
  
-  // HELPER FUNCTION:................................................................
   // Loads all BlogMessages from Datastore if true is passed,
   // Otherwise if false is passed only the recent post is loaded.
   // This is useful because each time a user posts, we only load the last BlogMessage
@@ -200,7 +201,7 @@ public class DataServlet extends HttpServlet {
     return blogMessages;
   }
  
-  // HELPER FUNCTION:........................................................................
+  // Takes a list of BlogMessages and tags to Search for and a load amount, and
   // Puts BlogMessages in BlogHashMap and loads the requested parameters.
   private LinkedList<BlogMessage> sortAndLoadFromBlogHashMap(
         List<BlogMessage> blogMessages, List<String> tagsToSearch, int loadAmount) {
@@ -210,7 +211,6 @@ public class DataServlet extends HttpServlet {
     return blogMap.getMessages(tagsToSearch, loadAmount);
   }
  
-  // HELPER FUNCTION:........................................................................
   // Returns a URL that points to the uploaded file, or null if the user didn't upload a file.
   private String getUploadedFileUrl(HttpServletRequest request, String formInputElementName) {
     BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
