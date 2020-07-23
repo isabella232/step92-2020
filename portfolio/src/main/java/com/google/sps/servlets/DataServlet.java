@@ -132,6 +132,28 @@ public class DataServlet extends HttpServlet {
     LinkedList<BlogMessage> loadedBlogMessages = blogMap.getMessages(
         tagsToSearch, numberOfCommentsToDisplay);
 
+    //get user email
+    UserService userService = UserServiceFactory.getUserService();
+    String email = (String) userService.getCurrentUser().getEmail();
+
+    //check to see if user follows any tags
+    if (LoadFollowedTags.hasFollowedTags(email)) {
+      List<String> newTags = LoadFollowedTags.getFollowedTags(email);
+      for (String tag : newTags) {
+        if (!tagsToSearch.contains(tag)) {
+          tagsToSearch.add(tag);
+        }
+      }
+      LinkedList<BlogMessage> followedBlogMessages = blogMap.getMessages(
+          tagsToSearch, numberOfCommentsToDisplay);
+
+      Gson gson = new Gson();
+      response.setContentType("application/json;");
+    
+      response.getWriter().println(gson.toJson(followedBlogMessages));
+      return;
+    }
+
     Gson gson = new Gson();
     response.setContentType("application/json;");
     
