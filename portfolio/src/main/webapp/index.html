@@ -73,9 +73,23 @@
         </div>
         <div id="confirm"></div>
       </div>
+
+      <div id="blogreplycontent">
+        <form id="my-form" enctype="multipart/form-data">
+          <textarea id="sender" rows="1" cols="20" placeholder="Nickname"></textarea> 
+          <br>
+          <textarea id="text-input" rows="6" cols="60" placeholder="What's on your mind..."></textarea>
+          <br>
+          <br>
+          Upload an image:
+          <input type="file" id="image" name="image">
+        </form>
+        <button onclick="sendAndGet()">Post</button> 
+      </div>
+      
     </div>
  
-    <div id="Information" class="tabcontent">
+    <div id=" formation" class="tabcontent">
       <div id="infocontent">
         <h1>Information</h1>
         <p>This page will provide online resources and relevant information.</p>
