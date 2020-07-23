@@ -61,7 +61,7 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get BlogMessages from Datastore.
-    List<BlogMessage> blogMessages = LoadAllBlogsOrLast(true);
+    List<BlogMessage> blogMessages = LoadAllBlogsOrLast(/**all=*/ true);
  
     // TODO: Get these from client.
     int numberOfCommentsToDisplay = 0;
@@ -141,25 +141,26 @@ public class DataServlet extends HttpServlet {
     Gson gson = new Gson();
  
     response.setContentType("application/json;");
-    response.getWriter().println(gson.toJson(LoadAllBlogsOrLast(false)));   
+    response.getWriter().println(gson.toJson(LoadAllBlogsOrLast(/**all=*/false)));   
   }
  
   // Takes BlogMessage details and puts in datastore.
   private void putBlogsInDatastore(
         String tag, String message, String nickname, List<BlogMessage> reply, long parentID) {
     // Only put BlogMessages with a message in datastore.
-    if (message != null || !message.isEmpty()) {
-      Entity blogMessageEntity = new Entity(BLOG_ENTITY_KIND);
-      blogMessageEntity.setProperty("nickname", nickname);
-      blogMessageEntity.setProperty("text", message);
-      blogMessageEntity.setProperty("time", System.currentTimeMillis());
-      blogMessageEntity.setProperty("tag", tag);
-      blogMessageEntity.setProperty("replies", reply);
-      blogMessageEntity.setProperty("parentID", parentID);
- 
-      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-      datastore.put(blogMessageEntity);
+    if (message == null || message.isEmpty()) {
+      return;
     }
+    Entity blogMessageEntity = new Entity(BLOG_ENTITY_KIND);
+    blogMessageEntity.setProperty("nickname", nickname);
+    blogMessageEntity.setProperty("text", message);
+    blogMessageEntity.setProperty("time", System.currentTimeMillis());
+    blogMessageEntity.setProperty("tag", tag);
+    blogMessageEntity.setProperty("replies", reply);
+    blogMessageEntity.setProperty("parentID", parentID);
+ 
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.put(blogMessageEntity);
   }
  
   // Loads all BlogMessages from Datastore if true is passed,
@@ -201,7 +202,7 @@ public class DataServlet extends HttpServlet {
     return blogMessages;
   }
  
-  // Takes a list of BlogMessages and tags to Search for and a load amount, and
+  // Takes a list of BlogMessages and 2 load parameters: tags to Search for and a load amount.
   // Puts BlogMessages in BlogHashMap and loads the requested parameters.
   private LinkedList<BlogMessage> sortAndLoadFromBlogHashMap(
         List<BlogMessage> blogMessages, List<String> tagsToSearch, int loadAmount) {
