@@ -132,9 +132,18 @@ function createListElement(msg) {
     postElement.remove();
   });
 
+  const replyMsgElement = document.createElement('button');
+  replyMsgElement.innerText = 'Reply';
+  replyMsgElement.style.marginTop = "5px";
+  replyMsgElement.style.float = "right";
+  replyMsgElement.addEventListener('click', () => {
+    commentReply();
+  });
+
   postElement.appendChild(messageElement);
   postElement.appendChild(userElement);
   postElement.appendChild(deleteMsgElement);
+  postElement.appendChild(replyMsgElement);
   postElement.appendChild(timeElement);
 
   return postElement;
@@ -160,6 +169,12 @@ async function deleteMessage(msg) {
     setTimeout(function () {
         document.getElementById('confirm').style.display='none';}, 5000);
   });
+}
+
+// Creates Reply
+function commentReply() { 
+  document.getElementById("blogcontent").style.display = "none";
+  document.getElementById("blogreplycontent").style.display = "block";
 }
  
 function fetchBlobstoreUrlAndShowForm() {
