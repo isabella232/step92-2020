@@ -56,11 +56,12 @@ public class DataServlet extends HttpServlet {
   private final static String SENDER_PARAMETER = "sender";
   private final static String TAG_PARAMETER = "tags";
   public final static String BLOG_ENTITY_KIND = "blogMessage";
- 
+  // Can add another parameter name for parentID which should be a constant.
+  
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get BlogMessages from Datastore.
-    List<BlogMessage> blogMessages = LoadAllBlogsOrLast(true);
+    List<BlogMessage> blogMessages = LoadAllBlogsOrLast(/*all=*/ true);
  
     // TODO: Get these from client.
     int numberOfCommentsToDisplay = 0;
@@ -124,7 +125,8 @@ public class DataServlet extends HttpServlet {
     if (postTag == null || postTag.isEmpty()) {
       postTag = InternalTags.defaultTag();
     }
- 
+    
+    // TODO: Get parentID from client when a reply is made.
     long parentID = 0;
  
     // TODO: Handle replies later.
@@ -139,28 +141,28 @@ public class DataServlet extends HttpServlet {
     Gson gson = new Gson();
  
     response.setContentType("application/json;");
-    response.getWriter().println(gson.toJson(LoadAllBlogsOrLast(false)));   
+    response.getWriter().println(gson.toJson(LoadAllBlogsOrLast(/*all=*/false)));   
   }
  
-  // HELPER FUNCTION:.........................................................................
+  // Takes BlogMessage details and puts in datastore.
   private void putBlogsInDatastore(
         String tag, String message, String nickname, List<BlogMessage> reply, long parentID) {
     // Only put BlogMessages with a message in datastore.
-    if (message != null || !message.isEmpty()) {
-      Entity blogMessageEntity = new Entity(BLOG_ENTITY_KIND);
-      blogMessageEntity.setProperty("nickname", nickname);
-      blogMessageEntity.setProperty("text", message);
-      blogMessageEntity.setProperty("time", System.currentTimeMillis());
-      blogMessageEntity.setProperty("tag", tag);
-      blogMessageEntity.setProperty("replies", reply);
-      blogMessageEntity.setProperty("parentID", parentID);
- 
-      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-      datastore.put(blogMessageEntity);
+    if (message == null || message.isEmpty()) {
+      return;
     }
+    Entity blogMessageEntity = new Entity(BLOG_ENTITY_KIND);
+    blogMessageEntity.setProperty("nickname", nickname);
+    blogMessageEntity.setProperty("text", message);
+    blogMessageEntity.setProperty("time", System.currentTimeMillis());
+    blogMessageEntity.setProperty("tag", tag);
+    blogMessageEntity.setProperty("replies", reply);
+    blogMessageEntity.setProperty("parentID", parentID);
+ 
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.put(blogMessageEntity);
   }
  
-  // HELPER FUNCTION:................................................................
   // Loads all BlogMessages from Datastore if true is passed,
   // Otherwise if false is passed only the recent post is loaded.
   // This is useful because each time a user posts, we only load the last BlogMessage
@@ -200,7 +202,7 @@ public class DataServlet extends HttpServlet {
     return blogMessages;
   }
  
-  // HELPER FUNCTION:........................................................................
+  // Takes a list of BlogMessages and 2 load parameters: tags to Search for and a load amount.
   // Puts BlogMessages in BlogHashMap and loads the requested parameters.
   private LinkedList<BlogMessage> sortAndLoadFromBlogHashMap(
         List<BlogMessage> blogMessages, List<String> tagsToSearch, int loadAmount) {
@@ -210,7 +212,6 @@ public class DataServlet extends HttpServlet {
     return blogMap.getMessages(tagsToSearch, loadAmount);
   }
  
-  // HELPER FUNCTION:........................................................................
   // Returns a URL that points to the uploaded file, or null if the user didn't upload a file.
   private String getUploadedFileUrl(HttpServletRequest request, String formInputElementName) {
     BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
