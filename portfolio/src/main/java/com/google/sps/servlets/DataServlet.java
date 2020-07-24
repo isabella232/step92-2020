@@ -139,7 +139,7 @@ public class DataServlet extends HttpServlet {
     String email = (String) userService.getCurrentUser().getEmail();
  
     // Check to see if user follows any tags
-    if (LoadFollowedTags.hasFollowedTags(email)) {
+    if (!LoadFollowedTags.hasFollowedTags(email)) {
       return tagsToSearch;
     }
     List<String> newTags = LoadFollowedTags.getFollowedTags(email);
