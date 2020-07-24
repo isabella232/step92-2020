@@ -69,19 +69,7 @@ public class DataServlet extends HttpServlet {
  
     blogMessages = putRepliesWithPosts(blogMessages);
 
-    // Get user email
-    UserService userService = UserServiceFactory.getUserService();
-    String email = (String) userService.getCurrentUser().getEmail();
- 
-    // Check to see if user follows any tags
-    if (LoadFollowedTags.hasFollowedTags(email)) {
-      List<String> newTags = LoadFollowedTags.getFollowedTags(email);
-      for (String tag : newTags) {
-        if (!tagsToSearch.contains(tag)) {
-          tagsToSearch.add(tag);
-        }
-      } 
-    }
+    tagsToSearch = updateTagsToSearch(tagsToSearch);
  
     Gson gson = new Gson();
     response.setContentType("application/json;");
@@ -127,8 +115,6 @@ public class DataServlet extends HttpServlet {
   }
  
   private List<BlogMessage> putRepliesWithPosts(List<BlogMessage> blogMessages) {
-    
- 
     // TODO: Use helper functions for lines 73-101.
  
     // Separate posts from replies from |blogMessages|.
@@ -149,6 +135,22 @@ public class DataServlet extends HttpServlet {
       } 
     }
     return blogMessages;
+  }
+
+  private List<String> updateTagsToSearch (List<String> tagsToSearch) {
+    UserService userService = UserServiceFactory.getUserService();
+    String email = (String) userService.getCurrentUser().getEmail();
+ 
+    // Check to see if user follows any tags
+    if (LoadFollowedTags.hasFollowedTags(email)) {
+      List<String> newTags = LoadFollowedTags.getFollowedTags(email);
+      for (String tag : newTags) {
+        if (!tagsToSearch.contains(tag)) {
+          tagsToSearch.add(tag);
+        }
+      } 
+    }
+    return tagsToSearch;
   }
 
   // Takes BlogMessage details and puts in datastore.
