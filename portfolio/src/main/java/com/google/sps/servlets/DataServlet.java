@@ -68,7 +68,6 @@ public class DataServlet extends HttpServlet {
     List<String> tagsToSearch = new ArrayList<String>();
  
     blogMessages = putRepliesWithPosts(blogMessages);
-
     tagsToSearch = updateTagsToSearch(tagsToSearch);
  
     Gson gson = new Gson();
@@ -115,8 +114,6 @@ public class DataServlet extends HttpServlet {
   }
  
   private List<BlogMessage> putRepliesWithPosts(List<BlogMessage> blogMessages) {
-    // TODO: Use helper functions for lines 73-101.
- 
     // Separate posts from replies from |blogMessages|.
     // Add replies to messageReplies for the respective posts.
     List<BlogMessage> blogMessagesReplies = new ArrayList<BlogMessage>();
@@ -143,13 +140,14 @@ public class DataServlet extends HttpServlet {
  
     // Check to see if user follows any tags
     if (LoadFollowedTags.hasFollowedTags(email)) {
-      List<String> newTags = LoadFollowedTags.getFollowedTags(email);
-      for (String tag : newTags) {
-        if (!tagsToSearch.contains(tag)) {
-          tagsToSearch.add(tag);
-        }
-      } 
+      return tagsToSearch;
     }
+    List<String> newTags = LoadFollowedTags.getFollowedTags(email);
+    for (String tag : newTags) {
+      if (!tagsToSearch.contains(tag)) {
+        tagsToSearch.add(tag);
+      }
+    } 
     return tagsToSearch;
   }
 
