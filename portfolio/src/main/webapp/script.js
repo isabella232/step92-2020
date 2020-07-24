@@ -63,24 +63,21 @@ async function sendAndGet() {
   });
 }
 
-function getCommentsHome() {
-  fetch('/data').then(response => response.json()).then((msgs) => {
-    const statsListElement = document.getElementById('home-comments-container');
-    statsListElement.innerHTML = '';
-    msgs.forEach((msg) => {
-      statsListElement.appendChild(
-        createListElement(msg.nickname + ': ' + msg.message));
-      statsListElement.appendChild(
-        createImgElement(msg.image));
-    })
-  });  
-}
-
+// Makes a Get request and loads Posts to the Blog page on body load
+// Also loads 5 display-only posts to be displayed on the home page.
 async function loadPosts(){
+  const HOME_LOAD_AMOUNT = 5;
   fetch('/data').then(response => response.json()).then((msgs) => {
     const statsListElement = document.getElementById('posts-list');
+    const homeListElement = document.getElementById('home-comments-container');
+    var i = 1;
     msgs.forEach((msg) => {
       statsListElement.appendChild(createListElement(msg));
+      if (i > HOME_LOAD_AMOUNT) {
+        return true;
+      }
+      homeListElement.appendChild(createListElementHome(msg));
+      i++;
     })
   });
 }
@@ -103,7 +100,7 @@ function getCommentsTag(tag) {
 // Creates an <li> element containing message details.
 function createListElement(msg) {
   const postElement = document.createElement('li');
-  postElement.style.margin = "10px";
+  postElement.className = 'post';
 
   const messageElement = document.createElement('span');
   messageElement.innerText = msg.message;
@@ -116,6 +113,7 @@ function createListElement(msg) {
   }
   userElement.style.marginLeft = "15px";
 
+  // TODO: move styles to style.css
   const timeElement = document.createElement('span');
   var date = new Date(msg.timestamp);
   timeElement.innerText = date.toString().slice(0, 24);
@@ -125,8 +123,6 @@ function createListElement(msg) {
 
   const deleteMsgElement = document.createElement('button');
   deleteMsgElement.innerText = 'Delete';
-  deleteMsgElement.style.marginTop = "5px";
-  deleteMsgElement.style.float = "right";
   deleteMsgElement.addEventListener('click', () => {
     deleteMessage(msg);
     postElement.remove();
@@ -140,10 +136,41 @@ function createListElement(msg) {
     commentReply();
   });
 
-  postElement.appendChild(messageElement);
   postElement.appendChild(userElement);
-  postElement.appendChild(deleteMsgElement);
+  postElement.appendChild(messageElement);
+  postElement.appendChild(timeElement);
   postElement.appendChild(replyMsgElement);
+  postElement.appendChild(deleteMsgElement);
+  return postElement;
+}
+
+// Creates a list of posts to be displayed on the homepage.
+// Display-only.(ie. No reply or delete button). 
+function createListElementHome(msg) {
+  const postElement = document.createElement('li');
+  postElement.className = 'post';
+
+  const messageElement = document.createElement('span');
+  messageElement.innerText = msg.message;
+  
+  const userElement = document.createElement('span');
+  if (msg.nickname === undefined || msg.nickname === null) {
+    userElement.innerHTML = "<b><i>_Anonymous</i></b>";
+  } else {
+    userElement.innerHTML = "<b><i>_" + msg.nickname + "</i></b>";
+  }
+  userElement.style.marginLeft = "15px";
+
+  // TODO: move styles to style.css
+  const timeElement = document.createElement('span');
+  var date = new Date(msg.timestamp);
+  timeElement.innerText = date.toString().slice(0, 24);
+  timeElement.style.marginTop = "5px";
+  timeElement.style.float = "right";
+  timeElement.style.clear = "left";
+  
+  postElement.appendChild(userElement);
+  postElement.appendChild(messageElement);
   postElement.appendChild(timeElement);
 
   return postElement;

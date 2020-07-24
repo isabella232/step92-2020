@@ -147,3 +147,21 @@ body, html {
 .scrollmenu a:hover {
   background-color: #777;
 }
+
+.post {
+  background-color: lightgrey;
+  border: 5px solid black;
+  display: flex;
+  margin: 30px;
+  padding: 30px;
+  width: 800px
+}
+
+.post span {
+  flex-grow: 1;
+}
+
+.post button {
+  margin-top: 5px;
+  float: right;
+}

@@ -14,7 +14,7 @@
       }
     </style>
   </head>
-  <body onload="fetchBlobstoreUrlAndShowForm(); defaultPage(); getCommentsHome(); loadPosts();">
+  <body onload="fetchBlobstoreUrlAndShowForm(); defaultPage(); loadPosts();">
     <button class="tablink" onclick="openPage('Home', this, 'grey')" id="defaultOpen">Home</button>
     <button class="tablink" onclick="openPage('Blog', this, 'grey')">Blog</button>
     <button class="tablink" onclick="openPage('Information', this, 'grey')">Information</button>
@@ -102,7 +102,9 @@
         <p>This page will provide physical resources.</p>
       </div>
     </div>
-
+    
+    <!-- TODO: Move this section to a new html file.
+    We want to create a popup of this page for first time users -->
     <div id="FollowTags" class="tabcontent">
       <div id="followtagscontent">
         <h1>Tags To Follow</h1>
