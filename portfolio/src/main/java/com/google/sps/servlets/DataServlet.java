@@ -62,31 +62,13 @@ public class DataServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get BlogMessages from Datastore.
     List<BlogMessage> blogMessages = LoadAllBlogsOrLast(/*all=*/ true);
- 
+    
     // TODO: Get these from client.
     int numberOfCommentsToDisplay = 0;
     List<String> tagsToSearch = new ArrayList<String>();
  
-    // TODO: Use helper functions for lines 73-101.
- 
-    // Separate posts from replies from |blogMessages|.
-    // Add replies to messageReplies for the respective posts.
-    List<BlogMessage> blogMessagesReplies = new ArrayList<BlogMessage>();
-    for (BlogMessage message : blogMessages) {
-      if (message.getParentID() != 0) {
-        blogMessagesReplies.add(message);
-        blogMessages.remove(message);
-      }
-    }
- 
-    for (BlogMessage post : blogMessages) {
-      for (BlogMessage reply : blogMessagesReplies) {
-        if (reply.getParentID() == post.getTimestamp()) {
-          post.addReply(reply);
-        }
-      } 
-    }
- 
+    blogMessages = putRepliesWithPosts(blogMessages);
+
     // Get user email
     UserService userService = UserServiceFactory.getUserService();
     String email = (String) userService.getCurrentUser().getEmail();
@@ -144,6 +126,31 @@ public class DataServlet extends HttpServlet {
     response.getWriter().println(gson.toJson(LoadAllBlogsOrLast(/*all=*/false)));   
   }
  
+  private List<BlogMessage> putRepliesWithPosts(List<BlogMessage> blogMessages) {
+    
+ 
+    // TODO: Use helper functions for lines 73-101.
+ 
+    // Separate posts from replies from |blogMessages|.
+    // Add replies to messageReplies for the respective posts.
+    List<BlogMessage> blogMessagesReplies = new ArrayList<BlogMessage>();
+    for (BlogMessage message : blogMessages) {
+      if (message.getParentID() != 0) {
+        blogMessagesReplies.add(message);
+        blogMessages.remove(message);
+      }
+    }
+ 
+    for (BlogMessage post : blogMessages) {
+      for (BlogMessage reply : blogMessagesReplies) {
+        if (reply.getParentID() == post.getTimestamp()) {
+          post.addReply(reply);
+        }
+      } 
+    }
+    return blogMessages;
+  }
+
   // Takes BlogMessage details and puts in datastore.
   private void putBlogsInDatastore(
         String tag, String message, String nickname, List<BlogMessage> reply, long parentID) {
