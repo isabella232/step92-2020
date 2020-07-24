@@ -61,7 +61,7 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get BlogMessages from Datastore.
-    List<BlogMessage> blogMessages = LoadAllBlogsOrLast(/**all=*/ true);
+    List<BlogMessage> blogMessages = LoadAllBlogsOrLast(/*all=*/ true);
  
     // TODO: Get these from client.
     int numberOfCommentsToDisplay = 0;
@@ -141,7 +141,7 @@ public class DataServlet extends HttpServlet {
     Gson gson = new Gson();
  
     response.setContentType("application/json;");
-    response.getWriter().println(gson.toJson(LoadAllBlogsOrLast(/**all=*/false)));   
+    response.getWriter().println(gson.toJson(LoadAllBlogsOrLast(/*all=*/false)));   
   }
  
   // Takes BlogMessage details and puts in datastore.
