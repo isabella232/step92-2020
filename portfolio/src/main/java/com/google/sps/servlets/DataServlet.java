@@ -61,14 +61,11 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get BlogMessages from Datastore.
-    List<BlogMessage> blogMessages = LoadAllBlogsOrLast(/*all=*/ true);
-    
+    List<BlogMessage> blogMessages = putRepliesWithPosts(LoadAllBlogsOrLast(/*all=*/ true));
     // TODO: Get these from client.
     int numberOfCommentsToDisplay = 0;
     List<String> tagsToSearch = new ArrayList<String>();
  
-    blogMessages = putRepliesWithPosts(blogMessages);
-
     // Get user email
     UserService userService = UserServiceFactory.getUserService();
     String email = (String) userService.getCurrentUser().getEmail();
@@ -127,10 +124,6 @@ public class DataServlet extends HttpServlet {
   }
  
   private List<BlogMessage> putRepliesWithPosts(List<BlogMessage> blogMessages) {
-    
- 
-    // TODO: Use helper functions for lines 73-101.
- 
     // Separate posts from replies from |blogMessages|.
     // Add replies to messageReplies for the respective posts.
     List<BlogMessage> blogMessagesReplies = new ArrayList<BlogMessage>();
