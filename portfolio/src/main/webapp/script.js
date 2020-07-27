@@ -39,11 +39,12 @@ function defaultPage() {
 }
  
 // Posts and fetches messages from the server and adds them to the DOM.
-async function sendAndGet() {
+async function sendAndGet(sender, text, tag) {
   // Get post parameters.
-  const textEle = document.getElementById('text-input');
-  const nameEle = document.getElementById('sender');
-  const tagEle = document.getElementById('tags');
+  const textEle = document.getElementById(text);
+  const nameEle = document.getElementById(sender);
+  const tagEle = document.getElementById(tag);
+  const parentidEle = document.getElementById('parentID');
 
   // TODO: use FormData function to post image file.
   
@@ -51,7 +52,13 @@ async function sendAndGet() {
   const params = new URLSearchParams();
   params.append('text-input', textEle.value);
   params.append('sender', nameEle.value);
-  params.append('tags', tagEle.value);
+  params.append('parentID', parentidEle.value);
+
+  console.log("In SendAndGet");
+  console.log("This is the text value", textEle.value);
+  console.log("This is the sender value", nameEle.value);
+  console.log("This is the tag value", tagEle.value);
+  console.log("This is the parentID value", parentidEle.value);
 
   // Post parameters to the server and fetch instantly to build the page.
   fetch('/data', {method: 'POST', body: params})
@@ -133,7 +140,7 @@ function createListElement(msg) {
   replyMsgElement.style.marginTop = "5px";
   replyMsgElement.style.float = "right";
   replyMsgElement.addEventListener('click', () => {
-    commentReply();
+    openReplies(msg.timestamp, msg.tag);
   });
 
   postElement.appendChild(userElement);
@@ -198,10 +205,16 @@ async function deleteMessage(msg) {
   });
 }
 
-// Creates Reply
-function commentReply() { 
+function openReplies(timestamp, tag) { 
   document.getElementById("blogcontent").style.display = "none";
   document.getElementById("blogreplycontent").style.display = "block";
+  document.getElementById('parentID').value = timestamp;
+  document.getElementById('tags-reply').value = tag;
+}
+
+function closeReplies() { 
+  document.getElementById("blogcontent").style.display = "block";
+  document.getElementById("blogreplycontent").style.display = "none";
 }
  
 function fetchBlobstoreUrlAndShowForm() {
