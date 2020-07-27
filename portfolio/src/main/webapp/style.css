@@ -17,6 +17,10 @@
   color: black;
 }
 
+#hidden-reply {
+  display: none;
+}
+
 #blogreplycontent {
   display: none;
   margin-left: auto;
