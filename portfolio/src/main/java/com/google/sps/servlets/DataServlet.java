@@ -61,12 +61,10 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get BlogMessages from Datastore.
-    List<BlogMessage> blogMessages = LoadAllBlogsOrLast(/*all=*/ true);
-    
+    List<BlogMessage> blogMessages = putRepliesWithPosts(LoadAllBlogsOrLast(/*all=*/ true));
     // TODO: Get these from client.
     int numberOfCommentsToDisplay = 0;
     List<String> tagsToSearch = new ArrayList<String>();
- 
     blogMessages = putRepliesWithPosts(blogMessages);
     updateTagsToSearch(tagsToSearch);
  
