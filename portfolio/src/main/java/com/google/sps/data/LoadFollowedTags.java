@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.io.*;
+
 
 
 //Class to check if a user follows a tag.
@@ -44,7 +46,7 @@ public final class LoadFollowedTags {
   }
 
   public static Boolean hasFollowedTags (String email) {
-    return getFollowedTags(email).isEmpty();
+    return !getFollowedTags(email).isEmpty();
   }
 
   private static PreparedQuery getTagsFromDatastore (String email) {
