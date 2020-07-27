@@ -62,49 +62,13 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get BlogMessages from Datastore.
-    List<BlogMessage> blogMessagesAll = LoadAllBlogsOrLast(/*all=*/ true);
- 
+    List<BlogMessage> blogMessages = putRepliesWithPosts(LoadAllBlogsOrLast(/*all=*/ true));
     // TODO: Get these from client.
     int numberOfCommentsToDisplay = 0;
     List<String> tagsToSearch = new ArrayList<String>();
- 
-    // TODO: Use helper functions for lines 73-101.
- 
-    // Separate posts from replies from |blogMessages|.
-    // Add replies to messageReplies for the respective posts.
-    List<BlogMessage> blogMessagesReplies = new ArrayList<BlogMessage>();
-    List<BlogMessage> blogMessages = new ArrayList<BlogMessage>();
-    for (BlogMessage message : blogMessagesAll) {
-      if (message.getParentID() == 0) {
-        blogMessages.add(message);
-      } else {
-          blogMessagesReplies.add(message);
-      }
-
-    }
- 
-    for (BlogMessage post : blogMessages) {
-      for (BlogMessage reply : blogMessagesReplies) {
-        if (reply.getParentID() == post.getTimestamp()) {
-          post.addReply(reply);
-        }
-      } 
-    }
- 
-    // Get user email
-    UserService userService = UserServiceFactory.getUserService(); 
-    String email = (String) userService.getCurrentUser().getEmail();
- 
-    // Check to see if user follows any tags
-    if (LoadFollowedTags.hasFollowedTags(email)) {
-      List<String> newTags = LoadFollowedTags.getFollowedTags(email);
-      for (String tag : newTags) {
-        if (!tagsToSearch.contains(tag)) {
-          tagsToSearch.add(tag);
-        }
-      } 
-    }
- 
+    blogMessages = putRepliesWithPosts(blogMessages);
+    updateTagsToSearch(tagsToSearch);
+    
     Gson gson = new Gson();
     response.setContentType("application/json;");
  
@@ -147,6 +111,43 @@ public class DataServlet extends HttpServlet {
     response.getWriter().println(gson.toJson(LoadAllBlogsOrLast(/*all=*/false)));   
   }
  
+  private List<BlogMessage> putRepliesWithPosts(List<BlogMessage> blogMessages) {
+    // Separate posts from replies from |blogMessages|.
+    // Add replies to messageReplies for the respective posts.
+    List<BlogMessage> blogMessagesReplies = new ArrayList<BlogMessage>();
+    for (BlogMessage message : blogMessages) {
+      if (message.getParentID() != 0) {
+        blogMessagesReplies.add(message);
+        blogMessages.remove(message);
+      }
+    }
+ 
+    for (BlogMessage post : blogMessages) {
+      for (BlogMessage reply : blogMessagesReplies) {
+        if (reply.getParentID() == post.getTimestamp()) {
+          post.addReply(reply);
+        }
+      } 
+    }
+    return blogMessages;
+  }
+
+  private void updateTagsToSearch (List<String> tagsToSearch) {
+    UserService userService = UserServiceFactory.getUserService();
+    String email = (String) userService.getCurrentUser().getEmail();
+ 
+    // Check to see if user follows any tags
+    if (!LoadFollowedTags.hasFollowedTags(email)) {
+      return;
+    }
+    List<String> newTags = LoadFollowedTags.getFollowedTags(email);
+    for (String tag : newTags) {
+      if (!tagsToSearch.contains(tag)) {
+        tagsToSearch.add(tag);
+      }
+    } 
+  }
+
   // Takes BlogMessage details and puts in datastore.
   private void putBlogsInDatastore(
         String tag, String message, String nickname, List<BlogMessage> reply, long parentID) {
