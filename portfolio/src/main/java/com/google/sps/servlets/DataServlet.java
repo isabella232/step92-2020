@@ -62,7 +62,7 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get BlogMessages from Datastore.
-    List<BlogMessage> blogMessages = LoadAllBlogsOrLast(/*all=*/ true);
+    List<BlogMessage> blogMessagesAll = LoadAllBlogsOrLast(/*all=*/ true);
  
     // TODO: Get these from client.
     int numberOfCommentsToDisplay = 0;
@@ -73,11 +73,14 @@ public class DataServlet extends HttpServlet {
     // Separate posts from replies from |blogMessages|.
     // Add replies to messageReplies for the respective posts.
     List<BlogMessage> blogMessagesReplies = new ArrayList<BlogMessage>();
-    for (BlogMessage message : blogMessages) {
-      if (message.getParentID() != 0) {
-        blogMessagesReplies.add(message);
-        blogMessages.remove(message);
+    List<BlogMessage> blogMessages = new ArrayList<BlogMessage>();
+    for (BlogMessage message : blogMessagesAll) {
+      if (message.getParentID() == 0) {
+        blogMessages.add(message);
+      } else {
+          blogMessagesReplies.add(message);
       }
+
     }
  
     for (BlogMessage post : blogMessages) {
@@ -89,7 +92,7 @@ public class DataServlet extends HttpServlet {
     }
  
     // Get user email
-    UserService userService = UserServiceFactory.getUserService();
+    UserService userService = UserServiceFactory.getUserService(); 
     String email = (String) userService.getCurrentUser().getEmail();
  
     // Check to see if user follows any tags
@@ -128,10 +131,7 @@ public class DataServlet extends HttpServlet {
     if (postTag == null || postTag.isEmpty()) {
       postTag = InternalTags.defaultTag();
     }
-    
-    // TODO: Get parentID from client when a reply is made.
-//    long parentID = 0;
- 
+     
     // TODO: Handle replies later.
     List<BlogMessage> messageReplies = new ArrayList<BlogMessage>(); 
  
