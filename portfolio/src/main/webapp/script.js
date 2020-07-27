@@ -54,12 +54,6 @@ async function sendAndGet(sender, text, tag) {
   params.append('sender', nameEle.value);
   params.append('parentID', parentidEle.value);
 
-  console.log("In SendAndGet");
-  console.log("This is the text value", textEle.value);
-  console.log("This is the sender value", nameEle.value);
-  console.log("This is the tag value", tagEle.value);
-  console.log("This is the parentID value", parentidEle.value);
-
   // Post parameters to the server and fetch instantly to build the page.
   fetch('/data', {method: 'POST', body: params})
         .then(response => response.json()).then((msgs) => {
