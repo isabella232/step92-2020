@@ -52,6 +52,7 @@
           <br>
           <textarea id="text-input" rows="6" cols="60" placeholder="What's on your mind..."></textarea>
           <br>
+          <br>
           <label for="tags">Choose tags:</label>
           <select name="tags" id="tags">
             <option value="#general">Default</option>
@@ -67,24 +68,27 @@
           Upload an image:
           <input type="file" id="image" name="image">
         </form>
-        <button onclick="sendAndGet()">Post</button> 
+        <button onclick="sendAndGet('sender', 'text-input', 'tags')">Post</button> 
         <div id="comments-container">
           <ul id="posts-list"></ul>
         </div>
         <div id="confirm"></div>
+        <div id="hidden-timestamp"></div>
       </div>
 
       <div id="blogreplycontent">
         <form id="my-form" enctype="multipart/form-data">
-          <textarea id="sender" rows="1" cols="20" placeholder="Nickname"></textarea> 
+          <textarea id="sender-reply" rows="1" cols="20" placeholder="Nickname"></textarea> 
           <br>
-          <textarea id="text-input" rows="6" cols="60" placeholder="What's on your mind..."></textarea>
+          <textarea id="text-input-reply" rows="6" cols="60" placeholder="What's on your mind..."></textarea>
           <br>
+          <input type="text" id="parentID" value="0"><br>
+          <input type="text" id="tags-reply" value="#general"><br>
           <br>
           Upload an image:
           <input type="file" id="image" name="image">
         </form>
-        <button onclick="sendAndGet()">Post</button> 
+        <button onclick="sendAndGet('sender-reply', 'text-input-reply', 'tags-reply'); closeReplies();">Post</button> 
       </div>
       
     </div>
