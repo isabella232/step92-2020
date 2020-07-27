@@ -68,7 +68,7 @@ public class DataServlet extends HttpServlet {
     List<String> tagsToSearch = new ArrayList<String>();
  
     blogMessages = putRepliesWithPosts(blogMessages);
-    tagsToSearch = updateTagsToSearch(tagsToSearch);
+    updateTagsToSearch(tagsToSearch);
  
     Gson gson = new Gson();
     response.setContentType("application/json;");
@@ -134,13 +134,13 @@ public class DataServlet extends HttpServlet {
     return blogMessages;
   }
 
-  private List<String> updateTagsToSearch (List<String> tagsToSearch) {
+  private void updateTagsToSearch (List<String> tagsToSearch) {
     UserService userService = UserServiceFactory.getUserService();
     String email = (String) userService.getCurrentUser().getEmail();
  
     // Check to see if user follows any tags
     if (!LoadFollowedTags.hasFollowedTags(email)) {
-      return tagsToSearch;
+      return;
     }
     List<String> newTags = LoadFollowedTags.getFollowedTags(email);
     for (String tag : newTags) {
@@ -148,7 +148,6 @@ public class DataServlet extends HttpServlet {
         tagsToSearch.add(tag);
       }
     } 
-    return tagsToSearch;
   }
 
   // Takes BlogMessage details and puts in datastore.
