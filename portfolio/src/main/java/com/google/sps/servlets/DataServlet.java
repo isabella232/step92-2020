@@ -55,6 +55,7 @@ public class DataServlet extends HttpServlet {
   private final static String MESSAGE_PARAMETER = "text-input";
   private final static String SENDER_PARAMETER = "sender";
   private final static String TAG_PARAMETER = "tags";
+  private final static String PARENTID_PARAMETER = "parentID";
   public final static String BLOG_ENTITY_KIND = "blogMessage";
   // Can add another parameter name for parentID which should be a constant.
   
@@ -122,12 +123,14 @@ public class DataServlet extends HttpServlet {
  
     String nickname = request.getParameter(SENDER_PARAMETER);
     String postTag = request.getParameter(TAG_PARAMETER);
+    String parentIDString = request.getParameter(PARENTID_PARAMETER);
+    long parentID = Long.parseLong(parentIDString);
     if (postTag == null || postTag.isEmpty()) {
       postTag = InternalTags.defaultTag();
     }
     
     // TODO: Get parentID from client when a reply is made.
-    long parentID = 0;
+//    long parentID = 0;
  
     // TODO: Handle replies later.
     List<BlogMessage> messageReplies = new ArrayList<BlogMessage>(); 
