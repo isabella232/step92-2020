@@ -63,7 +63,7 @@ public class FollowedTagsServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
      
-    String commentType = request.getParameter("tags");
+    String commentType = request.getParameter(BlogConstants.TAG_PARAMETER);
     if (commentType == null) {
       return;
     }
