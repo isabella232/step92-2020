@@ -18,9 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
-
-  private final static String NICKNAME = "nickname";
-
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("text/html");
@@ -74,7 +71,7 @@ public class LoginServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Entity entity = new Entity("blogMessage", id);
     entity.setProperty("id", id);
-    entity.setProperty("nickname", request.getParameter(NICKNAME));
+    entity.setProperty("nickname", request.getParameter(BlogConstants.NICKNAME));
     entity.setProperty("email", userEmail);
     datastore.put(entity);
 
@@ -91,6 +88,6 @@ public class LoginServlet extends HttpServlet {
     if (entity == null) {
       return "";
     }
-    return (String) entity.getProperty(NICKNAME);
+    return (String) entity.getProperty(BlogConstants.NICKNAME);
   }
 }

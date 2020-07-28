@@ -51,8 +51,6 @@ import java.util.Map;
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/follow-tags")
 public class FollowedTagsServlet extends HttpServlet {
-  public static final String TAG_QUERY = "followedTag";
-
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
@@ -65,13 +63,13 @@ public class FollowedTagsServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
      
-    Const String commentType = request.getParameter("tags");
+    String commentType = request.getParameter(BlogConstants.TAG_PARAMETER);
     if (commentType == null) {
       return;
     }
     String email = (String) userService.getCurrentUser().getEmail();
 
-    Entity followedTag = new Entity(TAG_QUERY);
+    Entity followedTag = new Entity(BlogConstants.TAG_QUERY);
     followedTag.setProperty("tag", commentType);
     followedTag.setProperty("email", email);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();

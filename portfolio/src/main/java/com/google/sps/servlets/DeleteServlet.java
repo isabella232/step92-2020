@@ -32,13 +32,12 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet responsible for deleting tasks. */
 @WebServlet("/delete-data")
 public class DeleteServlet extends HttpServlet {
-  private final static String ID_PARAMETER = "messageId"; 
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    long messageId = Long.parseLong(request.getParameter(ID_PARAMETER));
+    long messageId = Long.parseLong(request.getParameter(BlogConstants.ID_PARAMETER));
 
-    Key postEntityKey = KeyFactory.createKey(DataServlet.BLOG_ENTITY_KIND, messageId);
+    Key postEntityKey = KeyFactory.createKey(BlogConstants.BLOG_ENTITY_KIND, messageId);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.delete(postEntityKey);
 
