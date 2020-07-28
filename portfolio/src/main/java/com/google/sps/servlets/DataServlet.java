@@ -52,11 +52,6 @@ import java.util.Map;
  
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-  private final static String MESSAGE_PARAMETER = "text-input";
-  private final static String SENDER_PARAMETER = "sender";
-  private final static String TAG_PARAMETER = "tags";
-  private final static String PARENTID_PARAMETER = "parentID";
-  public final static String BLOG_ENTITY_KIND = "blogMessage";
   // Can add another parameter name for parentID which should be a constant.
   
   @Override
@@ -81,16 +76,16 @@ public class DataServlet extends HttpServlet {
     // Get Post parameters.
     // We can't process an empty message.
     // Also a post without a tag will be assigned the default tag.
-    String message = request.getParameter(MESSAGE_PARAMETER);
+    String message = request.getParameter(BlogConstants.MESSAGE_PARAMETER);
     if (message == null || message.isEmpty()) {
       response.setContentType("text/html");
       response.getWriter().println("<h2> Cannot post empty message.</h2>");
       return;
     }
  
-    String nickname = request.getParameter(SENDER_PARAMETER);
-    String postTag = request.getParameter(TAG_PARAMETER);
-    String parentIDString = request.getParameter(PARENTID_PARAMETER);
+    String nickname = request.getParameter(BlogConstants.SENDER_PARAMETER);
+    String postTag = request.getParameter(BlogConstants.TAG_PARAMETER);
+    String parentIDString = request.getParameter(BlogConstants.PARENTID_PARAMETER);
     long parentID = Long.parseLong(parentIDString);
     if (postTag == null || postTag.isEmpty()) {
       postTag = InternalTags.defaultTag();
@@ -155,7 +150,7 @@ public class DataServlet extends HttpServlet {
     if (message == null || message.isEmpty()) {
       return;
     }
-    Entity blogMessageEntity = new Entity(BLOG_ENTITY_KIND);
+    Entity blogMessageEntity = new Entity(BlogConstants.BLOG_ENTITY_KIND);
     blogMessageEntity.setProperty("nickname", nickname);
     blogMessageEntity.setProperty("text", message);
     blogMessageEntity.setProperty("time", System.currentTimeMillis());
@@ -173,7 +168,7 @@ public class DataServlet extends HttpServlet {
   // Which reduces the time to load datastore.
   private List<BlogMessage> LoadAllBlogsOrLast(boolean all) {
     List<BlogMessage> blogMessages = new ArrayList<BlogMessage>();
-    Query query = new Query(BLOG_ENTITY_KIND);
+    Query query = new Query(BlogConstants.BLOG_ENTITY_KIND);
  
     if (all) {
       query.addSort("time", SortDirection.ASCENDING);
