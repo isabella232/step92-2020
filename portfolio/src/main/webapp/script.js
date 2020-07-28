@@ -134,7 +134,7 @@ function createListElement(msg) {
   replyMsgElement.style.marginTop = "5px";
   replyMsgElement.style.float = "right";
   replyMsgElement.addEventListener('click', () => {
-    openReplies(msg.timestamp, msg.tag);
+    openReplies(msg.id, msg.tag);
   });
 
   postElement.appendChild(userElement);
@@ -199,10 +199,10 @@ async function deleteMessage(msg) {
   });
 }
 
-function openReplies(timestamp, tag) { 
+function openReplies(msgID, tag) { 
   document.getElementById("blogcontent").style.display = "none";
   document.getElementById("blogreplycontent").style.display = "block";
-  document.getElementById('parentID').value = timestamp;
+  document.getElementById('parentID').value = msgID;
   document.getElementById('tags-reply').value = tag;
 }
 
