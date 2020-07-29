@@ -28,11 +28,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 public final class DatastoreUtils {
-  public static LinkedList<BlogMessage> doGetFromDatastore () {
+  public static LinkedList<BlogMessage> doGetFromDatastore (int numberOfCommentsToDisplay) {
     // Get BlogMessages from Datastore.
     List<BlogMessage> blogMessages = RepliesUtils.putRepliesWithPosts(LoadAllBlogsOrLast(/*all=*/ true));
     // TODO: Get these from client.
-    int numberOfCommentsToDisplay = 0;
     List<String> tagsToSearch = new ArrayList<String>();
     TagsUtils.updateTagsToSearch(tagsToSearch);
 

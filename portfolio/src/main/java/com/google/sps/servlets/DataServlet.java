@@ -55,10 +55,12 @@ public class DataServlet extends HttpServlet {
   
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    int numberOfCommentsToDisplay = 0;
+    
     Gson gson = new Gson();
     response.setContentType("application/json;");
  
-    response.getWriter().println(gson.toJson(DatastoreUtils.doGetFromDatastore()));
+    response.getWriter().println(gson.toJson(DatastoreUtils.doGetFromDatastore(numberOfCommentsToDisplay)));
   }
  
   @Override
