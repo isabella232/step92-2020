@@ -34,7 +34,11 @@ public final class BlogMessage {
     this.message = message;
     this.nickname = nickname;
     this.email = email;
-    this.messageReplies = messageReplies;
+    if (messageReplies != null) {
+      this.messageReplies = messageReplies;   
+    } else {
+       this.messageReplies = new ArrayList<BlogMessage>();
+    }
     this.timestamp = timestamp;
     this.parentID = parentID;
   }
@@ -59,8 +63,10 @@ public final class BlogMessage {
     return messageReplies;
   }
 
-  public void addReply(BlogMessage message) {
-    messageReplies.add(message);
+  public void addReply(BlogMessage reply) {
+    if (reply != null) {
+      messageReplies.add(reply);
+    }
   }
 
   public long getTimestamp() {

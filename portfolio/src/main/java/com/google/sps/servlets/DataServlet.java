@@ -106,25 +106,27 @@ public class DataServlet extends HttpServlet {
     response.getWriter().println(gson.toJson(LoadAllBlogsOrLast(/*all=*/false)));   
   }
  
-  private List<BlogMessage> putRepliesWithPosts(List<BlogMessage> blogMessages) {
+  private List<BlogMessage> putRepliesWithPosts(List<BlogMessage> blogMessagesAll) {
     // Separate posts from replies from |blogMessages|.
     // Add replies to messageReplies for the respective posts.
+    List<BlogMessage> blogMessagesParents = new ArrayList<BlogMessage>();
     List<BlogMessage> blogMessagesReplies = new ArrayList<BlogMessage>();
-    for (BlogMessage message : blogMessages) {
-      if (message.getParentID() != 0) {
-        blogMessagesReplies.add(message);
-        blogMessages.remove(message);
+    for (BlogMessage message : blogMessagesAll) {
+      if (message.getParentID() == 0) {
+        blogMessagesParents.add(message);
+      } else {
+          blogMessagesReplies.add(message);
       }
     }
  
-    for (BlogMessage post : blogMessages) {
+    for (BlogMessage post : blogMessagesParents) {
       for (BlogMessage reply : blogMessagesReplies) {
         if (reply.getParentID() == post.getTimestamp()) {
           post.addReply(reply);
         }
       } 
     }
-    return blogMessages;
+    return blogMessagesParents;
   }
 
   private void updateTagsToSearch (List<String> tagsToSearch) {
