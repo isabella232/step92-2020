@@ -34,11 +34,7 @@ public final class BlogMessage {
     this.message = message;
     this.nickname = nickname;
     this.email = email;
-    if (messageReplies != null) {
-      this.messageReplies = messageReplies;   
-    } else {
-       this.messageReplies = new ArrayList<BlogMessage>();
-    }
+    this.messageReplies = messageReplies;   
     this.timestamp = timestamp;
     this.parentID = parentID;
   }
