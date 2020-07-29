@@ -121,7 +121,7 @@ public class DataServlet extends HttpServlet {
  
     for (BlogMessage post : blogMessagesParents) {
       for (BlogMessage reply : blogMessagesReplies) {
-        if (reply.getParentID() == post.getTimestamp()) {
+        if (reply.getParentID() == post.getMessageId()) {
           post.addReply(reply);
         }
       } 
