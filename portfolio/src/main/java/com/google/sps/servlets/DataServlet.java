@@ -52,7 +52,6 @@ import java.util.Map;
  
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-  // Can add another parameter name for parentID which should be a constant.
   
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -90,14 +89,11 @@ public class DataServlet extends HttpServlet {
     long parentID = Long.parseLong(parentIDString);
     if (postTag == null || postTag.isEmpty()) {
       postTag = InternalTags.defaultTag();
-    }
-     
-    // TODO: Handle replies later.
-    List<BlogMessage> messageReplies = new ArrayList<BlogMessage>(); 
+    } 
  
     // TODO: Handle image file sent with FormData.
  
-    putBlogsInDatastore(postTag, message, nickname, messageReplies, parentID);
+    putBlogsInDatastore(postTag, message, nickname, parentID);
  
     // Respond with the recent post.
     // |LoadAllBlogsOrLast| returns the recent post if false is passed.
@@ -109,7 +105,7 @@ public class DataServlet extends HttpServlet {
 
   // Takes BlogMessage details and puts in datastore.
   private void putBlogsInDatastore(
-        String tag, String message, String nickname, List<BlogMessage> reply, long parentID) {
+        String tag, String message, String nickname, long parentID) {
     // Only put BlogMessages with a message in datastore.
     if (message == null || message.isEmpty()) {
       return;
@@ -119,7 +115,6 @@ public class DataServlet extends HttpServlet {
     blogMessageEntity.setProperty("text", message);
     blogMessageEntity.setProperty("time", System.currentTimeMillis());
     blogMessageEntity.setProperty("tag", tag);
-    blogMessageEntity.setProperty("replies", reply);
     blogMessageEntity.setProperty("parentID", parentID);
  
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -153,7 +148,7 @@ public class DataServlet extends HttpServlet {
       String nickname = (String) entity.getProperty("nickname");
       String email = (String) userService.getCurrentUser().getEmail();
       long parentID = (long) entity.getProperty("parentID");
-      ArrayList<BlogMessage> messageReplies = (ArrayList) entity.getProperty("replies");
+      ArrayList<BlogMessage> messageReplies = new ArrayList<BlogMessage>();
  
       BlogMessage message = new BlogMessage(
             messageId, tag, comment, nickname, email, messageReplies, timestamp, parentID);
