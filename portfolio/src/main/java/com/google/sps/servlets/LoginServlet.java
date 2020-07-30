@@ -69,7 +69,7 @@ public class LoginServlet extends HttpServlet {
     String userEmail = userService.getCurrentUser().getEmail();
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Entity entity = new Entity("blogMessage", id);
+    Entity entity = new Entity("UserLogin");
     entity.setProperty("id", id);
     entity.setProperty("nickname", request.getParameter(BlogConstants.NICKNAME));
     entity.setProperty("email", userEmail);
