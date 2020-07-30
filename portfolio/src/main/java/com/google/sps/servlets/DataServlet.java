@@ -55,20 +55,12 @@ public class DataServlet extends HttpServlet {
   
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Get BlogMessages from Datastore.
-    List<BlogMessage> blogMessages = RepliesUtils.putRepliesWithPosts(LoadAllBlogsOrLast(/*all=*/ true));
-    // TODO: Get these from client.
     int numberOfCommentsToDisplay = 0;
-    List<String> tagsToSearch = new ArrayList<String>();
-    TagsUtils.updateTagsToSearch(tagsToSearch);
-
-    LinkedList<BlogMessage> output = BlogHashMapUtils.sortAndLoadFromBlogHashMap(
-        blogMessages, tagsToSearch, numberOfCommentsToDisplay);
     
     Gson gson = new Gson();
     response.setContentType("application/json;");
  
-    response.getWriter().println(gson.toJson(output));
+    response.getWriter().println(gson.toJson(DatastoreUtils.doGetFromDatastore(numberOfCommentsToDisplay)));
   }
  
   @Override
@@ -100,7 +92,7 @@ public class DataServlet extends HttpServlet {
     Gson gson = new Gson();
  
     response.setContentType("application/json;");
-    response.getWriter().println(gson.toJson(LoadAllBlogsOrLast(/*all=*/false)));   
+    response.getWriter().println(gson.toJson(DatastoreUtils.LoadAllBlogsOrLast(/*all=*/false)));   
   }
 
   // Takes BlogMessage details and puts in datastore.
@@ -119,45 +111,6 @@ public class DataServlet extends HttpServlet {
  
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(blogMessageEntity);
-  }
- 
-  // Loads all BlogMessages from Datastore if true is passed,
-  // Otherwise if false is passed only the recent post is loaded.
-  // This is useful because each time a user posts, we only load the last BlogMessage
-  // Which reduces the time to load datastore.
-  private List<BlogMessage> LoadAllBlogsOrLast(boolean all) {
-    List<BlogMessage> blogMessages = new ArrayList<BlogMessage>();
-    Query query = new Query(BlogConstants.BLOG_ENTITY_KIND);
- 
-    if (all) {
-      query.addSort("time", SortDirection.ASCENDING);
-    } else {
-      query.addSort("time", SortDirection.DESCENDING);
-    }
- 
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    PreparedQuery results = datastore.prepare(query);
- 
-    UserService userService = UserServiceFactory.getUserService();
- 
-    for (Entity entity : results.asIterable()) {
-      long messageId = entity.getKey().getId();
-      long timestamp = (long) entity.getProperty("time");
-      String tag = (String) entity.getProperty("tag");
-      String comment = (String) entity.getProperty("text");
-      String nickname = (String) entity.getProperty("nickname");
-      String email = (String) userService.getCurrentUser().getEmail();
-      long parentID = (long) entity.getProperty("parentID");
-      ArrayList<BlogMessage> messageReplies = new ArrayList<BlogMessage>();
- 
-      BlogMessage message = new BlogMessage(
-            messageId, tag, comment, nickname, email, messageReplies, timestamp, parentID);
-      blogMessages.add(message);
-      if (!all) {
-        break;
-      }
-    }
-    return blogMessages;
   }
  
   // Returns a URL that points to the uploaded file, or null if the user didn't upload a file.
