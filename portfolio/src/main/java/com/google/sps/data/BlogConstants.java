@@ -23,4 +23,8 @@ public final class BlogConstants {
   public static String ID_PARAMETER = "messageId"; 
   public static String TAG_QUERY = "followedTag";
   public static String NICKNAME = "nickname";
+  public static String BLOG_USER = "BlogUser";
+  public static String ID = "id";
+  public static String EMAIL = "email";
+  public static String TIME = "time";
 }
