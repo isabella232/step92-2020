@@ -28,7 +28,7 @@ public final class RepliesUtils {
       if (message.getParentID() == 0) {
         blogMessagesParents.add(message);
       } else {
-          blogMessagesReplies.add(message);
+        blogMessagesReplies.add(message);
       }
     }
  
