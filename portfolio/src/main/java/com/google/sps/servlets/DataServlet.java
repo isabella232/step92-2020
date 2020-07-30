@@ -151,11 +151,11 @@ public class DataServlet extends HttpServlet {
       return;
     }
     Entity blogMessageEntity = new Entity(BlogConstants.BLOG_ENTITY_KIND);
-    blogMessageEntity.setProperty("nickname", nickname);
+    blogMessageEntity.setProperty(BlogConstants.NICKNAME, nickname);
     blogMessageEntity.setProperty("text", message);
-    blogMessageEntity.setProperty("time", System.currentTimeMillis());
+    blogMessageEntity.setProperty(BlogConstants.TIME, System.currentTimeMillis());
     blogMessageEntity.setProperty("tag", tag);
-    blogMessageEntity.setProperty("parentID", parentID);
+    blogMessageEntity.setProperty(BlogConstants.PARENTID_PARAMETER, parentID);
  
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(blogMessageEntity);
@@ -170,9 +170,9 @@ public class DataServlet extends HttpServlet {
     Query query = new Query(BlogConstants.BLOG_ENTITY_KIND);
  
     if (all) {
-      query.addSort("time", SortDirection.ASCENDING);
+      query.addSort(BlogConstants.TIME, SortDirection.ASCENDING);
     } else {
-      query.addSort("time", SortDirection.DESCENDING);
+      query.addSort(BlogConstants.TIME, SortDirection.DESCENDING);
     }
  
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -182,12 +182,12 @@ public class DataServlet extends HttpServlet {
  
     for (Entity entity : results.asIterable()) {
       long messageId = entity.getKey().getId();
-      long timestamp = (long) entity.getProperty("time");
+      long timestamp = (long) entity.getProperty(BlogConstants.TIME);
       String tag = (String) entity.getProperty("tag");
       String comment = (String) entity.getProperty("text");
-      String nickname = (String) entity.getProperty("nickname");
+      String nickname = (String) entity.getProperty(BlogConstants.NICKNAME);
       String email = (String) userService.getCurrentUser().getEmail();
-      long parentID = (long) entity.getProperty("parentID");
+      long parentID = (long) entity.getProperty(BlogConstants.PARENTID_PARAMETER);
       ArrayList<BlogMessage> messageReplies = new ArrayList<BlogMessage>();
  
       BlogMessage message = new BlogMessage(
