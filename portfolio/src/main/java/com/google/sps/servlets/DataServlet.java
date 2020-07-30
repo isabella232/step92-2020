@@ -103,11 +103,11 @@ public class DataServlet extends HttpServlet {
       return;
     }
     Entity blogMessageEntity = new Entity(BlogConstants.BLOG_ENTITY_KIND);
-    blogMessageEntity.setProperty("nickname", nickname);
+    blogMessageEntity.setProperty(BlogConstants.NICKNAME, nickname);
     blogMessageEntity.setProperty("text", message);
-    blogMessageEntity.setProperty("time", System.currentTimeMillis());
+    blogMessageEntity.setProperty(BlogConstants.TIME, System.currentTimeMillis());
     blogMessageEntity.setProperty("tag", tag);
-    blogMessageEntity.setProperty("parentID", parentID);
+    blogMessageEntity.setProperty(BlogConstants.PARENTID_PARAMETER, parentID);
  
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(blogMessageEntity);

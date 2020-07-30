@@ -69,10 +69,10 @@ public class LoginServlet extends HttpServlet {
     String userEmail = userService.getCurrentUser().getEmail();
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Entity entity = new Entity("blogMessage", id);
-    entity.setProperty("id", id);
-    entity.setProperty("nickname", request.getParameter(BlogConstants.NICKNAME));
-    entity.setProperty("email", userEmail);
+    Entity entity = new Entity(BlogConstants.BLOG_USER, id);
+    entity.setProperty(BlogConstants.ID, id);
+    entity.setProperty(BlogConstants.NICKNAME, request.getParameter(BlogConstants.NICKNAME));
+    entity.setProperty(BlogConstants.EMAIL, userEmail);
     datastore.put(entity);
 
     response.sendRedirect("/");
@@ -81,8 +81,8 @@ public class LoginServlet extends HttpServlet {
   private String getUserNickname(String id) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Query query =
-        new Query("blogMessage")
-            .setFilter(new Query.FilterPredicate("id", Query.FilterOperator.EQUAL, id));
+        new Query(BlogConstants.BLOG_ENTITY_KIND)
+            .setFilter(new Query.FilterPredicate(BlogConstants.ID, Query.FilterOperator.EQUAL, id));
     PreparedQuery results = datastore.prepare(query);
     Entity entity = results.asSingleEntity();
     if (entity == null) {
