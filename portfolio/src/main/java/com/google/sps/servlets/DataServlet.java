@@ -55,20 +55,20 @@ public class DataServlet extends HttpServlet {
   
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Get BlogMessages from Datastore and put replies with their respective posts.
-    List<BlogMessage> blogMessages = putRepliesWithPosts(LoadAllBlogsOrLast(/*all=*/ true));
-
+    // Get BlogMessages from Datastore.
+    List<BlogMessage> blogMessages = RepliesUtils.putRepliesWithPosts(LoadAllBlogsOrLast(/*all=*/ true));
     // TODO: Get these from client.
     int numberOfCommentsToDisplay = 0;
     List<String> tagsToSearch = new ArrayList<String>();
+    TagsUtils.updateTagsToSearch(tagsToSearch);
 
-    updateTagsToSearch(tagsToSearch);
+    LinkedList<BlogMessage> output = BlogHashMapUtils.sortAndLoadFromBlogHashMap(
+        blogMessages, tagsToSearch, numberOfCommentsToDisplay);
     
     Gson gson = new Gson();
     response.setContentType("application/json;");
  
-    response.getWriter().println(gson.toJson(sortAndLoadFromBlogHashMap(
-       blogMessages, tagsToSearch, numberOfCommentsToDisplay)));
+    response.getWriter().println(gson.toJson(output));
   }
  
   @Override
@@ -101,46 +101,6 @@ public class DataServlet extends HttpServlet {
  
     response.setContentType("application/json;");
     response.getWriter().println(gson.toJson(LoadAllBlogsOrLast(/*all=*/false)));   
-  }
- 
-  private List<BlogMessage> putRepliesWithPosts(List<BlogMessage> blogMessagesAll) {
-    // Separate posts from replies from |blogMessages|.
-    // Add replies to messageReplies for the respective posts.
-    List<BlogMessage> blogMessagesParents = new ArrayList<BlogMessage>();
-    List<BlogMessage> blogMessagesReplies = new ArrayList<BlogMessage>();
-    for (BlogMessage message : blogMessagesAll) {
-      if (message.getParentID() == 0) {
-        blogMessagesParents.add(message);
-      } else {
-          blogMessagesReplies.add(message);
-      }
-    }
- 
-    for (BlogMessage post : blogMessagesParents) {
-      for (BlogMessage reply : blogMessagesReplies) {
-        if (reply.getParentID() == post.getMessageId()) {
-          System.out.println("we're adding a rep");
-          post.addReply(reply);
-        }
-      } 
-    }
-    return blogMessagesParents;
-  }
-
-  private void updateTagsToSearch (List<String> tagsToSearch) {
-    UserService userService = UserServiceFactory.getUserService();
-    String email = (String) userService.getCurrentUser().getEmail();
- 
-    // Check to see if user follows any tags
-    if (!LoadFollowedTags.hasFollowedTags(email)) {
-      return;
-    }
-    List<String> newTags = LoadFollowedTags.getFollowedTags(email);
-    for (String tag : newTags) {
-      if (!tagsToSearch.contains(tag)) {
-        tagsToSearch.add(tag);
-      }
-    } 
   }
 
   // Takes BlogMessage details and puts in datastore.
@@ -198,16 +158,6 @@ public class DataServlet extends HttpServlet {
       }
     }
     return blogMessages;
-  }
- 
-  // Takes a list of BlogMessages and 2 load parameters: tags to Search for and a load amount.
-  // Puts BlogMessages in BlogHashMap and loads the requested parameters.
-  private LinkedList<BlogMessage> sortAndLoadFromBlogHashMap(
-        List<BlogMessage> blogMessages, List<String> tagsToSearch, int loadAmount) {
-    BlogHashMap blogMap = new BlogHashMap();
-    blogMap.putInMap(blogMessages);
- 
-    return blogMap.getMessages(tagsToSearch, loadAmount);
   }
  
   // Returns a URL that points to the uploaded file, or null if the user didn't upload a file.
