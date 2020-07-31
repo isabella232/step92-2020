@@ -6,7 +6,7 @@
   padding: 50px;
   color: black;
 }
-
+ 
 #blogcontent {
   display: none;
   margin-left: auto;
@@ -16,21 +16,16 @@
   padding: 50px;
   color: black;
 }
-
-#hidden-reply {
+ 
+.hidden {
   display: none;
 }
-
-#blogreplycontent {
+ 
+#reply-form {
   display: none;
-  margin-left: auto;
-  margin-right: auto;
-  width: 950px;
-  background-color: rgb(255, 255, 255);
-  padding: 50px;
-  color: black;
+  float: right;
 }
-
+ 
 #infocontent {
   margin-left: auto;
   margin-right: auto;
@@ -39,7 +34,7 @@
   padding: 50px;
   color: black;
 }
-
+ 
 #resourcescontent {
   margin-left: auto;
   margin-right: auto;
@@ -48,7 +43,7 @@
   padding: 50px;
   color: black;
 }
-
+ 
 #followtagscontent {
   margin-left: auto;
   margin-right: auto;
@@ -57,12 +52,12 @@
   padding: 50px;
   color: black;
 }
-
+ 
 body, html {
   margin: 0;
   font-family: Arial;
 }
-
+ 
 /* Style tab links */
 .tablink {
   background-color: #555;
@@ -75,11 +70,11 @@ body, html {
   font-size: 17px;
   width: 20%;
 }
-
+ 
 .tablink:hover {
   background-color: #777;
 }
-
+ 
 /* Style the tab content (and add height:100% for full page content) */
 .tabcontent {
   color: white;
@@ -87,7 +82,7 @@ body, html {
   padding: 100px 20px;
   height: 100%;
 }
-
+ 
 #confirm {
   background-color: rgb(51, 153, 255);
   display: none;
@@ -95,13 +90,12 @@ body, html {
   border: 5px solid rgb(51, 153, 255);
   padding: 5px;
   margin: 5px;
-  text-decoration: none;
   color: #008CBA;
   position: relative;
   animation-name: confirmAnim;
   animation-duration: 5s;
 }
-
+ 
 @keyframes confirmAnim {
   0%   {background-color:rgb(0, 132, 255);}
   50% {
@@ -115,19 +109,19 @@ body, html {
     left:500px;
   }
 }
-
+ 
 #Home {background-color: rgb(220, 189, 255);}
 #Blog {background-color: rgb(189, 255, 249);}
 #Information {background-color: rgb(164, 248, 164);}
 #Resources {background-color: rgb(248, 235, 159);}
 #FollowTags {background-color: rgb(255, 255, 255);}
-
+ 
 .scrollmenu {
   background-color: #333;
   overflow: auto;
   white-space: nowrap;
 }
-
+ 
 .scrollbutton {
   background-color: #333;
   color: white;
@@ -138,8 +132,7 @@ body, html {
   text-decoration: none;
   border: none
 }
-
-
+ 
 .scrollmenu a {
   display: inline-block;
   color: white;
@@ -147,11 +140,11 @@ body, html {
   padding: 14px;
   text-decoration: none;
 }
-
+ 
 .scrollmenu a:hover {
   background-color: #777;
 }
-
+ 
 .post {
   background-color: lightgrey;
   border: 5px solid black;
@@ -160,11 +153,11 @@ body, html {
   padding: 30px;
   width: 800px
 }
-
+ 
 .post span {
   flex-grow: 1;
 }
-
+ 
 .post button {
   margin-top: 5px;
   float: right;
