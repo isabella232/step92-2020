@@ -74,13 +74,21 @@ public class DataServlet extends HttpServlet {
       response.getWriter().println("<h2> Cannot post empty message.</h2>");
       return;
     }
- 
-    String nickname = request.getParameter(BlogConstants.SENDER_PARAMETER);
-    String postTag = request.getParameter(BlogConstants.TAG_PARAMETER);
-    String parentIDString = request.getParameter(BlogConstants.PARENTID_PARAMETER);
-    long parentID = Long.parseLong(parentIDString);
-    if (postTag == null || postTag.isEmpty()) {
+   
+   String postTag = request.getParameter(BlogConstants.TAG_PARAMETER);
+   if (postTag == null || postTag.isEmpty()) {
       postTag = InternalTags.defaultTag();
+    } 
+ 
+    UserService userService = UserServiceFactory.getUserService();
+    String nickname = LoginServlet.getUserNickname(userService.getCurrentUser().getUserId());
+
+    long parentID = 0;
+    try {
+      parentID = Long.parseLong(request.getParameter(BlogConstants.PARENTID_PARAMETER));
+    } catch(NumberFormatException nfe) {
+      System.err.println("Exception caused by parentID: not number");
+      return;
     } 
  
     // TODO: Handle image file sent with FormData.
