@@ -5,15 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>BIPOC Blog</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
- 
-    <style>
-      /* Form is hidden by default. */
-      .hidden {
-        display: none;
-      }
-    </style>
   </head>
+
   <body onload="fetchBlobstoreUrlAndShowForm(); defaultPage(); loadPosts();">
     <button class="tablink" onclick="openPage('Home', this, 'grey')" id="defaultOpen">Home</button>
     <button class="tablink" onclick="openPage('Blog', this, 'grey')">Blog</button>
@@ -46,15 +39,12 @@
       <button onclick="setNicknameForm()">Set your nickname</button>
       <div id="blogcontent">
         <h1>Blog</h1>
-        <p>Welcome to the BIPOC blog, a space to uplift BIPOC and share resources.</p
-        <form id="my-form" enctype="multipart/form-data">
-          <textarea id="sender" rows="1" cols="20" placeholder="Nickname"></textarea> 
-          <br>
-          <textarea id="text-input" rows="6" cols="60" placeholder="What's on your mind..."></textarea>
-          <br>
-          <br>
+        <p>Welcome to the BIPOC blog, a space to uplift BIPOC and share resources.</p>
+        <form id="post-form" enctype="multipart/form-data">
+          <textarea id="post-text-input" name="text-input" rows="6" cols="60" placeholder="What's on your mind..."></textarea>
+          <br/>
           <label for="tags">Choose tags:</label>
-          <select name="tags" id="tags">
+          <select name="tags" id="post-tag">
             <option value="#general">Default</option>
             <option value="#business">#business</option>
             <option value="#education">#education</option>
@@ -65,31 +55,30 @@
             <option value="#wellbeing">#wellbeing</option>
           </select>
           <br>
+          <input class="hidden" type="text" id="post-parentID" name="parentID" value="0"><br>
           Upload an image:
-          <input type="file" id="image" name="image">
-        </form>
-        <button onclick="sendAndGet('sender', 'text-input', 'tags')">Post</button> 
+          <input type="file" id="post-image" name="image">
+          <button type="submit">Post</button>
+        </form> 
+        
         <div id="comments-container">
           <ul id="posts-list"></ul>
         </div>
-        <div id="confirm"></div>
-      </div>
 
-      <div id="blogreplycontent">
-        <form id="my-form" enctype="multipart/form-data">
-          <textarea id="sender-reply" rows="1" cols="20" placeholder="Nickname"></textarea> 
+        <div id="confirm"></div>
+
+        <form id="reply-form" enctype="multipart/form-data">
+          <textarea id="reply-text-input" name="text-input" rows="3" cols="60" placeholder=""></textarea>
           <br>
-          <textarea id="text-input-reply" rows="6" cols="60" placeholder="What's on your mind..."></textarea>
-          <br>
-          <div id="hidden-reply">
-            <input type="text" id="parentID" value="0"><br>
-            <input type="text" id="tags-reply" value="#general"><br>
+          <div class="hidden">
+            <input type="text" id="reply-parentID" name="parentID" value="0"><br>
+            <input type="text" id="reply-tag" name="tags" value="#general"><br>
           </div>
-          <br>
           Upload an image:
-          <input type="file" id="image" name="image">
+          <input type="file" id="reply-image" name="image">
+          <button class="hidden" id="reply-submit" type="submit">Post</button>
         </form>
-        <button onclick="sendAndGet('sender-reply', 'text-input-reply', 'tags-reply'); closeReplies();">Post</button> 
+
       </div>
       
     </div>
@@ -126,6 +115,7 @@
         <div id="home-comments-container"></div>
       </div>
     </div>
- 
+  <script type="text/javascript"  src="script.js" charset="utf-8"></script>
+    
   </body>
 </html>
