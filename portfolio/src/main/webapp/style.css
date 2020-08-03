@@ -231,12 +231,12 @@ body, html {
 
 /* Style the check indicator */
 .tagselectcontainer .tagcheckindicator:after {
- 	top: 9px;
-	left: 9px;
-	width: 8px;
-	height: 8px;
-	border-radius: 50%;
-	background: white;
+  top: 9px;
+  left: 9px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
 }
 
 /* Styles for followTag boxes */
