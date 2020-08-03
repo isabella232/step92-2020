@@ -338,11 +338,134 @@ function setNicknameForm() {
     window.open("/login");
 }
 
-function sendFollowedTags() {
-  const tagElem = document.getElementById('followtags');
+let followSectionBtn = document.getElementById('show-Ft-Btn');
+followSectionBtn.addEventListener('click', () => {
+  const followTagsSection = document.getElementById('follow-tags-section');
+  if (followTagsSection.style.display == 'none') {
+    showTagsToFollow();
+  } else {
+    hideTagsToFollow();
+  }
+});
 
-  const params = new URLSearchParams();
-  params.append('tags', tagElem.value);
-
-  fetch('/follow-tags', {method: 'POST', body: params});
+function showTagsToFollow() {
+  document.getElementById('follow-tags-section').style.display = 'block';
+  followSectionBtn.innerText = 'Hide Tags to Follow';
 }
+
+function hideTagsToFollow() {
+  document.getElementById('follow-tags-section').style.display = 'none';
+  followSectionBtn.innerText = 'Show Tags to Follow';
+}
+
+// If a user selects tag(s) to follow, this function posts them to the server, and 
+// Sends the appropriate confirmation message for 5 seconds.
+function sendFollowedTags() {
+  let params = new URLSearchParams();
+
+  const tagElems = document.getElementsByClassName('followtagcheck');
+  for (var i = 0; i < tagElems.length; i++) {
+    if (tagElems[i].checked === true) {
+      params.append('tags', tagElems[i].value);
+    }
+  }
+  fetch('/follow-tags', {method: 'POST', body: params}).then(
+        response => response.text()).then((text) => {
+    const confirmationBox = document.getElementById('confirm-box');
+    const confirmationElement = document.getElementById('confirm-text');
+
+    // In case of unexpected server errors...
+    if (!text.includes('Success!') && !text.includes('Failed!')) {
+      confirmationBox.style.backgroundColor = 'FireBrick';
+      confirmationElement.innerHTML = '';
+      confirmationElement.innerHTML = `<i>Oops! Please try again</i>`;
+      confirmationBox.style.display = 'block';
+      setTimeout(function () {
+        confirmationBox.style.display = 'none';}, 5000);
+      return;
+    }
+    
+    // This server message means user tried to re-follow tag(s) they already follow.
+    if (text.includes('Failed!')) {
+      confirmationBox.style.backgroundColor = 'FireBrick';
+      confirmationElement.innerHTML = "";
+      confirmationElement.innerHTML = `${text}`;
+      confirmationBox.style.display = 'block';
+      setTimeout(function () {
+            confirmationBox.style.display = 'none';}, 5000);
+      return;
+    } 
+    
+    confirmationBox.style.backgroundColor = 'DarkSlateGray';
+    confirmationElement.innerHTML = "";
+    confirmationElement.innerHTML = `${text}`;
+    confirmationBox.style.display = 'block';
+    setTimeout(function () {
+        confirmationBox.style.display = 'none';}, 5000);
+        
+    // Post was successful, so
+    // Hide the tags to follow section and load the recently followed tag(s).
+    hideTagsToFollow();
+    getFollowedTags();
+  });
+}
+
+// Loads user followed tags to the FollowTags page...
+function getFollowedTags() {
+  fetch('/follow-tags').then(response => response.json()).then((userFollowedTags) => {
+    const userFollowedTagsBox = document.getElementById('user-followed-tags');
+    const followTagsStatusElem = document.getElementById('follow-tags-status');
+
+    if (isEmpty(userFollowedTags)) {
+      followTagsStatusElem.innerHTML = '<Strong>You do not follow any tag.</Strong>';
+      return;
+    }
+
+    userFollowedTagsBox.innerHTML = '';
+    followTagsStatusElem.innerHTML = '<Strong>You follow the following tag(s).</Strong>';
+    userFollowedTags.forEach((followedTag) => {
+      userFollowedTagsBox.appendChild(createFollowedTagContainer(followedTag));
+    });
+  });
+}
+
+//
+function checkEmptyFollowedTagsStatus() {
+  const userFollowedTagsBox = document.getElementById('user-followed-tags');
+  const followTagsStatusElem = document.getElementById('follow-tags-status');
+  if (!userFollowedTagsBox.firstElementChild) {
+    followTagsStatusElem.innerHTML = '<Strong>You do not follow any tag.</Strong>';
+  }
+}
+
+// Checks if an object (specifically a response object) is empty.
+function isEmpty(obj) {
+  for(var key in obj) {
+    if(obj.hasOwnProperty(key)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+// Returns a container for a followedTag, including a button to unfollow the tag.
+function createFollowedTagContainer(tagObject) {
+  const tagContainer = document.createElement('div');
+  tagContainer.className = 'followtagbox';
+
+  // The style defined in our css file is the [Ft_tagName] without the '#' sign, so slice it...
+  tagContainer.id = `Ft_${tagObject.tag.slice(1)}`;
+  tagContainer.innerHTML = `<strong>${tagObject.tag}</strong>`;
+
+  const unfollowBtn = document.createElement('button');
+  unfollowBtn.className = 'Ft-Btns';
+  unfollowBtn.innerText = 'Unfollow tag';
+  unfollowBtn.addEventListener('click', () => {
+    const FTAG_ENTITY_KIND  = 'followedTag';
+    deleteElement(tagObject, FTAG_ENTITY_KIND, tagContainer);
+  });
+
+  tagContainer.appendChild(unfollowBtn);
+  return tagContainer;
+}
+/* End Of File */
