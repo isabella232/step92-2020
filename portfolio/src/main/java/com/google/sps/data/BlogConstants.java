@@ -20,7 +20,8 @@ public final class BlogConstants {
   public static String TAG_PARAMETER = "tags";
   public static String PARENTID_PARAMETER = "parentID";
   public static String BLOG_ENTITY_KIND = "blogMessage";
-  public static String ID_PARAMETER = "messageId"; 
+  public static String ENTITY_KIND_PARAMETER = "entity_name";
+  public static String ENTITY_ID_PARAMETER = "entityId"; 
   public static String TAG_QUERY = "followedTag";
   public static String NICKNAME = "nickname";
   public static String BLOG_USER = "BlogUser";
