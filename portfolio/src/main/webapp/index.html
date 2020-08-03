@@ -7,12 +7,16 @@
     <link rel="stylesheet" href="style.css">
   </head>
 
-  <body onload="fetchBlobstoreUrlAndShowForm(); defaultPage(); loadPosts();">
-    <button class="tablink" onclick="openPage('Home', this, 'grey')" id="defaultOpen">Home</button>
-    <button class="tablink" onclick="openPage('Blog', this, 'grey')">Blog</button>
-    <button class="tablink" onclick="openPage('Information', this, 'grey')">Information</button>
-    <button class="tablink" onclick="openPage('Resources', this, 'grey')">Resources</button>
-    <button class="tablink" onclick="openPage('FollowTags', this, 'grey')">Tags You Follow</button>
+  <body onload="fetchBlobstoreUrlAndShowForm(); defaultPage(); loadPosts(); getFollowedTags();">
+    <div id="tablink-buttons">
+      <button class="tablink" onclick="openPage('Home', this, 'grey')" id="defaultOpen">Home</button>
+      <button class="tablink" onclick="openPage('Blog', this, 'grey')">Blog</button>
+      <button class="tablink" onclick="openPage('FollowTags', this, 'grey')">Tags You Follow</button>
+      <button class="tablink" onclick="openPage('Information', this, 'grey')">Information</button>
+      <button class="tablink" onclick="openPage('Resources', this, 'grey')">Resources</button>
+      <br><br>
+      <div id="confirm-box"><p id="confirm-text"></p></div>
+    </div>
 
     <div id="Home" class="tabcontent">
       <div id="homecontent">
@@ -30,7 +34,7 @@
         </div>
         <h1 style="text-align:center;">TOP X POSTS</h1>
         <p>Here are the top X posts!</p>
-        <div id="home-comments-container" style="text-align:center;"></div>
+        <div id="home-comments-tagselectcontainer" style="text-align:center;"></div>
       </div>
     </div>
 
@@ -61,11 +65,9 @@
           <button type="submit">Post</button>
         </form> 
         
-        <div id="comments-container">
+        <div id="comments-tagselectcontainer">
           <ul id="posts-list"></ul>
         </div>
-
-        <div id="confirm"></div>
 
         <form id="reply-form" enctype="multipart/form-data">
           <textarea id="reply-text-input" name="text-input" rows="3" cols="60" placeholder=""></textarea>
@@ -78,9 +80,7 @@
           <input type="file" id="reply-image" name="image">
           <button class="hidden" id="reply-submit" type="submit">Post</button>
         </form>
-
       </div>
-      
     </div>
  
     <div id="Information" class="tabcontent">
@@ -101,18 +101,60 @@
     We want to create a popup of this page for first time users -->
     <div id="FollowTags" class="tabcontent">
       <div id="followtagscontent">
-        <h1>Tags To Follow</h1>
-        <p>This page will provide posts on tags to follow.</p>
-        <select name="tags" id="followtags">
-          <option value="#general" id="general">#general</option>
-          <option value="#business" id="business">#business</option>
-          <option value="#education" id="education">#education</option>
-          <option value="#games" id="games">#games</option>
-          <option value="#music" id="music">#music</option>
-          <option value="#wellbeing" id="wellbeing">#wellbeing</option>
-        </select>
-        <button onclick="sendFollowedTags()">Follow</button>
-        <div id="home-comments-container"></div>
+        <h1 class="Ft-headerAndPara">Your Followed Tags Page</h1>
+        <button class="Ft-Btns" id="show-Ft-Btn">Show Tags to Follow</button>
+        <div class="hidden" id="follow-tags-section">
+          <h3 class="Ft-headerAndPara">You can follow tags you're interested in.</h3>
+          <p class="Ft-headerAndPara">If you follow a tag, you'll see posts for those tags first!</p>
+          <label class="tagselectcontainer">
+            <div class="followtagbox" id="Ft_animals"><strong>#animals</strong></div>
+            <input type="checkbox" class="followtagcheck" name="tags" value="#animals">
+            <span class="tagcheckindicator"></span>
+          </label>
+          <label class="tagselectcontainer">
+            <div class="followtagbox" id="Ft_art"><strong>#art</strong></div>
+            <input type="checkbox" class="followtagcheck" name="tags" value="#art">
+            <span class="tagcheckindicator"></span>
+          </label>
+          <label class="tagselectcontainer">
+            <div class="followtagbox" id="Ft_business"><strong>#business</strong></div>
+            <input type="checkbox" class="followtagcheck" name="tags" value="#business">
+            <span class="tagcheckindicator"></span>
+          </label> <br><br>
+          <label class="tagselectcontainer">
+            <div class="followtagbox" id="Ft_education"><strong>#education</strong></div>
+            <input type="checkbox" class="followtagcheck" name="tags" value="#education">
+            <span class="tagcheckindicator"></span>
+          </label>
+          <label class="tagselectcontainer">
+            <div class="followtagbox" id="Ft_environment"><strong>#environment</strong></div>
+            <input type="checkbox" class="followtagcheck" name="tags" value="#environment">
+            <span class="tagcheckindicator"></span>
+          </label>
+          <label class="tagselectcontainer">
+            <div class="followtagbox" id="Ft_games"><strong>#games</strong></div>
+            <input type="checkbox" class="followtagcheck" name="tags" value="#games">
+            <span class="tagcheckindicator"></span>
+          </label> <br><br>
+          <label class="tagselectcontainer">
+            <div class="followtagbox" id="Ft_music"><strong>#music</strong></div>
+            <input type="checkbox" class="followtagcheck" name="tags" value="#music">
+            <span class="tagcheckindicator"></span>
+          </label>
+          <label class="tagselectcontainer">
+            <div class="followtagbox" id="Ft_politics"><strong>#politics</strong></div>
+            <input type="checkbox" class="followtagcheck" name="tags" value="#politics">
+            <span class="tagcheckindicator"></span>
+          </label> <br><br>
+          <label class="tagselectcontainer">
+            <div class="followtagbox" id="Ft_wellbeing"><strong>#wellbeing</strong></div>
+            <input type="checkbox" class="followtagcheck" name="tags" value="#wellbeing">
+            <span class="tagcheckindicator"></span>
+          </label> <br>
+          <button onclick="sendFollowedTags()">Follow</button> <br>
+        </div>
+        <p class="Ft-headerAndPara" id="follow-tags-status"></p>
+        <div id="user-followed-tags"></div>
       </div>
     </div>
   <script type="text/javascript"  src="script.js" charset="utf-8"></script>
