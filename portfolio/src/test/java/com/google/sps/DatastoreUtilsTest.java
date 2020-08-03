@@ -19,20 +19,17 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
-import java.io.*;
-
 @RunWith(JUnit4.class)
 public final class DatastoreUtilsTest {
   public static String TAG = "tag";
-  public static String NO_TAGS_EMAIL = "noTags@testing.com";
   public static String HAS_TAGS_EMAIL = "hasTags@testing.com";
   public static String HAS_MULTIPLE_TAGS_EMAIL = "hasMultipleTags@testing.com";
   public static DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
   private final LocalServiceTestHelper helper =
-    new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
+    new LocalServiceTestHelper(
+        new LocalDatastoreServiceTestConfig()).setEnvAuthDomain(
+        "example.com").setEnvIsLoggedIn(true).setEnvEmail(HAS_MULTIPLE_TAGS_EMAIL);
 
   @Before
   public void setUp() {
@@ -70,12 +67,9 @@ public final class DatastoreUtilsTest {
   }
 
   private void createDatastoreEntities() {
-    createUserEntity("357911", "noTags", NO_TAGS_EMAIL);
-    createUserEntity("246810", "hasTags", HAS_TAGS_EMAIL);
     createUserEntity("123456", "hasMultipleTags", HAS_MULTIPLE_TAGS_EMAIL);
     createBlogMessageEntity("test1", "test text business", "#business", 0);
     createBlogMessageEntity("test2", "test text business", "#business", 0);
-    addEntityTags("#business", HAS_TAGS_EMAIL);
 
     List<String> multipleTagsFollowed = new ArrayList<String>();
     multipleTagsFollowed.add("#business");
@@ -85,16 +79,6 @@ public final class DatastoreUtilsTest {
     for (int i=0; i<multipleTagsFollowed.size(); i++) {
       addEntityTags(multipleTagsFollowed.get(i), HAS_MULTIPLE_TAGS_EMAIL);
     }
-  }
-
-  public Entity createBlogMessageEntityAndReturn(String nickname, String text, String tag, long parentID) {
-    Entity blogMessageEntity = new Entity(BlogConstants.BLOG_ENTITY_KIND);
-    blogMessageEntity.setProperty(BlogConstants.NICKNAME, nickname);
-    blogMessageEntity.setProperty("text", text);
-    blogMessageEntity.setProperty(BlogConstants.TIME, System.currentTimeMillis());
-    blogMessageEntity.setProperty(TAG, tag);
-    blogMessageEntity.setProperty(BlogConstants.PARENTID_PARAMETER, parentID);
-    return blogMessageEntity;
   }
 
   @Test
@@ -109,32 +93,30 @@ public final class DatastoreUtilsTest {
     Assert.assertEquals(1, actual.size());
   }
 
-  /*@Test
+  @Test
   public void loadAllBlogsOrLastTestTrue() {
     createDatastoreEntities();
     List<BlogMessage> actual = DatastoreUtils.LoadAllBlogsOrLast(true);
 
     Assert.assertEquals(2, actual.size());
-  }*/
+  }
 
-  /*@Test
+  @Test
   public void loadAllBlogsOrLastTestFalse() {
     createDatastoreEntities();
     List<BlogMessage> actual = DatastoreUtils.LoadAllBlogsOrLast(false);
 
     Assert.assertEquals(1, actual.size());
-  }*/
+  }
 
-  /*@Test
+  @Test
   public void updateTagsToSearchTest() {
     List<String> tagsToSearch = new ArrayList<String>();
+    createDatastoreEntities();
     TagsUtils.updateTagsToSearch(tagsToSearch);
-    //TODO find out what email is used to get tags
-    UserService userService = UserServiceFactory.getUserService();
-    String email = (String) userService.getCurrentUser().getEmail();
-    System.out.println(email);
-    Assert.assertEquals(1, 0);
-  }*/
+   
+    Assert.assertEquals(3, tagsToSearch.size());
+  }
 
   @Test
   public void sortAndLoadFromBlogHashMapTest() {
