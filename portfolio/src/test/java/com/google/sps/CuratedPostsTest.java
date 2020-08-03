@@ -1,3 +1,17 @@
+// Copyright 2019 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package com.google.sps.servlets;
 
 import static com.google.appengine.api.datastore.FetchOptions.Builder.withLimit;
@@ -79,7 +93,7 @@ public class CuratedPostsTest {
   @Test
   public void testFollowsNoTags() {
     createDatastoreEntities();
-    List<String> expectedFollowedTags = new ArrayList<String>();
+    List<FollowedTag> expectedFollowedTags = new ArrayList<FollowedTag>();
     assertEquals(expectedFollowedTags, LoadFollowedTags.getFollowedTags(NO_TAGS_EMAIL));
   }
 
@@ -88,7 +102,11 @@ public class CuratedPostsTest {
     createDatastoreEntities();
     List<String> expectedFollowedTags = new ArrayList<String>();
     expectedFollowedTags.add("#business");
-    assertEquals(expectedFollowedTags, LoadFollowedTags.getFollowedTags(HAS_TAGS_EMAIL));
+    List<String> returnedTags = new ArrayList<String>();
+    for (FollowedTag followedTag : LoadFollowedTags.getFollowedTags(HAS_TAGS_EMAIL)) {
+      returnedTags.add(followedTag.getTag());
+    }
+    assertEquals(expectedFollowedTags, returnedTags);
     assertEquals(1, LoadFollowedTags.getFollowedTags(HAS_TAGS_EMAIL).size());
   }
 
@@ -99,7 +117,11 @@ public class CuratedPostsTest {
     expectedFollowedTags.add("#business");
     expectedFollowedTags.add("#education");
     expectedFollowedTags.add("#music");
-    assertEquals(expectedFollowedTags, LoadFollowedTags.getFollowedTags(HAS_MULTIPLE_TAGS_EMAIL));
+    List<String> returnedTags = new ArrayList<String>();
+    for (FollowedTag followedTag : LoadFollowedTags.getFollowedTags(HAS_MULTIPLE_TAGS_EMAIL)) {
+      returnedTags.add(followedTag.getTag());
+    }
+    assertEquals(expectedFollowedTags, returnedTags);
     assertEquals(3, LoadFollowedTags.getFollowedTags(HAS_MULTIPLE_TAGS_EMAIL).size());
   }
 
@@ -118,3 +140,4 @@ public class CuratedPostsTest {
     assertEquals(expectedFollowedTags, LoadFollowedTags.hasFollowedTags(HAS_MULTIPLE_TAGS_EMAIL));
   }
 }
+/* End Of File */ 

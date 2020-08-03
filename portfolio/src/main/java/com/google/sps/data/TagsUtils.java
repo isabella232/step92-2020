@@ -27,11 +27,12 @@ public final class TagsUtils {
     if (!LoadFollowedTags.hasFollowedTags(email)) {
       return;
     }
-    List<String> newTags = LoadFollowedTags.getFollowedTags(email);
-    for (String tag : newTags) {
-      if (!tagsToSearch.contains(tag)) {
-        tagsToSearch.add(tag);
+    List<FollowedTag> userFollowedTags = LoadFollowedTags.getFollowedTags(email);
+    for (FollowedTag tag : userFollowedTags) {
+      if (!tagsToSearch.contains(tag.getTag())) {
+        tagsToSearch.add(tag.getTag());
       }
     } 
   }
 }
+
