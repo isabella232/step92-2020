@@ -40,9 +40,9 @@ public class DeleteServlet extends HttpServlet {
     long entityID = Long.parseLong(request.getParameter(BlogConstants.ENTITY_ID_PARAMETER));
     String entityKind = request.getParameter(BlogConstants.ENTITY_KIND_PARAMETER);
 
-    Key EntityKey = KeyFactory.createKey(entityKind, entityID);
+    Key entityKey = KeyFactory.createKey(entityKind, entityID);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    datastore.delete(EntityKey);
+    datastore.delete(entityKey);
 
     response.setContentType("text/html");
     if (entityKind.equals(BlogConstants.BLOG_ENTITY_KIND)) {
