@@ -230,7 +230,7 @@ function createImgElement(text) {
 }
 
 // Deletes an entity from datastore and sends a confirmation message for 5 seconds.
-async function deleteElement(entityObj, entityKind, ElemContainer) { 
+async function deleteElement(entityObj, entityKind, elemContainer) { 
   const params = new URLSearchParams();
   params.append('entityId', entityObj.id);
   params.append('entity_name', entityKind);
@@ -256,7 +256,7 @@ async function deleteElement(entityObj, entityKind, ElemContainer) {
     confirmationBox.style.display='block';
     setTimeout(function () {
         confirmationBox.style.display='none';}, 5000);
-    ElemContainer.remove();
+    elemContainer.remove();
   }).then(function() {
     if (entityKind == 'followedTag') {
       checkEmptyFollowedTagsStatus();
