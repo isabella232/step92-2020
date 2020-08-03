@@ -18,8 +18,8 @@ import java.lang.String;
  
 // Datastructure to hold a followed tag and its Id.
 public final class FollowedTag {
-  String tag;
-  long id;
+  private final String tag;
+  private final long id;
  
   public FollowedTag(String tag, long id) {
     this.tag = tag;
