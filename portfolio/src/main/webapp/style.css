@@ -162,3 +162,188 @@ body, html {
   margin-top: 5px;
   float: right;
 }
+
+.followtagbox {
+  display : inline-block;
+  background-color: lightgrey;
+  border: 5px solid black;
+  margin: 10px;
+  padding: 30px;
+  text-align: center;
+  width: 150px;
+  color: black;
+}
+
+.tagselectcontainer {
+  display: inline-block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.tagselectcontainer input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create custom [circle dot] check indicator */
+.tagcheckindicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+  border-radius: 50%;
+}
+
+/* On mouse-over, add a grey background color */
+.tagselectcontainer:hover input ~ .tagcheckindicator {
+  background-color: #ccc;
+}
+
+/* Green background for our checked boxes*/
+.tagselectcontainer input:checked ~ .tagcheckindicator {
+  background-color: green;
+}
+
+/* Check indicator hidden when box is not checked */
+.tagcheckindicator:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Check indicator shown when box is checked */
+.tagselectcontainer input:checked ~ .tagcheckindicator:after {
+  display: block;
+}
+
+/* Style the check indicator */
+.tagselectcontainer .tagcheckindicator:after {
+ 	top: 9px;
+	left: 9px;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: white;
+}
+
+/* Styles for followTag boxes */
+#Ft_animals {
+  background: url("/Images/animals_lion.jpg");
+  background-size: 150px 50px;
+}
+
+#Ft_animals:hover {
+  background: none;
+  background-color: lightgrey;
+}
+
+#Ft_art {
+  background: url("/Images/art_blog.png");
+  background-size: 150px 50px;
+}
+
+#Ft_art:hover {
+  background: none;
+  background-color: lightgrey;
+}
+
+#Ft_business {
+  background: url("/Images/business.png");
+  background-size: 150px 50px;
+}
+
+#Ft_business:hover {
+  background: none;
+  background-color: lightgrey;
+}
+
+#Ft_education {
+  background: url("/Images/education.jpg");
+  background-size: 150px 50px;
+}
+
+#Ft_education:hover {
+  background: none;
+  background-color: lightgrey;
+}
+
+#Ft_environment {
+  background: url("/Images/environment.jpg");
+  background-size: 150px 50px;
+}
+
+#Ft_environment:hover {
+  background: none;
+  background-color: lightgrey;
+}
+
+#Ft_games {
+  background: url("/Images/games.jpg");
+  background-size: 150px 50px;
+}
+
+#Ft_games:hover {
+  background: none;
+  background-color: lightgrey;
+}
+
+#Ft_music {
+  background: url("/Images/music.jpeg");
+  background-size: 150px 50px;
+}
+
+#Ft_music:hover {
+  background: none;
+  background-color: lightgrey;
+}
+
+#Ft_politics {
+  background: url("/Images/politics.jpg");
+  background-size: 150px 50px;
+}
+
+#Ft_politics:hover {
+  background: none;
+  background-color: lightgrey;
+}
+
+#Ft_wellbeing {
+  background: url("/Images/wellbeing.jpg");
+  background-size: 150px 50px;
+}
+
+#Ft_wellbeing:hover {
+  background: none;
+  background-color: lightgrey;
+}
+
+.Ft-Btns {
+  position: relative;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.Ft-headerAndPara {
+  position: relative;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
