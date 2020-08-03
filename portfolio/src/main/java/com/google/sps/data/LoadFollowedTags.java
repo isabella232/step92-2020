@@ -28,32 +28,33 @@ import java.util.Iterator;
 import java.util.List;
 import java.io.*;
 
-
-
-//Class to check if a user follows a tag.
-//Includes functionality to get followed tags from datastore.
+// Class to check if a user follows a tag.
+// Includes functionality to get followed tags from datastore.
 public final class LoadFollowedTags {
-  public static final String TAG_QUERY = "followedTag";
-  public static List<String> getFollowedTags (String email) {
-    List<String> followedTags = new ArrayList<String>();
+
+  public static List<FollowedTag> getFollowedTags(String email) {
+    List<FollowedTag> followedTags = new ArrayList<FollowedTag>();
     PreparedQuery results = getTagsFromDatastore(email);
 
     for (Entity entity : results.asIterable()) {
+      long tagId = entity.getKey().getId();
       String tag = (String) entity.getProperty("tag");
-      followedTags.add(tag);
+      FollowedTag followedTag = new FollowedTag(tag, tagId);
+      followedTags.add(followedTag);
     }
     return followedTags;
   }
 
-  public static Boolean hasFollowedTags (String email) {
+  public static Boolean hasFollowedTags(String email) {
     return !getFollowedTags(email).isEmpty();
   }
 
-  private static PreparedQuery getTagsFromDatastore (String email) {
+  private static PreparedQuery getTagsFromDatastore(String email) {
     Filter tagFilter = new FilterPredicate("email", FilterOperator.EQUAL, email);
-    Query query = new Query(TAG_QUERY).setFilter(tagFilter);
+    Query query = new Query(BlogConstants.TAG_QUERY).setFilter(tagFilter);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
     return results;
   }
 }
+/* End Of File */
