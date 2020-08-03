@@ -429,7 +429,7 @@ function getFollowedTags() {
   });
 }
 
-//
+// If a user unfollows all tags, change paragraph text to show the appropriate message.
 function checkEmptyFollowedTagsStatus() {
   const userFollowedTagsBox = document.getElementById('user-followed-tags');
   const followTagsStatusElem = document.getElementById('follow-tags-status');
