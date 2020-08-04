@@ -83,8 +83,10 @@ public final class DatastoreUtilsTest {
 
   @Test
   public void createDatastoreEntitiesWithResponse() {
-    BlogMessage parent = new BlogMessage (1, "#business", "test text business", "nickname", HAS_TAGS_EMAIL, new ArrayList<BlogMessage>(), 0, 0);
-    BlogMessage child = new BlogMessage (2, "#business", "test text business", "nickname", HAS_TAGS_EMAIL, new ArrayList<BlogMessage>(), 0, parent.getMessageId());
+    BlogMessage parent = new BlogMessage (
+        1, "#business", "test text business", "nickname", HAS_TAGS_EMAIL, new ArrayList<BlogMessage>(), 0, 0);
+    BlogMessage child = new BlogMessage (
+        2, "#business", "test text business", "nickname", HAS_TAGS_EMAIL, new ArrayList<BlogMessage>(), 0, parent.getMessageId());
     List<BlogMessage> testMessages = new ArrayList<BlogMessage>();
     testMessages.add(parent);
     testMessages.add(child);
@@ -106,7 +108,7 @@ public final class DatastoreUtilsTest {
     createDatastoreEntities();
     List<BlogMessage> actual = DatastoreUtils.LoadAllBlogsOrLast(false);
 
-    Assert.assertEquals(1, actual.size());
+    Assert.assertEquals("test2", actual.get(0).getSender());
   }
 
   @Test
@@ -115,7 +117,9 @@ public final class DatastoreUtilsTest {
     createDatastoreEntities();
     TagsUtils.updateTagsToSearch(tagsToSearch);
    
-    Assert.assertEquals(3, tagsToSearch.size());
+    Assert.assertEquals(true, tagsToSearch.contains("#music"));
+    Assert.assertEquals(true, tagsToSearch.contains("#education"));
+    Assert.assertEquals(true, tagsToSearch.contains("#business"));
   }
 
   @Test
@@ -123,9 +127,12 @@ public final class DatastoreUtilsTest {
     List<BlogMessage> blogMessages = new ArrayList<BlogMessage>();
     List<String> tagsToSearch = new ArrayList<String>();
     tagsToSearch.add("#music");
-    BlogMessage testBusiness = new BlogMessage (1, "#business", "test text business", "nickname", HAS_TAGS_EMAIL, new ArrayList<BlogMessage>(), 0, 0);
-    BlogMessage testMusic = new BlogMessage (1, "#music", "test text music", "nickname", HAS_TAGS_EMAIL, new ArrayList<BlogMessage>(), 0, 0);
-    BlogMessage testEducation = new BlogMessage (1, "#education", "test text education", "nickname", HAS_TAGS_EMAIL, new ArrayList<BlogMessage>(), 0, 0);
+    BlogMessage testBusiness = new BlogMessage (
+        1, "#business", "test text business", "nickname", HAS_TAGS_EMAIL, new ArrayList<BlogMessage>(), 0, 0);
+    BlogMessage testMusic = new BlogMessage (
+        1, "#music", "test text music", "nickname", HAS_TAGS_EMAIL, new ArrayList<BlogMessage>(), 0, 0);
+    BlogMessage testEducation = new BlogMessage (
+        1, "#education", "test text education", "nickname", HAS_TAGS_EMAIL, new ArrayList<BlogMessage>(), 0, 0);
     blogMessages.add(testBusiness);
     blogMessages.add(testMusic);
     blogMessages.add(testEducation);
