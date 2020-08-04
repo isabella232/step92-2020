@@ -243,21 +243,21 @@ async function deleteElement(entityObj, entityKind, elemContainer) {
     // Delete failed due to unexpected client/server error...
     if (!text.includes('Success!')) {
       confirmationBox.style.backgroundColor = 'FireBrick';
-      confirmationElement.innerHTML="";
+      confirmationElement.innerHTML = '';
       confirmationElement.innerHTML = `<i>Oops! Please try again</i>`;
-      confirmationBox.style.display='block';
+      confirmationBox.style.display = 'block';
       setTimeout(function () {
-        confirmationBox.style.display='none';}, 5000);
+        confirmationBox.style.display = 'none';}, 5000);
       return;
     }
     confirmationBox.style.backgroundColor = 'DarkSlateGray';
-    confirmationElement.innerHTML="";
+    confirmationElement.innerHTML = '';
     confirmationElement.innerHTML = `<i>${text}</i>`;
-    confirmationBox.style.display='block';
+    confirmationBox.style.display = 'block';
     setTimeout(function () {
-        confirmationBox.style.display='none';}, 5000);
+        confirmationBox.style.display = 'none';}, 5000);
     elemContainer.remove();
-  }).then(function() {
+  }).then(function () {
     if (entityKind == 'followedTag') {
       checkEmptyFollowedTagsStatus();
     }
