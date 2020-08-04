@@ -141,4 +141,37 @@ public final class DatastoreUtilsTest {
 
     Assert.assertEquals(1, actual.size());
   }
+  
+   @Test
+  public void PutBlogsInDatastoreTest_withPost() {
+    String postTag = "#test";
+    String post = "I am testing this function";
+    String nickname = "tester";
+    long parentID = 0;
+    DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+    assertEquals(0, ds.prepare(new Query(BlogConstants.BLOG_ENTITY_KIND)).countEntities(withLimit(5)));
+    
+    DatastoreUtils.putBlogsInDatastore(postTag, post, nickname, parentID);
+    assertEquals(1, ds.prepare(new Query(BlogConstants.BLOG_ENTITY_KIND)).countEntities(withLimit(5)));
+  }
+
+  // |DatastoreUtils.putBlogsInDatastore| shouldn't put anything without a post in datastore.
+  @Test
+  public void PutBlogsInDatastoreTest_withoutPost() {
+    String postTag = "#test";
+    String post = null;
+    String nickname = "tester";
+    long parentID = 0;
+    
+    // Null posts aren't allowed.
+    DatastoreUtils.putBlogsInDatastore(postTag, post, nickname, parentID);
+    DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+    assertEquals(0, ds.prepare(new Query(BlogConstants.BLOG_ENTITY_KIND)).countEntities(withLimit(5)));
+
+    // Empty posts aren't allowed.
+    String newPost = "";
+    DatastoreUtils.putBlogsInDatastore(postTag, newPost, nickname, parentID);
+    assertEquals(0, ds.prepare(new Query(BlogConstants.BLOG_ENTITY_KIND)).countEntities(withLimit(5)));
+  }
+
 }
