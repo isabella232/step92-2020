@@ -229,19 +229,39 @@ function createImgElement(text) {
   return imgElement;
 }
 
-// Deletes a post and sends a confirmation message for 5 seconds.
-async function deleteMessage(msg) { 
+// Deletes an entity from datastore and sends a confirmation message for 5 seconds.
+async function deleteElement(entityObj, entityKind, elemContainer) { 
   const params = new URLSearchParams();
-  params.append('messageId', msg.id);
+  params.append('entityId', entityObj.id);
+  params.append('entity_name', entityKind);
+
   fetch('/delete-data', {method: 'POST', body: params})
         .then(response => response.text()).then((text) => {
-    const confirmationElement = document.getElementById('confirm');
-    confirmationElement.innerHTML="";
-    confirmationElement.style.display='inline-block';
+    const confirmationBox = document.getElementById('confirm-box');
+    const confirmationElement = document.getElementById('confirm-text');
+
+    // Delete failed due to unexpected client/server error...
+    if (!text.includes('Success!')) {
+      confirmationBox.style.backgroundColor = 'FireBrick';
+      confirmationElement.innerHTML = '';
+      confirmationElement.innerHTML = `<i>Oops! Please try again</i>`;
+      confirmationBox.style.display = 'block';
+      setTimeout(function () {
+        confirmationBox.style.display = 'none';}, 5000);
+      return;
+    }
+    confirmationBox.style.backgroundColor = 'DarkSlateGray';
+    confirmationElement.innerHTML = '';
     confirmationElement.innerHTML = `<i>${text}</i>`;
+    confirmationBox.style.display = 'block';
     setTimeout(function () {
-        document.getElementById('confirm').style.display='none';}, 5000);
-  });
+        confirmationBox.style.display = 'none';}, 5000);
+    elemContainer.remove();
+  }).then(function () {
+    if (entityKind == 'followedTag') {
+      checkEmptyFollowedTagsStatus();
+    }
+  }); 
 }
 
 // Displays the reply form under a post when its reply button is clicked.
@@ -468,4 +488,3 @@ function createFollowedTagContainer(tagObject) {
   tagContainer.appendChild(unfollowBtn);
   return tagContainer;
 }
-/* End Of File */
