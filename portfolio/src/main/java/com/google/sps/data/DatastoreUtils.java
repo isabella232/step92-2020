@@ -11,9 +11,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
+ 
 package com.google.sps.servlets;
-
+ 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -26,7 +26,7 @@ import com.google.sps.data.BlogMessage;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
+ 
 public final class DatastoreUtils {
   public static LinkedList<BlogMessage> doGetFromDatastore (int numberOfCommentsToDisplay) {
     // Get BlogMessages from Datastore.
@@ -34,11 +34,29 @@ public final class DatastoreUtils {
     // TODO: Get these from client.
     List<String> tagsToSearch = new ArrayList<String>();
     TagsUtils.updateTagsToSearch(tagsToSearch);
-
+ 
     return BlogHashMapUtils.sortAndLoadFromBlogHashMap(
         blogMessages, tagsToSearch, numberOfCommentsToDisplay);
   }
-
+ 
+  // Takes BlogMessage details and puts in datastore.
+  public static void putBlogsInDatastore(
+        String tag, String message, String nickname, long parentID) {
+    // Only put BlogMessages with a message in datastore.
+    if (message == null || message.isEmpty()) {
+      return;
+    }
+    Entity blogMessageEntity = new Entity(BlogConstants.BLOG_ENTITY_KIND);
+    blogMessageEntity.setProperty(BlogConstants.NICKNAME, nickname);
+    blogMessageEntity.setProperty("text", message);
+    blogMessageEntity.setProperty(BlogConstants.TIME, System.currentTimeMillis());
+    blogMessageEntity.setProperty("tag", tag);
+    blogMessageEntity.setProperty(BlogConstants.PARENTID_PARAMETER, parentID);
+ 
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.put(blogMessageEntity);
+  }
+ 
   // Loads all BlogMessages from Datastore if true is passed,
   // Otherwise if false is passed only the recent post is loaded.
   // This is useful because each time a user posts, we only load the last BlogMessage
