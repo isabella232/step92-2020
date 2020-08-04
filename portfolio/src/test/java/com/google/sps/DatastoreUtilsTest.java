@@ -142,7 +142,7 @@ public final class DatastoreUtilsTest {
     Assert.assertEquals(1, actual.size());
   }
   
-   @Test
+  @Test
   public void PutBlogsInDatastoreTest_withPost() {
     String postTag = "#test";
     String post = "I am testing this function";
