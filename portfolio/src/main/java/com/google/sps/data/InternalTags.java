@@ -20,7 +20,7 @@ import java.util.List;
 public final class InternalTags {
   private static List<String> INTERNAL_TAGS = new ArrayList<String>();
   private static String DEFAULT_TAG = "#general";
-  private static String ANIMAL_TAG = "#animal";
+  private static String ANIMALS_TAG = "#animals";
   private static String ART_TAG = "#art";
   private static String BUSINESS_TAG = "#business";
   private static String EDUCATION_TAG = "#education";
@@ -32,7 +32,7 @@ public final class InternalTags {
   
   private static void setTags() {
     INTERNAL_TAGS.add(DEFAULT_TAG);
-    INTERNAL_TAGS.add(ANIMAL_TAG);
+    INTERNAL_TAGS.add(ANIMALS_TAG);
     INTERNAL_TAGS.add(ART_TAG);
     INTERNAL_TAGS.add(BUSINESS_TAG);
     INTERNAL_TAGS.add(EDUCATION_TAG);
