@@ -188,4 +188,11 @@ public final class DatastoreUtilsTest {
     assertEquals(0, ds.prepare(new Query(BlogConstants.BLOG_ENTITY_KIND)).countEntities(withLimit(5)));
   }
 
+  @Test
+  public void testDoGetFromDatastore() {
+    createDatastoreEntities();
+    LinkedList<BlogMessage> actual = DatastoreUtils.doGetFromDatastore(1);
+
+    Assert.assertEquals(1, actual.size());
+  }
 }
