@@ -28,12 +28,23 @@ import java.util.LinkedList;
 import java.util.List;
  
 public final class DatastoreUtils {
-  public static LinkedList<BlogMessage> doGetFromDatastore (int numberOfCommentsToDisplay) {
+  public static LinkedList<BlogMessage> doGetFromDatastore(
+        int numberOfCommentsToDisplay, List<String> tagsToSearch, boolean loadAll) {
     // Get BlogMessages from Datastore.
     List<BlogMessage> blogMessages = RepliesUtils.putRepliesWithPosts(LoadAllBlogsOrLast(/*all=*/ true));
-    // TODO: Get these from client.
-    List<String> tagsToSearch = new ArrayList<String>();
-    TagsUtils.updateTagsToSearch(tagsToSearch);
+    
+    if (loadAll) {
+      // BlogHashMap loads everything if tagsToSearch and load amount are empty.
+      tagsToSearch = new ArrayList<String>();
+      numberOfCommentsToDisplay = 0;
+      return BlogHashMapUtils.sortAndLoadFromBlogHashMap(
+        blogMessages, tagsToSearch, numberOfCommentsToDisplay);
+    }
+     
+    if (tagsToSearch.isEmpty()) {
+      // No specific tag requested; use followed tags.
+      TagsUtils.updateTagsToSearch(tagsToSearch);
+    }
  
     return BlogHashMapUtils.sortAndLoadFromBlogHashMap(
         blogMessages, tagsToSearch, numberOfCommentsToDisplay);
