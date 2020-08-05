@@ -95,7 +95,7 @@ public class LoginServlet extends HttpServlet {
   public static String getUserNickname(String id) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Query query =
-        new Query(BlogConstants.BLOG_ENTITY_KIND)
+        new Query(BlogConstants.BLOG_USER)
             .setFilter(new Query.FilterPredicate(BlogConstants.ID, Query.FilterOperator.EQUAL, id));
     PreparedQuery results = datastore.prepare(query);
     Entity entity = results.asSingleEntity();
