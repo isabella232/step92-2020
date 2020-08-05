@@ -25,9 +25,8 @@ import java.util.Map;
 import java.util.Set;
 
 public final class BlogHashMap {
-  private final String[] INTERNAL_TAGS = {"#general", "#animals", "#art", "#business", "#education", 
-  "#environment", "#games", "#music", "#politics", "#wellbeing", "Tags"};
-  private final int DEFAULT_LOAD_AMOUNT = 10;
+  // Set a reasonable default load amount.
+  private final int DEFAULT_LOAD_AMOUNT = 50;
   private Map<String, LinkedList<BlogMessage>> map;
 
   public int size(){
@@ -47,7 +46,7 @@ public final class BlogHashMap {
         }
         map.get(message.getTag()).addLast(message);
       } else {
-        System.err.println("Tag not supported. Tag: " + message.getTag());
+        System.err.println("at BlogHashMap.PutInMap: Tag not supported. Tag: " + message.getTag());
       }
     }
   }
@@ -107,7 +106,7 @@ public final class BlogHashMap {
         limit--;
       }
     } else {
-      System.err.println("Tag not found. Tag: " + tag);
+      System.err.println("at BlogHashMap.getMessages(String, int): Tag not found. Tag: " + tag);
     }
     return values;
   } 
@@ -145,7 +144,7 @@ public final class BlogHashMap {
           limit--;
         }
       } else {
-        System.err.println("Tag not found. Tag: " + tag);
+        System.err.println("at BlogHashMap.getMessages(List, int): Tag not found. Tag: " + tag);
       }
     }
     return values;
@@ -154,5 +153,4 @@ public final class BlogHashMap {
   public BlogHashMap() {
     map = new LinkedHashMap<String, LinkedList<BlogMessage>>();
   }
-
 }
