@@ -56,11 +56,30 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     int numberOfCommentsToDisplay = 0;
+    List<String> tagsToSearch = new ArrayList<String>();
+
+    // If user wants to load all posts...
+    String loadOption = (String) request.getParameter("load-all");
+    if (loadOption != null && !loadOption.isEmpty()) {
+      if (loadOption.equals("all")) {
+        Gson gson = new Gson();
+        response.setContentType("application/json;");
+        response.getWriter().println(gson.toJson(DatastoreUtils.doGetFromDatastore(
+            numberOfCommentsToDisplay, tagsToSearch, /*loadAll=*/ true)));
+        return;
+      }
+    }
+
+    String tagRequested = (String) request.getParameter("tag");
+    if (tagRequested != null && !tagRequested.isEmpty()) {
+      tagsToSearch.add(tagRequested);
+    }
     
     Gson gson = new Gson();
     response.setContentType("application/json;");
  
-    response.getWriter().println(gson.toJson(DatastoreUtils.doGetFromDatastore(numberOfCommentsToDisplay)));
+    response.getWriter().println(gson.toJson(DatastoreUtils.doGetFromDatastore(
+        numberOfCommentsToDisplay, tagsToSearch, /*loadAll=*/ false)));
   }
  
   @Override

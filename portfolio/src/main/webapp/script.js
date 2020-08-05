@@ -128,18 +128,40 @@ async function loadPosts() {
   });
 }
 
+function loadAllPosts() {
+  fetch('/data?load-all=all').then(response => response.json()).then((msgs) => {
+    const statsListElement = document.getElementById('posts-list');
+    if (isEmpty(msgs)) {
+      return; 
+    }
+    statsListElement.innerHTML = '';
+    msgs.forEach((msg) => {
+      statsListElement.appendChild(createPostsElements(msg));
+      let msgReplies = msg.messageReplies;
+      let repliesContainer = document.querySelector(`#repliesli${CSS.escape(msg.id)}`);
+      if (!isEmpty(msgReplies)) {
+        msgReplies.forEach((reply) => {
+          repliesContainer.appendChild(createRepliesElements(reply));
+        });
+      }
+    });
+  }).catch(function(error) {
+    console.log(error);
+  });
+}
+ 
 function getCommentsTag(tag) {
-  fetch('/data').then(response => response.json()).then((msgs) => {
-   
-  const statsListElement = document.getElementById('home-comments-container');
-  statsListElement.innerHTML = '';
-  msgs.forEach((msg) => {
-    if (msg.tag == tag || tag == "") {
-      statsListElement.appendChild(
-        createListElement(msg.nickname + ': ' + msg.message));
-      statsListElement.appendChild(
-        createImgElement(msg.image));}
-    })   
+  fetch('/data?' + new URLSearchParams({
+    'tag': tag})).then(response => response.json()).then((msgs) => {
+    const statsListElement = document.getElementById('home-comments-tagselectcontainer');
+    if (isEmpty(msgs)) {
+      statsListElement.innerHTML = '<b>There are no posts for this tag!</b>'; 
+      return;
+    }
+    statsListElement.innerHTML = '';
+    msgs.forEach((msg) => {
+      statsListElement.appendChild(createPostsElementsHome(msg));
+    });   
   });
 }
  

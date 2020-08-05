@@ -208,6 +208,22 @@ body, html {
   margin: 10px;
 }
 
+#posts-load {
+  float: right;
+  clear: left;
+  display: block;
+}
+
+.loadPostsBtn {
+  background-color: whitesmoke;
+  width: max-content;
+}
+
+.loadPostsBtn:hover {
+  background-color: dimgrey;
+  color: whitesmoke;
+}
+
 .reply {
   position: relative;
   float: right;
