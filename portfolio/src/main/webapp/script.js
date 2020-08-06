@@ -11,13 +11,24 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-
+ 
+ 
 // These variables will be used to track whenever a reply button is clicked
 // And whether the same button was clicked again in a row.
 var replyClickCounter = 0;
 var currentReplyBtnClicked = 0;
-
+ 
+const postInputArea = document.getElementById('post-text-input');
+postInputArea.addEventListener('keyup', () => {
+  if (postInputArea.value.length >= 1) {
+    document.getElementById('post-submit').style.display = 'block';
+    postInputArea.style.backgroundColor = 'DimGrey';
+  } else {
+    document.getElementById('post-submit').style.display = 'none';
+    postInputArea.style.backgroundColor = 'white';
+  }
+});
+ 
 // Post event listener to submit posts with Fetch on form submit. 
 document.getElementById('post-form').addEventListener('submit', function(postSubmitEvent) {
   // Prevent form from redirecting to the server.
@@ -32,24 +43,22 @@ document.getElementById('post-form').addEventListener('submit', function(postSub
   for (const pair of formData) {
     postFormParams.append(pair[0], pair[1]);
   }
-
+ 
   // Make a POST request with the new post and fetch it to add to the DOM.
   fetch('/data', {method: 'POST', body: postFormParams}).then(
         response => response.json()).then((msgs) => {
     const statsListElement = document.getElementById('posts-list');
     msgs.forEach((msg) => {
-      statsListElement.appendChild(createListElement(msg));
-    })
+      statsListElement.appendChild(createPostsElements(msg));
+    });
+ 
+    // Empty the post form after a post is submitted.
+    resetForm('post-form');
   }).catch (function(error) {
-      console.log(error);
-      // No form reset if post wasn't submitted; return.
-      return;
-  })
-  
-  // Empty the post form after a post is submitted.
-  resetForm('post-form');
+    console.log(error);
+  });
 });
-
+ 
 // Reply event listener to submit replies with Fetch on form submit.
 document.getElementById('reply-form').addEventListener('submit', function(replySubmitEvent) {
   replySubmitEvent.preventDefault();
@@ -72,7 +81,7 @@ document.getElementById('reply-form').addEventListener('submit', function(replyS
       console.log(error);
   });
 });
-
+ 
 function openPage(pageName, elmnt, color) {
   // Hide all elements with class="tabcontent" by default */
   var i, tabcontent, tablinks;
@@ -94,11 +103,11 @@ function openPage(pageName, elmnt, color) {
   elmnt.style.backgroundColor = color;
   
 }
-
+ 
 function defaultPage() {
   document.getElementById("defaultOpen").click();
 }
-
+ 
 // Makes a Get request and loads Posts to the Blog page on body load
 // Also loads 5 display-only posts to be displayed on the home page.
 async function loadPosts() {
@@ -166,50 +175,53 @@ function getCommentsTag(tag) {
 }
  
 // Creates an <li> element containing message details.
-function createListElement(msg) {
+function createPostsElements(msg) {
   const postElement = document.createElement('li');
   postElement.id = 'li' + msg.id;
  
   // Add container for posts
-  let divEle = document.createElement('div');
+  let divEle = document.createElement('span');
   divEle.className = 'post';
   divEle.id = msg.id;
-
+ 
+  const tagElement = document.createElement('span');
+  tagElement.className = 'postTag';
+  tagElement.innerHTML = `<b><i>${msg.tag}</i></b>`;
+ 
   const messageElement = document.createElement('span');
+  messageElement.className = 'postText';
   messageElement.innerText = msg.message;
   
   const userElement = document.createElement('span');
+  userElement.className = 'postSender';
   if (msg.nickname === undefined || msg.nickname === null) {
-    userElement.innerHTML = "<b><i>_Anonymous</i></b>";
+    userElement.innerHTML = "<i>_Anonymous</i>";
   } else {
-    userElement.innerHTML = "<b><i>_" + msg.nickname + "</i></b>";
+    userElement.innerHTML = `<i>_${msg.nickname}</i>`;
   }
-  userElement.style.marginLeft = "15px";
-
-  // TODO: move styles to style.css
+ 
   const timeElement = document.createElement('span');
+  timeElement.className = 'postDate';
   var date = new Date(msg.timestamp);
-  timeElement.innerText = date.toString().slice(0, 24);
-  timeElement.style.marginTop = "5px";
-  timeElement.style.float = "right";
-  timeElement.style.clear ="left";
-
+  timeElement.innerText = date.toLocaleString().slice(0, 24);
+ 
   const deleteMsgElement = document.createElement('button');
+  deleteMsgElement.className = 'postDelBtn';
   deleteMsgElement.innerText = 'Delete';
   deleteMsgElement.addEventListener('click', () => {
-    deleteMessage(msg);
-    postElement.remove();
+    const POST_ENTITY_KIND = 'blogMessage';
+    deleteElement(msg, POST_ENTITY_KIND, postElement);
   });
-
+ 
   const replyMsgElement = document.createElement('button');
+  replyMsgElement.className = 'postRepBtn';
   replyMsgElement.innerText = 'Reply';
-  replyMsgElement.style.marginTop = "5px";
-  replyMsgElement.style.float = "right";
   replyMsgElement.addEventListener('click', () => {
     handleReplies(msg.id, msg.nickname, msg.tag, postElement.id);
     replyClickCounter++;
   });
-
+ 
+  divEle.appendChild(tagElement);
   divEle.appendChild(userElement);
   divEle.appendChild(messageElement);
   divEle.appendChild(timeElement);
@@ -217,44 +229,53 @@ function createListElement(msg) {
   divEle.appendChild(deleteMsgElement);
  
   postElement.appendChild(divEle);
+ 
+  const replyListEle = document.createElement('ul');
+  replyListEle.id = 'replies' + postElement.id;
+ 
+  postElement.appendChild(replyListEle);
   return postElement;
 }
-
-// TODO: Implement function to load replies under their respective posts
-
-//TODO: Show top 3 trending posts(ie. with the most replies)
+ 
+// TODO: Show top 3 trending posts(ie. with the most replies)
 // Creates a list of posts to be displayed on the homepage.
 // Display-only. Non-Interactive (ie. No reply or delete button). 
-function createListElementHome(msg) {
+function createPostsElementsHome(msg) {
   const postElement = document.createElement('li');
   postElement.className = 'post';
-
+  
+  let divEle = document.createElement('span');
+ 
+  const tagElement = document.createElement('span');
+  tagElement.className = 'postTag';
+  tagElement.innerHTML = `<b><i>${msg.tag}</i></b>`;
+ 
   const messageElement = document.createElement('span');
+  messageElement.className = 'postText';
   messageElement.innerText = msg.message;
   
   const userElement = document.createElement('span');
+  userElement.className = 'postSender';
   if (msg.nickname === undefined || msg.nickname === null) {
-    userElement.innerHTML = "<b><i>_Anonymous</i></b>";
+    userElement.innerHTML = "<i>_Anonymous</i>";
   } else {
-    userElement.innerHTML = "<b><i>_" + msg.nickname + "</i></b>";
+    userElement.innerHTML = `<i>_${msg.nickname}</i>`;
   }
-  userElement.style.marginLeft = "15px";
-
-  // TODO: move styles to style.css
+ 
   const timeElement = document.createElement('span');
+  timeElement.className = 'postDate';
   var date = new Date(msg.timestamp);
-  timeElement.innerText = date.toString().slice(0, 24);
-  timeElement.style.marginTop = "5px";
-  timeElement.style.float = "right";
-  timeElement.style.clear = "left";
+  timeElement.innerText = date.toLocaleString().slice(0, 24);
   
-  postElement.appendChild(userElement);
-  postElement.appendChild(messageElement);
-  postElement.appendChild(timeElement);
-
+  divEle.appendChild(tagElement);
+  divEle.appendChild(userElement);
+  divEle.appendChild(messageElement);
+  divEle.appendChild(timeElement);
+ 
+  postElement.appendChild(divEle);
   return postElement;
 }
-
+ 
 // Returns an <li> element containing reply details.
 function createRepliesElements(reply) {
   const replyElement = document.createElement('li');
@@ -262,7 +283,7 @@ function createRepliesElements(reply) {
   replyElement.className = 'reply';
   
   const replyContainer = document.createElement('span');
-
+ 
   const messageElement = document.createElement('span');
   messageElement.className = 'replyText';
   messageElement.innerText = reply.message;
@@ -292,30 +313,30 @@ function createRepliesElements(reply) {
   replyContainer.appendChild(messageElement);
   replyContainer.appendChild(timeElement);
   replyContainer.appendChild(deleteReplyBtn);
-
+ 
   replyElement.appendChild(replyContainer);
  
   return replyElement;
 }
-
+ 
 /** Creates an <img> element containing text. */
 function createImgElement(text) {
   const imgElement = document.createElement('img');
   imgElement.src = text;
   return imgElement;
 }
-
+ 
 // Deletes an entity from datastore and sends a confirmation message for 5 seconds.
 async function deleteElement(entityObj, entityKind, elemContainer) { 
   const params = new URLSearchParams();
   params.append('entityId', entityObj.id);
   params.append('entity_name', entityKind);
-
+ 
   fetch('/delete-data', {method: 'POST', body: params})
         .then(response => response.text()).then((text) => {
     const confirmationBox = document.getElementById('confirm-box');
     const confirmationElement = document.getElementById('confirm-text');
-
+ 
     // Delete failed due to unexpected client/server error...
     if (!text.includes('Success!')) {
       confirmationBox.style.backgroundColor = 'FireBrick';
@@ -339,7 +360,7 @@ async function deleteElement(entityObj, entityKind, elemContainer) {
     }
   }); 
 }
-
+ 
 // Displays the reply form under a post when its reply button is clicked.
 // Removes the reply form if button is clicked again, and so on...
 function handleReplies(msgID, msgSender, tag, postEleID) { 
@@ -380,7 +401,7 @@ function handleReplies(msgID, msgSender, tag, postEleID) {
   document.getElementById('reply-parentID').value = msgID;
   document.getElementById('reply-tag').value = tag;
 }
-
+ 
 // Returns true if the clicked reply button is different from the last reply button clicked.
 // Otherwise; returns false.
 function clickedDifferentReplyButton(clickedId) {
@@ -391,7 +412,7 @@ function clickedDifferentReplyButton(clickedId) {
   currentReplyBtnClicked = clickedId;
   return isDif;
 }
-
+ 
 // Empties the form whose Id is passed.
 function resetForm(formID) { 
   // For reply form, first revert all modifications, and
@@ -416,7 +437,7 @@ function fetchBlobstoreUrlAndShowForm() {
         messageForm.classList.remove('hidden');
       });
 }
-
+ 
 function showPostForm() {
   fetch('/login_status').then(response => response.json()).then((isLoggedIn) => {
     if (isLoggedIn) {
@@ -425,15 +446,15 @@ function showPostForm() {
     window.open("/login")}
   });
 }
-
+ 
 function setTag(tag) {
   document.getElementById("comments-tag").value = tag;
 }
-
+ 
 function setNicknameForm() {
     window.open("/login");
 }
-
+ 
 let followSectionBtn = document.getElementById('show-Ft-Btn');
 followSectionBtn.addEventListener('click', () => {
   const followTagsSection = document.getElementById('follow-tags-section');
@@ -443,22 +464,22 @@ followSectionBtn.addEventListener('click', () => {
     hideTagsToFollow();
   }
 });
-
+ 
 function showTagsToFollow() {
   document.getElementById('follow-tags-section').style.display = 'block';
   followSectionBtn.innerText = 'Hide Tags to Follow';
 }
-
+ 
 function hideTagsToFollow() {
   document.getElementById('follow-tags-section').style.display = 'none';
   followSectionBtn.innerText = 'Show Tags to Follow';
 }
-
+ 
 // If a user selects tag(s) to follow, this function posts them to the server, and 
 // Sends the appropriate confirmation message for 5 seconds.
 function sendFollowedTags() {
   let params = new URLSearchParams();
-
+ 
   const tagElems = document.getElementsByClassName('followtagcheck');
   for (var i = 0; i < tagElems.length; i++) {
     if (tagElems[i].checked === true) {
@@ -469,7 +490,7 @@ function sendFollowedTags() {
         response => response.text()).then((text) => {
     const confirmationBox = document.getElementById('confirm-box');
     const confirmationElement = document.getElementById('confirm-text');
-
+ 
     // In case of unexpected server errors...
     if (!text.includes('Success!') && !text.includes('Failed!')) {
       confirmationBox.style.backgroundColor = 'FireBrick';
@@ -505,18 +526,18 @@ function sendFollowedTags() {
     getFollowedTags();
   });
 }
-
+ 
 // Loads user followed tags to the FollowTags page...
 function getFollowedTags() {
   fetch('/follow-tags').then(response => response.json()).then((userFollowedTags) => {
     const userFollowedTagsBox = document.getElementById('user-followed-tags');
     const followTagsStatusElem = document.getElementById('follow-tags-status');
-
+ 
     if (isEmpty(userFollowedTags)) {
       followTagsStatusElem.innerHTML = '<Strong>You do not follow any tag.</Strong>';
       return;
     }
-
+ 
     userFollowedTagsBox.innerHTML = '';
     followTagsStatusElem.innerHTML = '<Strong>You follow the following tag(s).</Strong>';
     userFollowedTags.forEach((followedTag) => {
@@ -524,7 +545,7 @@ function getFollowedTags() {
     });
   });
 }
-
+ 
 // If a user unfollows all tags, change paragraph text to show the appropriate message.
 function checkEmptyFollowedTagsStatus() {
   const userFollowedTagsBox = document.getElementById('user-followed-tags');
@@ -533,7 +554,7 @@ function checkEmptyFollowedTagsStatus() {
     followTagsStatusElem.innerHTML = '<Strong>You do not follow any tag.</Strong>';
   }
 }
-
+ 
 // Checks if an object (specifically a response object) is empty.
 function isEmpty(obj) {
   for(var key in obj) {
@@ -543,16 +564,16 @@ function isEmpty(obj) {
   }
   return true;
 }
-
+ 
 // Returns a container for a followedTag, including a button to unfollow the tag.
 function createFollowedTagContainer(tagObject) {
   const tagContainer = document.createElement('div');
   tagContainer.className = 'followtagbox';
-
+ 
   // The style defined in our css file is the [Ft_tagName] without the '#' sign, so slice it...
   tagContainer.id = `Ft_${tagObject.tag.slice(1)}`;
   tagContainer.innerHTML = `<strong>${tagObject.tag}</strong>`;
-
+ 
   const unfollowBtn = document.createElement('button');
   unfollowBtn.className = 'Ft-Btns';
   unfollowBtn.innerText = 'Unfollow tag';
@@ -560,7 +581,7 @@ function createFollowedTagContainer(tagObject) {
     const FTAG_ENTITY_KIND  = 'followedTag';
     deleteElement(tagObject, FTAG_ENTITY_KIND, tagContainer);
   });
-
+ 
   tagContainer.appendChild(unfollowBtn);
   return tagContainer;
 }
