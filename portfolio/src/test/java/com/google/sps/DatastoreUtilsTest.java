@@ -188,11 +188,80 @@ public final class DatastoreUtilsTest {
     assertEquals(0, ds.prepare(new Query(BlogConstants.BLOG_ENTITY_KIND)).countEntities(withLimit(5)));
   }
 
+ // Should load and return everything if |loadAll = true|.
   @Test
-  public void testDoGetFromDatastore() {
-    createDatastoreEntities();
-    LinkedList<BlogMessage> actual = DatastoreUtils.doGetFromDatastore(1);
+  public void testDoGetFromDatastore_LoadAll() {
+    DatastoreUtils.putBlogsInDatastore("#general", "Hi", "tester", 0);
+    DatastoreUtils.putBlogsInDatastore("#education", "Hi", "tester", 0);
+    DatastoreUtils.putBlogsInDatastore("#games", "Hi", "tester", 0);
 
-    Assert.assertEquals(1, actual.size());
+    List<String> tagsToSearch = new ArrayList<String>();
+    Assert.assertEquals(3, DatastoreUtils.doGetFromDatastore(0, tagsToSearch, /*loadAll=*/true).size());
+    
+    // Load everything even if user follows tags.
+    // TagUtils uses current user's email...
+    UserService userService = UserServiceFactory.getUserService();
+    String userEmail = (String) userService.getCurrentUser().getEmail();
+
+    // Follow #games.
+    addEntityTags("#games", userEmail);
+    
+    // Should ignore followed tags and load everything...
+    Assert.assertEquals(3, DatastoreUtils.doGetFromDatastore(0, tagsToSearch, true).size());
+  }
+
+  @Test
+  public void testDoGetFromDatastore_LoadFollowedTagsPosts() {
+    DatastoreUtils.putBlogsInDatastore("#general", "Hi", "tester", 0);
+    DatastoreUtils.putBlogsInDatastore("#education", "Hi", "tester", 0);
+    DatastoreUtils.putBlogsInDatastore("#games", "Hi", "tester", 0);
+
+    List<String> tagsToSearch = new ArrayList<String>();
+
+    // No followed tags, load all 3 posts.
+    Assert.assertEquals(3, DatastoreUtils.doGetFromDatastore(0, tagsToSearch, /*loadAll=*/ false).size());
+
+    UserService userService = UserServiceFactory.getUserService();
+    String userEmail = (String) userService.getCurrentUser().getEmail();
+
+    // Follow these 2 tags.
+    addEntityTags("#general", userEmail);
+    addEntityTags("#games", userEmail);
+
+    // Load posts for only the tags followed. In this case, 2.
+    Assert.assertEquals(2, DatastoreUtils.doGetFromDatastore(0, tagsToSearch, false).size());
+
+    // New posts for unfollowed tags, still load posts for only followed tags - 2 in this case.
+    DatastoreUtils.putBlogsInDatastore("#music", "Hello", "tester2", 0);
+    Assert.assertEquals(2, DatastoreUtils.doGetFromDatastore(0, tagsToSearch, false).size());
+
+    // New posts for followed tags, include those in the loaded posts - 3 in this case.
+    DatastoreUtils.putBlogsInDatastore("#games", "Let's play", "gamer", 0);
+    Assert.assertEquals(3, DatastoreUtils.doGetFromDatastore(0, tagsToSearch, false).size());
+  }
+
+  // Should load posts for only the requested tag.
+  @Test
+  public void testDoGetFromDatastore_LoadRequestedTagPosts() {
+    DatastoreUtils.putBlogsInDatastore("#general", "Hi", "tester", 0);
+    DatastoreUtils.putBlogsInDatastore("#education", "Hi", "tester", 0);
+    DatastoreUtils.putBlogsInDatastore("#games", "Hi", "tester", 0);
+    DatastoreUtils.putBlogsInDatastore("#games", "Let's play", "gamer", 0);
+
+    UserService userService = UserServiceFactory.getUserService();
+    String userEmail = (String) userService.getCurrentUser().getEmail();
+    // Follow a tag.
+    addEntityTags("#general", userEmail);
+    
+    // If a tag is requested, ignore followed tags and load posts for only the requested tag.
+    List<String> tagsToSearch = new ArrayList<String>();
+    tagsToSearch.add("#games");
+    // Shoud load the 2 posts for #games.
+    Assert.assertEquals(2, DatastoreUtils.doGetFromDatastore(0, tagsToSearch, false).size());
+    
+    // No requested tag, load everything or use followed tags if there's any.
+    tagsToSearch.remove("#games");
+    // Should load the post for the followed tag (#general).
+    Assert.assertEquals(1, DatastoreUtils.doGetFromDatastore(0, tagsToSearch, false).size());
   }
 }
