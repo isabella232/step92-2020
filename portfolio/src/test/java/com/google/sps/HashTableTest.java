@@ -43,12 +43,13 @@ public final class HashTableTest {
     //Return a Hashmap with LinkedList of size one for each tag.
     BlogHashMap actual = new BlogHashMap();
     List<BlogMessage> blogMessages = new ArrayList<>();
+
     blogMessages.add(
-      new BlogMessage(1l, "#general", "I enjoy pop music", "", "Steven", "", new ArrayList<String>(), System.currentTimeMillis()));
+      new BlogMessage(1l, "#general", "I enjoy pop music", "Steven", "", new ArrayList<BlogMessage>(), System.currentTimeMillis(), 0));
     blogMessages.add(
-      new BlogMessage(2l, "#wellbeing", "Country music is the best music", "", "Tayyaba", "", new ArrayList<String>(), System.currentTimeMillis()));
+      new BlogMessage(2l, "#wellbeing", "Country music is the best music", "Tayyaba", "", new ArrayList<BlogMessage>(), System.currentTimeMillis(), 0));
     blogMessages.add(
-      new BlogMessage(3l, "#music", "Classical music makes you smarter", "", "Andrew", "", new ArrayList<String>(), System.currentTimeMillis()));
+      new BlogMessage(3l, "#music", "Classical music makes you smarter", "Andrew", "", new ArrayList<BlogMessage>(), System.currentTimeMillis(), 0));
     actual.putInMap(blogMessages);
 
     Collection<String> keys = Arrays.asList("#general", "#wellbeing", "#music");
@@ -67,15 +68,15 @@ public final class HashTableTest {
     List<BlogMessage> blogMessages = new ArrayList<>();
     for (int i = 0; i < 4; i++) {
       blogMessages.add(
-        new BlogMessage(i, "#general", "Test Message", "", "Steven", "", new ArrayList<String>(), System.currentTimeMillis()));
+        new BlogMessage(i, "#general", "Test Message", "Steven", "", new ArrayList<BlogMessage>(), System.currentTimeMillis(), 0));
     }
     for (int i = 0; i < 4; i++) {
       blogMessages.add(
-        new BlogMessage(i, "#wellbeing", "Test Message", "", "Tayyaba", "", new ArrayList<String>(), System.currentTimeMillis()));
+        new BlogMessage(i, "#wellbeing", "Test Message", "Tayyaba", "", new ArrayList<BlogMessage>(), System.currentTimeMillis(), 0));
     }
     for (int i = 0; i < 4; i++) {
       blogMessages.add(
-        new BlogMessage(i, "#music", "Test Message", "", "Andrew", "", new ArrayList<String>(), System.currentTimeMillis()));
+        new BlogMessage(i, "#music", "Test Message", "Andrew", "", new ArrayList<BlogMessage>(), System.currentTimeMillis(), 0));
     }
     actual.putInMap(blogMessages);
 
@@ -96,9 +97,9 @@ public final class HashTableTest {
     for (int i = 0; i < 4; i++) {
       long time = System.currentTimeMillis();
       blogMessages.add(
-        new BlogMessage(i, "#general", "Test Message", "", "Steven", "", new ArrayList<String>(), time));
+        new BlogMessage(i, "#general", "Test Message", "Steven", "", new ArrayList<BlogMessage>(), time, 0));
       expected.add(
-        new BlogMessage(i, "#general", "Test Message", "", "Steven", "", new ArrayList<String>(), time));
+        new BlogMessage(i, "#general", "Test Message", "Steven", "", new ArrayList<BlogMessage>(), time, 0));
     }
     actual.putInMap(blogMessages);
 
@@ -116,7 +117,7 @@ public final class HashTableTest {
     BlogHashMap actual = new BlogHashMap();
     List<BlogMessage> blogMessages = new ArrayList<>();
     blogMessages.add(
-      new BlogMessage((long) 1, "#Edm", "I listen to Edm while I work.", "", "Steven", "", new ArrayList<String>(), System.currentTimeMillis()));
+      new BlogMessage((long) 1, "#Edm", "I listen to Edm while I work.", "Steven", "", new ArrayList<BlogMessage>(), System.currentTimeMillis(), 0));
 
     Assert.assertEquals(0, actual.size());
   }
